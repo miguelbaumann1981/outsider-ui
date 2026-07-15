@@ -1,0 +1,7 @@
+{
+  "hello": "Hola mundo 2",
+  "welcome": "Bienvenido",
+  "dashboard": {
+    "books": "Libros"
+  }
+}
