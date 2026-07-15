@@ -16,5 +16,9 @@
       "externalTemplate": true,
       "skipStyle": true
     }
-  }
+  },
+  "editor.quickSuggestions": {
+    "strings": true
+  },
+  "tailwindCSS.experimental.configFile": "../src/styles.scss"
 }

@@ -1,1 +1,18 @@
-<p>home-page works!</p>,
+<main class="flex flex-col gap-5">
+  <!-- SLOGAN -->
+  @if (isShown()) {
+    <div class="flex">
+      <h1 class="text-info text-4xl font-bold">Revista Literaria Subterránea</h1>
+    </div>
+  }
+
+  <!-- CARDS -->
+  <div class="grid grid-cols-3">
+    <out-article-home-card />
+    <out-article-home-card />
+    <out-article-home-card />
+    <out-article-home-card />
+    <out-article-home-card />
+    <out-article-home-card />
+  </div>
+</main>
