@@ -7,12 +7,33 @@
   }
 
   <!-- CARDS -->
-  <div class="grid grid-cols-3">
-    <out-article-home-card />
-    <out-article-home-card />
-    <out-article-home-card />
-    <out-article-home-card />
-    <out-article-home-card />
-    <out-article-home-card />
+  <div class="grid grid-cols-1 gap-5 lg:grid-cols-3">
+    <div class="col-span-1 lg:col-span-2">
+      <out-article-card-full-width />
+    </div>
+
+    <div>
+      <out-article-card-narrow />
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 gap-5 lg:grid-cols-2">
+    <div>
+      <out-article-card-medium-left />
+    </div>
+
+    <div>
+      <out-article-card-medium-center />
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 gap-5 lg:grid-cols-3">
+    <div>
+      <out-article-card-diagonal-content />
+    </div>
+
+    <div class="col-span-1 lg:col-span-2">
+      <out-article-card-right-content />
+    </div>
   </div>
 </main>
