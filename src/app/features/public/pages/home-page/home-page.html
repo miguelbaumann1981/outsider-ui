@@ -1,39 +1,18 @@
 <main class="flex flex-col gap-5">
   <!-- SLOGAN -->
-  @if (isShown()) {
-    <div class="flex items-center justify-center">
-      <h1 class="text-info text-4xl font-bold">Revista Literaria Subterránea</h1>
-    </div>
-  }
+  <div class="flex items-center justify-center">
+    <h1 id="slogan" class="slogan" [class.fontFamily]="fontFamilyStyle()">
+      Revista Literaria Subterránea
+    </h1>
+  </div>
 
   <!-- CARDS -->
-  <div class="grid grid-cols-1 gap-5 lg:grid-cols-3">
-    <div class="col-span-1 lg:col-span-2">
-      <out-article-card-full-width />
-    </div>
-
-    <div>
-      <out-article-card-narrow />
-    </div>
-  </div>
-
-  <div class="grid grid-cols-1 gap-5 lg:grid-cols-2">
-    <div>
-      <out-article-card-medium-left />
-    </div>
-
-    <div>
-      <out-article-card-medium-center />
-    </div>
-  </div>
-
-  <div class="grid grid-cols-1 gap-5 lg:grid-cols-3">
-    <div>
-      <out-article-card-diagonal-content />
-    </div>
-
-    <div class="col-span-1 lg:col-span-2">
-      <out-article-card-right-content />
-    </div>
+  <div class="grid grid-cols-1 gap-10 lg:grid-cols-2">
+    <out-article-home-card [article]="article1()" />
+    <out-article-home-card [article]="article2()" />
+    <out-article-home-card [article]="article3()" />
+    <out-article-home-card [article]="article4()" />
+    <out-article-home-card [article]="article5()" />
+    <out-article-home-card [article]="article6()" />
   </div>
 </main>

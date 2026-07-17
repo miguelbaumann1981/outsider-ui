@@ -1,7 +1,10 @@
 {
-  "hello": "Hola mundo 2",
-  "welcome": "Bienvenido",
-  "dashboard": {
-    "books": "Libros"
+  "category": {
+    "editorialArticle": "Artículo de opinión",
+    "nightTales": "Cuentos para no dormir",
+    "ourLifeBooks": "Los libros de nuestra vida",
+    "strongholds": "Reductos de lo imposible",
+    "booksYear": "La lista del año",
+    "microStories": "Microrrelatos"
   }
 }
