@@ -10,17 +10,17 @@ export class ArticleSectionPipe implements PipeTransform {
 
   transform(value: ArticleCategory): string {
     switch (value) {
-      case ArticleCategory.BOOKS_YEAR:
+      case ArticleCategory.BOOKSYEAR:
         return this.i18n.category.booksYear;
-      case ArticleCategory.EDITORIAL_ARTICLE:
+      case ArticleCategory.EDITORIAL:
         return this.i18n.category.editorialArticle;
-      case ArticleCategory.MICRO_STORIES:
+      case ArticleCategory.MICROSTORY:
         return this.i18n.category.microStories;
-      case ArticleCategory.NIGHT_TALES:
+      case ArticleCategory.TALES:
         return this.i18n.category.nightTales;
-      case ArticleCategory.OUR_LIFE_BOOKS:
+      case ArticleCategory.OPINION:
         return this.i18n.category.ourLifeBooks;
-      case ArticleCategory.STRONGHOLDS:
+      case ArticleCategory.OUTSIDERS:
         return this.i18n.category.strongholds;
 
       default:

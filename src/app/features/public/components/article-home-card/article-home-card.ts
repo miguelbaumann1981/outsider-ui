@@ -16,17 +16,17 @@ export class ArticleHomeCard {
 
   getFontFamily(section: ArticleCategory): string {
     switch (section) {
-      case ArticleCategory.BOOKS_YEAR:
+      case ArticleCategory.BOOKSYEAR:
         return 'gravitas-one-regular text-2xl';
-      case ArticleCategory.EDITORIAL_ARTICLE:
+      case ArticleCategory.EDITORIAL:
         return 'homemade-apple-regular text-4xl';
-      case ArticleCategory.MICRO_STORIES:
+      case ArticleCategory.MICROSTORY:
         return 'special-elite-regular text-4xl';
-      case ArticleCategory.NIGHT_TALES:
+      case ArticleCategory.TALES:
         return 'carter-one-regular text-3xl';
-      case ArticleCategory.OUR_LIFE_BOOKS:
+      case ArticleCategory.OPINION:
         return 'fredoka-regular text-4xl';
-      case ArticleCategory.STRONGHOLDS:
+      case ArticleCategory.OUTSIDERS:
         return 'zen-dots-regular text-3xl';
 
       default:

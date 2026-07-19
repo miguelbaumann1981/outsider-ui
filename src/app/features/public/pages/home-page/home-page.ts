@@ -42,7 +42,7 @@ export class HomePage implements OnInit, AfterViewInit {
   protected readonly i18n = es;
   article1 = signal<ArticleCard>({
     id: '111',
-    section: ArticleCategory.EDITORIAL_ARTICLE,
+    section: ArticleCategory.EDITORIAL,
     title: 'La ciudad que nunca olvida',
     author: 'Miguel Baumann',
     imageUrl: '/assets/foto-libros.jpg',
@@ -50,7 +50,7 @@ export class HomePage implements OnInit, AfterViewInit {
   });
   article2 = signal<ArticleCard>({
     id: '222',
-    section: ArticleCategory.NIGHT_TALES,
+    section: ArticleCategory.TALES,
     title: 'La ciudad que nunca olvida',
     author: 'Miguel Baumann',
     imageUrl: '/assets/foto-libros.jpg',
@@ -58,7 +58,7 @@ export class HomePage implements OnInit, AfterViewInit {
   });
   article3 = signal<ArticleCard>({
     id: '333',
-    section: ArticleCategory.MICRO_STORIES,
+    section: ArticleCategory.MICROSTORY,
     title: 'La ciudad que nunca olvida',
     author: 'Miguel Baumann',
     imageUrl: '/assets/foto-libros.jpg',
@@ -66,7 +66,7 @@ export class HomePage implements OnInit, AfterViewInit {
   });
   article4 = signal<ArticleCard>({
     id: '333',
-    section: ArticleCategory.BOOKS_YEAR,
+    section: ArticleCategory.BOOKSYEAR,
     title: 'La ciudad que nunca olvida',
     author: 'Miguel Baumann',
     imageUrl: '/assets/foto-libros.jpg',
@@ -74,7 +74,7 @@ export class HomePage implements OnInit, AfterViewInit {
   });
   article5 = signal<ArticleCard>({
     id: '333',
-    section: ArticleCategory.OUR_LIFE_BOOKS,
+    section: ArticleCategory.OPINION,
     title: 'La ciudad que nunca olvida',
     author: 'Miguel Baumann',
     imageUrl: '/assets/foto-libros.jpg',
@@ -82,7 +82,7 @@ export class HomePage implements OnInit, AfterViewInit {
   });
   article6 = signal<ArticleCard>({
     id: '333',
-    section: ArticleCategory.STRONGHOLDS,
+    section: ArticleCategory.OUTSIDERS,
     title: 'La ciudad que nunca olvida',
     author: 'Miguel Baumann',
     imageUrl: '/assets/foto-libros.jpg',
@@ -100,10 +100,13 @@ export class HomePage implements OnInit, AfterViewInit {
   constructor(@Inject(PLATFORM_ID) private platformId: object) {}
 
   ngOnInit(): void {
-    console.log(this.articlesApi.value());
-    console.log(this.articlesApi.hasValue());
-    console.log(this.articlesApi.isLoading());
-    console.log(this.articlesApi.error());
+    this.getArticlesHomePage();
+  }
+
+  getArticlesHomePage(): void {
+    this.homeService.getArticles().subscribe((data) => {
+      console.log(data);
+    });
   }
 
   async ngAfterViewInit(): Promise<void> {
