@@ -1,4 +1,13 @@
-import { AfterViewInit, Component, signal, Inject, PLATFORM_ID } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  signal,
+  Inject,
+  PLATFORM_ID,
+  inject,
+  resource,
+  OnInit,
+} from '@angular/core';
 import { gsap } from 'gsap';
 import { isPlatformBrowser } from '@angular/common';
 import { ArticleHomeCard } from '../../components/article-home-card/article-home-card';
@@ -6,6 +15,8 @@ import { ArticleCard } from '../../interfaces/article-card.interface';
 import { ArticleCategory } from '../../enums/article-category.enum';
 import es from '@/i18n/es.json';
 import { setInterval } from 'timers/promises';
+import { httpResource } from '@angular/common/http';
+import { HomeService } from '../../services/home.service';
 
 @Component({
   selector: 'out-home-page',
@@ -27,7 +38,7 @@ import { setInterval } from 'timers/promises';
     }
   `,
 })
-export class HomePage implements AfterViewInit {
+export class HomePage implements OnInit, AfterViewInit {
   protected readonly i18n = es;
   article1 = signal<ArticleCard>({
     id: '111',
@@ -80,7 +91,20 @@ export class HomePage implements AfterViewInit {
 
   fontFamilyStyle = signal('fredoka-regular');
 
+  homeService = inject(HomeService);
+
+  articlesApi = httpResource(() => ({
+    url: 'http://localhost:3000/api/articles',
+  }));
+
   constructor(@Inject(PLATFORM_ID) private platformId: object) {}
+
+  ngOnInit(): void {
+    console.log(this.articlesApi.value());
+    console.log(this.articlesApi.hasValue());
+    console.log(this.articlesApi.isLoading());
+    console.log(this.articlesApi.error());
+  }
 
   async ngAfterViewInit(): Promise<void> {
     if (!isPlatformBrowser(this.platformId)) {
