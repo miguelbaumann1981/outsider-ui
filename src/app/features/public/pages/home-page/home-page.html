@@ -8,11 +8,8 @@
 
   <!-- CARDS -->
   <div class="grid grid-cols-1 gap-10 lg:grid-cols-2">
-    <out-article-home-card [article]="article1()" />
-    <out-article-home-card [article]="article2()" />
-    <out-article-home-card [article]="article3()" />
-    <out-article-home-card [article]="article4()" />
-    <out-article-home-card [article]="article5()" />
-    <out-article-home-card [article]="article6()" />
+    @for (article of articlesRelease(); track article.id) {
+      <out-article-home-card [article]="article" />
+    }
   </div>
 </main>

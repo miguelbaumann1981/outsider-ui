@@ -2,21 +2,21 @@ import {
   AfterViewInit,
   Component,
   signal,
-  Inject,
   PLATFORM_ID,
   inject,
-  resource,
   OnInit,
+  computed,
 } from '@angular/core';
 import { gsap } from 'gsap';
 import { isPlatformBrowser } from '@angular/common';
 import { ArticleHomeCard } from '../../components/article-home-card/article-home-card';
 import { ArticleCard } from '../../interfaces/article-card.interface';
-import { ArticleCategory } from '../../enums/article-category.enum';
 import es from '@/i18n/es.json';
-import { setInterval } from 'timers/promises';
-import { httpResource } from '@angular/common/http';
 import { HomeService } from '../../services/home.service';
+import { forkJoin } from 'rxjs';
+import { Release } from '../../enums/release.enum';
+import { ArticlesApi } from '../../interfaces/articles-api.interface';
+import { LayoutArticlesApi } from '../../interfaces/layout-articles-api.interface';
 
 @Component({
   selector: 'out-home-page',
@@ -40,72 +40,41 @@ import { HomeService } from '../../services/home.service';
 })
 export class HomePage implements OnInit, AfterViewInit {
   protected readonly i18n = es;
-  article1 = signal<ArticleCard>({
-    id: '111',
-    section: ArticleCategory.EDITORIAL,
-    title: 'La ciudad que nunca olvida',
-    author: 'Miguel Baumann',
-    imageUrl: '/assets/foto-libros.jpg',
-    imageLayout: 'left',
-  });
-  article2 = signal<ArticleCard>({
-    id: '222',
-    section: ArticleCategory.TALES,
-    title: 'La ciudad que nunca olvida',
-    author: 'Miguel Baumann',
-    imageUrl: '/assets/foto-libros.jpg',
-    imageLayout: 'right',
-  });
-  article3 = signal<ArticleCard>({
-    id: '333',
-    section: ArticleCategory.MICROSTORY,
-    title: 'La ciudad que nunca olvida',
-    author: 'Miguel Baumann',
-    imageUrl: '/assets/foto-libros.jpg',
-    imageLayout: 'left',
-  });
-  article4 = signal<ArticleCard>({
-    id: '333',
-    section: ArticleCategory.BOOKSYEAR,
-    title: 'La ciudad que nunca olvida',
-    author: 'Miguel Baumann',
-    imageUrl: '/assets/foto-libros.jpg',
-    imageLayout: 'right',
-  });
-  article5 = signal<ArticleCard>({
-    id: '333',
-    section: ArticleCategory.OPINION,
-    title: 'La ciudad que nunca olvida',
-    author: 'Miguel Baumann',
-    imageUrl: '/assets/foto-libros.jpg',
-    imageLayout: 'left',
-  });
-  article6 = signal<ArticleCard>({
-    id: '333',
-    section: ArticleCategory.OUTSIDERS,
-    title: 'La ciudad que nunca olvida',
-    author: 'Miguel Baumann',
-    imageUrl: '/assets/foto-libros.jpg',
-    imageLayout: 'right',
-  });
+  homeService = inject(HomeService);
+  private platformId = inject(PLATFORM_ID);
 
   fontFamilyStyle = signal('fredoka-regular');
+  articlesApi = signal<ArticlesApi>({} as ArticlesApi);
+  layoutArticlesApi = signal<LayoutArticlesApi[]>([]);
+  articlesRelease = computed<ArticleCard[]>(() => {
+    const articles = this.articlesApi()?.articles ?? [];
+    const layout = this.layoutArticlesApi() ?? [];
 
-  homeService = inject(HomeService);
-
-  articlesApi = httpResource(() => ({
-    url: 'http://localhost:3000/api/articles',
-  }));
-
-  constructor(@Inject(PLATFORM_ID) private platformId: object) {}
+    return articles
+      .map((item) => ({
+        section: item.category,
+        title: item.title,
+        author: item.author,
+        id: item.id,
+        imageUrl: item.image,
+        imageLayout: layout.find((elem) => elem.category === item.category)?.orientation ?? 'left',
+        position: layout.find((elem) => elem.category === item.category)?.position ?? 1,
+      }))
+      .sort((a, b) => a.position - b.position);
+  });
 
   ngOnInit(): void {
     this.getArticlesHomePage();
+    console.log(this.articlesRelease());
   }
 
   getArticlesHomePage(): void {
-    this.homeService.getArticles().subscribe((data) => {
-      console.log(data);
+    forkJoin([
+      this.homeService.getArticles(Release.RELEASED),
+      this.homeService.getLayoutArticles(),
+    ]).subscribe(([articlesData, layoutData]) => {
+      this.articlesApi.set(articlesData);
+      this.layoutArticlesApi.set(layoutData);
     });
   }
 

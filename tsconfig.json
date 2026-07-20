@@ -19,7 +19,8 @@
       "@auth/*": ["./src/app/auth/*"],
       "@admin/*": ["./src/app/features/admin*"],
       "@public/*": ["./src/app/features/public/*"],
-      "@shared/*": ["./src/app/shared/*"]
+      "@shared/*": ["./src/app/shared/*"],
+      "@envs/*": ["./src/environments/*"]
     }
   },
   "angularCompilerOptions": {
