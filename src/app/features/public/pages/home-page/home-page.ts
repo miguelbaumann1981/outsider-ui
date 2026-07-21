@@ -6,6 +6,7 @@ import {
   inject,
   OnInit,
   computed,
+  DestroyRef,
 } from '@angular/core';
 import { gsap } from 'gsap';
 import { isPlatformBrowser } from '@angular/common';
@@ -14,9 +15,9 @@ import { ArticleCard } from '../../interfaces/article-card.interface';
 import es from '@/i18n/es.json';
 import { HomeService } from '../../services/home.service';
 import { forkJoin } from 'rxjs';
-import { Release } from '../../enums/release.enum';
-import { ArticlesApi } from '../../interfaces/articles-api.interface';
-import { LayoutArticlesApi } from '../../interfaces/layout-articles-api.interface';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ArticlesApi, LayoutArticlesApi } from '../../interfaces';
+import { Release } from '../../enums';
 
 @Component({
   selector: 'out-home-page',
@@ -40,10 +41,14 @@ import { LayoutArticlesApi } from '../../interfaces/layout-articles-api.interfac
 })
 export class HomePage implements OnInit, AfterViewInit {
   protected readonly i18n = es;
-  homeService = inject(HomeService);
+  private homeService = inject(HomeService);
   private platformId = inject(PLATFORM_ID);
+  private destroyRef = inject(DestroyRef);
 
   fontFamilyStyle = signal('fredoka-regular');
+  releaseLocalStorage = signal<Release>(
+    (localStorage.getItem('release') as Release) || Release.RELEASED,
+  );
   articlesApi = signal<ArticlesApi>({} as ArticlesApi);
   layoutArticlesApi = signal<LayoutArticlesApi[]>([]);
   articlesRelease = computed<ArticleCard[]>(() => {
@@ -65,17 +70,18 @@ export class HomePage implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.getArticlesHomePage();
-    console.log(this.articlesRelease());
   }
 
   getArticlesHomePage(): void {
     forkJoin([
-      this.homeService.getArticles(Release.RELEASED),
+      this.homeService.getArticles(this.releaseLocalStorage()),
       this.homeService.getLayoutArticles(),
-    ]).subscribe(([articlesData, layoutData]) => {
-      this.articlesApi.set(articlesData);
-      this.layoutArticlesApi.set(layoutData);
-    });
+    ])
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(([articlesData, layoutData]) => {
+        this.articlesApi.set(articlesData);
+        this.layoutArticlesApi.set(layoutData);
+      });
   }
 
   async ngAfterViewInit(): Promise<void> {

@@ -1,10 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Service } from '@angular/core';
-import { ArticlesApi } from '../interfaces/articles-api.interface';
-import { Observable } from 'rxjs';
-import { LayoutArticlesApi } from '../interfaces/layout-articles-api.interface';
+import { Observable, tap } from 'rxjs';
 import { environment } from '@envs/environment.development';
-import { Release } from '../enums/release.enum';
+import { Release } from '../enums';
+import { ArticlesApi, LayoutArticlesApi } from '../interfaces';
 
 @Service()
 export class HomeService {
@@ -12,7 +11,9 @@ export class HomeService {
   private baseUrl: string = environment.url;
 
   getArticles(release: Release): Observable<ArticlesApi> {
-    return this.http.get<ArticlesApi>(`${this.baseUrl}/api/articles/${release}`);
+    return this.http
+      .get<ArticlesApi>(`${this.baseUrl}/api/articles/${release}`)
+      .pipe(tap(() => localStorage.setItem('release', release)));
   }
 
   getLayoutArticles(): Observable<LayoutArticlesApi[]> {

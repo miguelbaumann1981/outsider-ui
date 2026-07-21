@@ -1,1 +1,9 @@
-<p>releases-page works!</p>,
+<ul>
+  @for (release of releases(); track release.id) {
+    <li (click)="navigateToReleasePage(release.release)">
+      <a class="cursor-pointer">
+        {{ release.month }} / {{ release.year }} / {{ release.release | release }}</a
+      >
+    </li>
+  }
+</ul>

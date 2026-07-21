@@ -10,6 +10,8 @@
   <div class="grid grid-cols-1 gap-10 lg:grid-cols-2">
     @for (article of articlesRelease(); track article.id) {
       <out-article-home-card [article]="article" />
+    } @empty {
+      <p>No hay informacion</p>
     }
   </div>
 </main>

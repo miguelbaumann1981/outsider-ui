@@ -1,4 +1,9 @@
 {
+  "menu": {
+    "aboutUs": "Sobre nosotros",
+    "lastReleases": "Números anteriores",
+    "contact": "Contacto"
+  },
   "category": {
     "editorialArticle": "Artículo de opinión",
     "nightTales": "Cuentos para no dormir",

@@ -2,34 +2,17 @@
   <div class="navbar-start">
     <div class="dropdown">
       <div tabindex="0" role="button" class="btn btn-ghost lg:hidden">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class="h-5 w-5"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M4 6h16M4 12h8m-8 6h16"
-          />
-        </svg>
+        <out-icon-menu />
       </div>
       <ul
         tabindex="-1"
         class="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow"
       >
-        <li><a>Item 1</a></li>
-        <li>
-          <a>Parent</a>
-          <ul class="p-2">
-            <li><a>Submenu 1</a></li>
-            <li><a>Submenu 2</a></li>
-          </ul>
-        </li>
-        <li><a>Item 3</a></li>
+        @for (item of menu(); track item.text) {
+          <li>
+            <a>{{ item.text }}</a>
+          </li>
+        }
       </ul>
     </div>
 
@@ -43,18 +26,12 @@
 
   <div class="navbar-end">
     <ul class="menu menu-horizontal hidden px-1 lg:flex">
-      <li><a>Item 1</a></li>
-      <li>
-        <details>
-          <summary>Parent</summary>
-          <ul class="bg-base-100 z-1 w-40 p-2">
-            <li><a>Submenu 1</a></li>
-            <li><a>Submenu 2</a></li>
-          </ul>
-        </details>
-      </li>
-      <li><a>Item 3</a></li>
+      @for (item of menu(); track item.text) {
+        <li class="px-3 text-base font-semibold hover:text-gray-500">
+          <a [routerLink]="item.url" routerLinkActive="text-info">{{ item.text }}</a>
+        </li>
+      }
     </ul>
-    <a class="btn">Zona privada</a>
+    <a class="btn btn-outline btn-info">Zona privada</a>
   </div>
 </div>
