@@ -5,6 +5,7 @@ import { ReleaseObj } from '../../interfaces';
 import { ReleasePipe } from '../../pipes';
 import { Router } from '@angular/router';
 import { Release } from '../../enums';
+import { LocalStorageService } from '@/core/services/local-storage.service';
 
 @Component({
   selector: 'out-releases-page',
@@ -14,6 +15,7 @@ import { Release } from '../../enums';
 export class ReleasesPage implements OnInit {
   private releasesService = inject(ReleasesService);
   private destroyRef = inject(DestroyRef);
+  private localStorageService = inject(LocalStorageService);
   router = inject(Router);
 
   releases = signal<ReleaseObj[]>([]);
@@ -32,7 +34,9 @@ export class ReleasesPage implements OnInit {
   }
 
   navigateToReleasePage(release: Release): void {
-    localStorage.setItem('release', release);
-    this.router.navigate(['/']);
+    this.localStorageService.setItem('release', release);
+    const currentRelease = this.localStorageService.getItem('release');
+
+    this.router.navigate([currentRelease === Release.CURRENT ? '/' : `/release/${release}`]);
   }
 }

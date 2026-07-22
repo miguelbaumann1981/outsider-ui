@@ -4,16 +4,18 @@ import { Observable, tap } from 'rxjs';
 import { environment } from '@envs/environment.development';
 import { Release } from '../enums';
 import { ArticlesApi, LayoutArticlesApi } from '../interfaces';
+import { LocalStorageService } from '@/core/services/local-storage.service';
 
 @Service()
 export class HomeService {
   private http = inject(HttpClient);
+  private localStorageService = inject(LocalStorageService);
   private baseUrl: string = environment.url;
 
   getArticles(release: Release): Observable<ArticlesApi> {
     return this.http
       .get<ArticlesApi>(`${this.baseUrl}/api/articles/${release}`)
-      .pipe(tap(() => localStorage.setItem('release', release)));
+      .pipe(tap(() => this.localStorageService.setItem('release', release)));
   }
 
   getLayoutArticles(): Observable<LayoutArticlesApi[]> {

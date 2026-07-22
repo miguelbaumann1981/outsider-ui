@@ -15,7 +15,7 @@ export class ReleasePipe implements PipeTransform {
         return 'Julio 2026';
       case Release.OCT26:
         return 'Octubre 2026';
-      case Release.RELEASED:
+      case Release.CURRENT:
         return 'Número actual';
       default:
         return '';

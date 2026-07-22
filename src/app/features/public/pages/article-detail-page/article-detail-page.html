@@ -1,0 +1,15 @@
+<section class="grid grid-cols-1 gap-10 lg:grid-cols-2">
+  <div>
+    <h2 class="text-3xl" [class.fontFamily]="'fredoka-regular'">Artículo de opinión</h2>
+    <h3 class="text-xl">La editorial de Mayte</h3>
+    <h4>Mayte Blasco</h4>
+
+    <div class="content-article">
+      <div [innerHTML]="fakeText | safeHtml"></div>
+    </div>
+  </div>
+
+  <div>
+    <img src="/assets/foto-libros.jpg" width="100%" alt="foto" />
+  </div>
+</section>

@@ -18,10 +18,13 @@ import { forkJoin } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ArticlesApi, LayoutArticlesApi } from '../../interfaces';
 import { Release } from '../../enums';
+import { LocalStorageService } from '@/core/services/local-storage.service';
+import { ReleasePipe } from '../../pipes';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'out-home-page',
-  imports: [ArticleHomeCard],
+  imports: [ArticleHomeCard, ReleasePipe],
   templateUrl: './home-page.html',
   styles: `
     .slogan {
@@ -44,10 +47,13 @@ export class HomePage implements OnInit, AfterViewInit {
   private homeService = inject(HomeService);
   private platformId = inject(PLATFORM_ID);
   private destroyRef = inject(DestroyRef);
+  private localStorageService = inject(LocalStorageService);
+  router = inject(Router);
 
   fontFamilyStyle = signal('fredoka-regular');
+  releaseDefault = signal<Release>(Release.CURRENT);
   releaseLocalStorage = signal<Release>(
-    (localStorage.getItem('release') as Release) || Release.RELEASED,
+    (this.localStorageService.getItem('release') as Release) ?? Release.CURRENT,
   );
   articlesApi = signal<ArticlesApi>({} as ArticlesApi);
   layoutArticlesApi = signal<LayoutArticlesApi[]>([]);
@@ -61,6 +67,7 @@ export class HomePage implements OnInit, AfterViewInit {
         title: item.title,
         author: item.author,
         id: item.id,
+        slug: item.slug,
         imageUrl: item.image,
         imageLayout: layout.find((elem) => elem.category === item.category)?.orientation ?? 'left',
         position: layout.find((elem) => elem.category === item.category)?.position ?? 1,
@@ -70,18 +77,6 @@ export class HomePage implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.getArticlesHomePage();
-  }
-
-  getArticlesHomePage(): void {
-    forkJoin([
-      this.homeService.getArticles(this.releaseLocalStorage()),
-      this.homeService.getLayoutArticles(),
-    ])
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(([articlesData, layoutData]) => {
-        this.articlesApi.set(articlesData);
-        this.layoutArticlesApi.set(layoutData);
-      });
   }
 
   async ngAfterViewInit(): Promise<void> {
@@ -103,5 +98,22 @@ export class HomePage implements OnInit, AfterViewInit {
       ease: 'power4',
       stagger: 0.04,
     });
+  }
+
+  getArticlesHomePage(): void {
+    forkJoin([
+      this.homeService.getArticles(this.releaseLocalStorage()),
+      this.homeService.getLayoutArticles(),
+    ])
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(([articlesData, layoutData]) => {
+        this.articlesApi.set(articlesData);
+        this.layoutArticlesApi.set(layoutData);
+      });
+  }
+
+  navigateToDetail(slug: string) {
+    console.log({ slug });
+    this.router.navigate([`/article/${slug}`]);
   }
 }

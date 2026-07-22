@@ -7,6 +7,7 @@ export interface ArticleCard {
   title: string;
   author: string;
   id: string;
+  slug: string;
   imageUrl: string;
   imageLayout: OrientationLayoutArticles;
   position: PositionLayoutArticles;

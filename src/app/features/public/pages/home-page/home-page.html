@@ -1,15 +1,21 @@
 <main class="flex flex-col gap-5">
   <!-- SLOGAN -->
-  <div class="flex items-center justify-center">
-    <h1 id="slogan" class="slogan" [class.fontFamily]="fontFamilyStyle()">
-      Revista Literaria Subterránea
-    </h1>
-  </div>
+  @if (releaseLocalStorage() === 'current') {
+    <div class="flex items-center justify-center">
+      <h1 id="slogan" class="slogan" [class.fontFamily]="fontFamilyStyle()">
+        Revista Literaria Subterránea
+      </h1>
+    </div>
+  } @else {
+    <div class="flex items-center justify-center">
+      <h2 class="slogan">{{ releaseLocalStorage() | release }}</h2>
+    </div>
+  }
 
   <!-- CARDS -->
   <div class="grid grid-cols-1 gap-10 lg:grid-cols-2">
     @for (article of articlesRelease(); track article.id) {
-      <out-article-home-card [article]="article" />
+      <out-article-home-card [article]="article" (click)="navigateToDetail(article.slug)" />
     } @empty {
       <p>No hay informacion</p>
     }
