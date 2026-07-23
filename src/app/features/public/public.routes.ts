@@ -20,7 +20,7 @@ export const publicRoutes: Routes = [
         component: HomePage,
       },
       {
-        path: 'article/:slug',
+        path: 'articles/:release/:slug',
         component: ArticleDetailPage,
       },
       {

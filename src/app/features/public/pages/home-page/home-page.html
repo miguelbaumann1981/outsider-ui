@@ -13,9 +13,12 @@
   }
 
   <!-- CARDS -->
-  <div class="grid grid-cols-1 gap-10 lg:grid-cols-2">
+  <div class="grid grid-cols-1 gap-5 lg:grid-cols-2 lg:gap-10">
     @for (article of articlesRelease(); track article.id) {
-      <out-article-home-card [article]="article" (click)="navigateToDetail(article.slug)" />
+      <out-article-home-card
+        [article]="article"
+        (click)="navigateToDetail(article.release, article.slug)"
+      />
     } @empty {
       <p>No hay informacion</p>
     }

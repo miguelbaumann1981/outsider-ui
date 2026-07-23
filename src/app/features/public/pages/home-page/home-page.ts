@@ -68,6 +68,7 @@ export class HomePage implements OnInit, AfterViewInit {
         author: item.author,
         id: item.id,
         slug: item.slug,
+        release: item.release,
         imageUrl: item.image,
         imageLayout: layout.find((elem) => elem.category === item.category)?.orientation ?? 'left',
         position: layout.find((elem) => elem.category === item.category)?.position ?? 1,
@@ -77,6 +78,7 @@ export class HomePage implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.getArticlesHomePage();
+    this.getLayoutArticles();
   }
 
   async ngAfterViewInit(): Promise<void> {
@@ -101,19 +103,25 @@ export class HomePage implements OnInit, AfterViewInit {
   }
 
   getArticlesHomePage(): void {
-    forkJoin([
-      this.homeService.getArticles(this.releaseLocalStorage()),
-      this.homeService.getLayoutArticles(),
-    ])
+    this.homeService
+      .getArticles(this.releaseLocalStorage())
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(([articlesData, layoutData]) => {
+      .subscribe((articlesData) => {
         this.articlesApi.set(articlesData);
+      });
+  }
+
+  getLayoutArticles(): void {
+    this.homeService
+      .getLayoutArticles()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((layoutData) => {
         this.layoutArticlesApi.set(layoutData);
       });
   }
 
-  navigateToDetail(slug: string) {
-    console.log({ slug });
-    this.router.navigate([`/article/${slug}`]);
+  navigateToDetail(release: Release, slug: string) {
+    this.localStorageService.setItem('release', release);
+    this.router.navigate([`/articles/${release}/${slug}`]);
   }
 }
