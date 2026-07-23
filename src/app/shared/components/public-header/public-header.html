@@ -20,7 +20,6 @@
       <a class="cursor-pointer hover:opacity-75" (click)="navigateToHomePage()">
         <img src="/assets/Outsider-logo.png" alt="" class="h-[25px]" />
       </a>
-      <!-- <span>Revista Literaria Subterránea</span> -->
     </div>
   </div>
 
@@ -28,7 +27,7 @@
     <ul class="menu menu-horizontal hidden px-1 lg:flex">
       @for (item of menu(); track item.text) {
         <li class="px-3 text-base font-semibold hover:text-gray-500">
-          <a [routerLink]="item.url" routerLinkActive="text-info">{{ item.text }}</a>
+          <a [routerLink]="item.url" routerLinkActive="text-teal-600">{{ item.text }}</a>
         </li>
       }
     </ul>

@@ -1,4 +1,5 @@
 import { Release } from '../enums';
+import { ArticleAuthor } from './article-author.interface';
 
 export interface ReleasesApi {
   total: number;
@@ -10,4 +11,6 @@ export interface ReleaseObj {
   year: number;
   release: Release;
   id: string;
+  index: number;
+  articles?: ArticleAuthor[];
 }

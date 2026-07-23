@@ -13,11 +13,8 @@
 
     <div class="flex h-50 w-full flex-col justify-between p-4">
       <h2
-        class="mt-3 flex text-lg lg:text-3xl"
-        [ngClass]="[
-          getFontFamily(article()?.section),
-          article()?.imageLayout === 'left' ? 'justify-end' : 'justify-start',
-        ]"
+        class="mt-3 flex text-lg lg:text-3xl {{ fontFamily() }}"
+        [ngClass]="article()?.imageLayout === 'left' ? 'justify-end' : 'justify-start'"
       >
         {{ article()?.section | articleSection }}
       </h2>

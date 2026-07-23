@@ -1,9 +1,58 @@
-<ul>
-  @for (release of releases(); track release.id) {
-    <li (click)="navigateToReleasePage(release.release)">
-      <a class="cursor-pointer">
-        {{ release.month }} / {{ release.year }} / {{ release.release | release }}</a
-      >
-    </li>
-  }
-</ul>
+<section class="flex flex-col gap-5 px-0 lg:px-20">
+  <div class="flex items-center justify-between">
+    <h2 class="text-4xl">Numeros anteriores</h2>
+
+    <button class="btn btn-outline btn-neutral" (click)="navigateToReleasePage(releaseSelected())">
+      Volver
+    </button>
+  </div>
+
+  <div class="rounded-lg border border-gray-200 bg-white p-4 shadow-lg">
+    <div class="overflow-x-auto">
+      <table class="table text-base">
+        <thead>
+          <tr>
+            <th>Número</th>
+            <th>Mes</th>
+            <th>Año</th>
+            <th>Lanzamiento</th>
+            <th>Titulos</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (release of releases(); track release.id) {
+            <tr
+              class="hover:bg-gray-100"
+              [ngClass]="
+                release.release === releaseSelected()
+                  ? 'text-neutral cursor-auto bg-gray-200'
+                  : 'cursor-pointer'
+              "
+              (click)="
+                release.release !== releaseSelected()
+                  ? navigateToReleasePage(release.release)
+                  : null
+              "
+            >
+              <th>{{ release.index }}</th>
+              <td>{{ release.month }}</td>
+              <td>{{ release.year }}</td>
+              <td>{{ release.release | release }}</td>
+              <td>
+                <ul class="flex flex-col gap-1">
+                  @for (article of articlesTitleAuthor(); track article.title) {
+                    <li class="text-sm">
+                      <span class="font-semibold">{{ article.title }}</span
+                      >,
+                      <span class="italic">{{ article.author }}</span>
+                    </li>
+                  }
+                </ul>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>

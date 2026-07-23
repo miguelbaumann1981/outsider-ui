@@ -1,21 +1,29 @@
-import { Component, DestroyRef, inject, OnInit, signal, ViewEncapsulation } from '@angular/core';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import {
+  Component,
+  computed,
+  DestroyRef,
+  inject,
+  OnInit,
+  signal,
+  ViewEncapsulation,
+} from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ArticleSectionPipe, SafeHtmlPipe } from '../../pipes';
 import { Release } from '../../enums';
 import { LocalStorageService } from '@/core/services/local-storage.service';
 import { Article } from '../../interfaces';
 import { HomeService } from '../../services/home.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { getFontFamilyCategory } from '../../utils';
 
 @Component({
   selector: 'out-article-detail-page',
-  imports: [RouterLink, SafeHtmlPipe, ArticleSectionPipe],
+  imports: [SafeHtmlPipe, ArticleSectionPipe],
   templateUrl: './article-detail-page.html',
   styles: `
     .content-article {
       p {
         margin-bottom: 30px;
-        color: red;
       }
     }
   `,
@@ -32,8 +40,9 @@ export class ArticleDetailPage implements OnInit {
   slugSelected = signal<string>('');
   articleSelected = signal<Article>({} as Article);
 
-  fakeText: string =
-    '<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo.</p> <p>Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet.</p> <p>Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Donec sodales sagittis magna. Sed consequat, leo eget bibendum sodales, augue velit cursus nunc</p>';
+  fontFamilySelected = computed<string>(() => {
+    return getFontFamilyCategory(this.articleSelected()?.category);
+  });
 
   ngOnInit(): void {
     this.getRouteParams();
@@ -52,7 +61,6 @@ export class ArticleDetailPage implements OnInit {
       .getArticleBySlug(this.releaseSelected(), this.slugSelected())
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((article) => {
-        console.log(article);
         this.articleSelected.set(article);
       });
   }
