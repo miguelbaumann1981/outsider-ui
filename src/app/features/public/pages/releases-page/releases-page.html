@@ -1,6 +1,6 @@
 <section class="flex flex-col gap-5 px-0 lg:px-20">
   <div class="flex items-center justify-between">
-    <h2 class="text-4xl">Numeros anteriores</h2>
+    <h2 class="text-4xl">{{ i18n.menu.lastReleases }}</h2>
 
     <button class="btn btn-outline btn-neutral" (click)="navigateToReleasePage(releaseSelected())">
       Volver
@@ -12,36 +12,48 @@
       <table class="table text-base">
         <thead>
           <tr>
-            <th>Número</th>
-            <th>Mes</th>
-            <th>Año</th>
-            <th>Lanzamiento</th>
-            <th>Titulos</th>
+            <th>{{ i18n.releases.table.index }}</th>
+            <th>{{ i18n.releases.table.month }}</th>
+            <th>{{ i18n.releases.table.year }}</th>
+            <th>{{ i18n.releases.table.release }}</th>
+            <th>{{ i18n.releases.table.articles }}</th>
           </tr>
         </thead>
         <tbody>
           @for (release of releases(); track release.id) {
             <tr
-              class="hover:bg-gray-100"
+              class="hover:bg-base-200"
               [ngClass]="
                 release.release === releaseSelected()
-                  ? 'text-neutral cursor-auto bg-gray-200'
-                  : 'cursor-pointer'
-              "
-              (click)="
-                release.release !== releaseSelected()
-                  ? navigateToReleasePage(release.release)
-                  : null
+                  ? 'text-secondary bg-teal-50 hover:bg-teal-50'
+                  : ''
               "
             >
               <th>{{ release.index }}</th>
-              <td>{{ release.month }}</td>
+              <td>{{ release.month | releaseMonth }}</td>
               <td>{{ release.year }}</td>
-              <td>{{ release.release | release }}</td>
+              <td
+                class="font-semibold"
+                [ngClass]="
+                  release.release === releaseSelected()
+                    ? 'cursor-auto'
+                    : 'hover:text-primary cursor-pointer'
+                "
+                (click)="
+                  release.release !== releaseSelected()
+                    ? navigateToReleasePage(release.release)
+                    : null
+                "
+              >
+                {{ release.release | release }}
+              </td>
               <td>
                 <ul class="flex flex-col gap-1">
-                  @for (article of articlesTitleAuthor(); track article.title) {
-                    <li class="text-sm">
+                  @for (article of release.articles; track article.title) {
+                    <li
+                      class="hover:text-primary text-neutral cursor-pointer text-sm"
+                      (click)="navigateToArticleDetail(release.release, article.slug)"
+                    >
                       <span class="font-semibold">{{ article.title }}</span
                       >,
                       <span class="italic">{{ article.author }}</span>

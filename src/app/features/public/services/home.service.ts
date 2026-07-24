@@ -25,4 +25,8 @@ export class HomeService {
   getLayoutArticles(): Observable<LayoutArticlesApi[]> {
     return this.http.get<LayoutArticlesApi[]>(`${this.baseUrl}/api/layout-articles`);
   }
+
+  getAllArticles(): Observable<ArticlesApi> {
+    return this.http.get<ArticlesApi>(`${this.baseUrl}/api/articles`);
+  }
 }

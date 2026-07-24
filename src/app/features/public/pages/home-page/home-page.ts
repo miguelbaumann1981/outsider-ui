@@ -14,7 +14,6 @@ import { ArticleHomeCard } from '../../components/article-home-card/article-home
 import { ArticleCard } from '../../interfaces/article-card.interface';
 import es from '@/i18n/es.json';
 import { HomeService } from '../../services/home.service';
-import { forkJoin } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ArticlesApi, LayoutArticlesApi } from '../../interfaces';
 import { Release } from '../../enums';

@@ -11,5 +11,33 @@
     "strongholds": "Reductos de lo imposible",
     "booksYear": "La lista del año",
     "microStories": "Microrrelatos"
+  },
+  "releases": {
+    "current": "Número actual",
+    "jan26": "Enero '26",
+    "apr26": "Abril '26",
+    "jul26": "Julio '26",
+    "oct26": "Octubre '26",
+    "table": {
+      "index": "Número",
+      "month": "Mes",
+      "year": "Año",
+      "release": "Lanzamiento",
+      "articles": "Artículos"
+    }
+  },
+  "months": {
+    "january": "Enero",
+    "february": "Febrero",
+    "march": "Marzo",
+    "april": "Abril",
+    "may": "Mayo",
+    "june": "Junio",
+    "july": "July",
+    "august": "Agosto",
+    "september": "Septiembre",
+    "october": "Octubre",
+    "november": "Noviembre",
+    "december": "Diciembre"
   }
 }
