@@ -16,6 +16,6 @@ export const getFontFamilyCategory = (section: ArticleCategory): string => {
       return 'zen-dots-regular ';
 
     default:
-      return '';
+      return section;
   }
 };

@@ -1,0 +1,8 @@
+<div class="flex items-center justify-between">
+  <h2 class="text-4xl font-semibold {{ fontFamilySelected }}">{{ text() }}</h2>
+
+  <button class="btn btn-ghost text-primary" (click)="return.emit()">
+    <span class="material-icons"> arrow_back </span>
+    <span>{{ i18n.common.back }}</span>
+  </button>
+</div>

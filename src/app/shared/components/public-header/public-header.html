@@ -1,4 +1,4 @@
-<div class="navbar bg-base-100 px-8 shadow-sm">
+<div class="navbar bg-base-100 px-2 shadow-sm lg:px-12">
   <div class="navbar-start">
     <div class="dropdown">
       <div tabindex="0" role="button" class="btn btn-ghost lg:hidden">
@@ -23,14 +23,17 @@
     </div>
   </div>
 
-  <div class="navbar-end">
+  <div class="navbar-center hidden lg:flex">
     <ul class="menu menu-horizontal hidden px-1 lg:flex">
       @for (item of menu(); track item.text) {
-        <li class="px-3 text-base font-semibold hover:text-gray-500">
+        <li class="px-5 text-sm font-semibold hover:text-gray-500 xl:text-lg">
           <a [routerLink]="item.url" routerLinkActive="text-teal-600">{{ item.text }}</a>
         </li>
       }
     </ul>
+  </div>
+
+  <div class="navbar-end">
     <a class="btn btn-outline btn-info">Zona privada</a>
   </div>
 </div>

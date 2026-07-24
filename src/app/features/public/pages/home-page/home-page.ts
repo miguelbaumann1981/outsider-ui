@@ -28,16 +28,20 @@ import { Router } from '@angular/router';
   styles: `
     .slogan {
       color: gray;
-      font-size: clamp(2rem, 10rem, 4vw);
       line-height: 1.2;
       box-sizing: border-box;
-      padding: 3%;
+      padding: 2%;
       width: 100%;
       text-align: center;
       perspective: 500px;
       font-weight: 500;
-      // font-family: 'Fredoka', sans-serif;
       text-shadow: 1px 1px 2px rgba($color: #000, $alpha: 0.5);
+      .title {
+        font-size: clamp(2rem, 10rem, 4vw);
+      }
+      .subtitle {
+        font-size: clamp(0.75rem, 6rem, 2.5vw);
+      }
     }
   `,
 })
@@ -78,6 +82,7 @@ export class HomePage implements OnInit, AfterViewInit {
   ngOnInit(): void {
     this.getArticlesHomePage();
     this.getLayoutArticles();
+    console.log(this.articlesRelease());
   }
 
   async ngAfterViewInit(): Promise<void> {

@@ -1,4 +1,8 @@
 {
+  "common": {
+    "back": "Volver"
+  },
+  "slogan": "Revista Literaria Subterránea",
   "menu": {
     "aboutUs": "Sobre nosotros",
     "lastReleases": "Números anteriores",
@@ -33,7 +37,7 @@
     "april": "Abril",
     "may": "Mayo",
     "june": "Junio",
-    "july": "July",
+    "july": "Julio",
     "august": "Agosto",
     "september": "Septiembre",
     "october": "Octubre",

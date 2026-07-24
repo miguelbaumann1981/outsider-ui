@@ -1,11 +1,8 @@
-<section class="flex flex-col gap-5 px-0 lg:px-20">
-  <div class="flex items-center justify-between">
-    <h2 class="text-4xl">{{ i18n.menu.lastReleases }}</h2>
-
-    <button class="btn btn-outline btn-neutral" (click)="navigateToReleasePage(releaseSelected())">
-      Volver
-    </button>
-  </div>
+<section [class]="layoutPage()">
+  <out-title-page
+    [text]="i18n.menu.lastReleases"
+    (return)="navigateToReleasePage(releaseSelected())"
+  />
 
   <div class="rounded-lg border border-gray-200 bg-white p-4 shadow-lg">
     <div class="overflow-x-auto">
@@ -48,7 +45,7 @@
                 {{ release.release | release }}
               </td>
               <td>
-                <ul class="flex flex-col gap-1">
+                <ul class="grid grid-cols-2 gap-2">
                   @for (article of release.articles; track article.title) {
                     <li
                       class="hover:text-primary text-neutral cursor-pointer text-sm"

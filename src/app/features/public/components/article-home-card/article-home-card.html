@@ -2,27 +2,32 @@
   class="flex cursor-pointer flex-col gap-5 rounded-lg bg-white shadow-md transition-all transition-discrete hover:bg-teal-50 hover:shadow-xl"
 >
   <div
-    class="flex flex-col items-center gap-5 lg:flex-row"
-    [ngClass]="article()?.imageLayout === 'left' ? 'flex-row' : 'flex-row-reverse'"
+    class="flex flex-col items-center gap-5"
+    [ngClass]="article()?.imageLayout === 'left' ? 'xl:flex-row' : 'xl:flex-row-reverse'"
   >
     <img
       [src]="article()?.imageUrl"
-      class="w-75"
-      [ngClass]="article()?.imageLayout === 'left' ? 'rounded-l-lg' : 'rounded-r-lg'"
+      class="w-full rounded-t-lg lg:w-75"
+      [ngClass]="
+        article()?.imageLayout === 'left'
+          ? 'lg:rounded-t-none lg:rounded-l-lg'
+          : 'lg:rounded-t-none lg:rounded-r-lg'
+      "
     />
 
-    <div class="flex h-50 w-full flex-col justify-between p-4">
+    <div class="flex w-full flex-col justify-between gap-2 p-4 xl:h-50">
       <h2
-        class="mt-3 flex text-lg lg:text-3xl {{ fontFamily() }}"
-        [ngClass]="article()?.imageLayout === 'left' ? 'justify-end' : 'justify-start'"
+        class="xl:mt-3 flex text-lg lg:text-3xl justify-start {{ fontFamily() }}"
+        [ngClass]="article()?.imageLayout === 'left' ? 'xl:justify-end' : 'xl:justify-start'"
       >
         {{ article()?.section | articleSection }}
       </h2>
+
       <div
-        class="flex flex-col gap-2"
-        [ngClass]="article()?.imageLayout === 'left' ? 'items-start' : 'items-end'"
+        class="flex flex-col items-start gap-2"
+        [ngClass]="article()?.imageLayout === 'left' ? 'xl:items-start' : 'xl:items-end'"
       >
-        <h3 class="text-secondary text-lg font-bold lg:text-2xl">{{ article()?.title }}</h3>
+        <h3 class="text-secondary text-base font-bold lg:text-2xl">{{ article()?.title }}</h3>
         <p class="text-sm font-semibold">{{ article()?.author }}</p>
       </div>
     </div>

@@ -1,1 +1,22 @@
-<p>contact-page works!</p>,
+<section [class]="layoutPage()">
+  <out-title-page [text]="i18n.menu.contact" (return)="navigateToHome()" />
+
+  <div class="rounded-lg border border-gray-200 bg-white p-4 shadow-lg">
+    <form class="flex flex-col justify-center gap-5">
+      <fieldset class="fieldset w-full">
+        <legend class="fieldset-legend">Nombre</legend>
+        <input type="text" class="input" placeholder="Añade nombre...." />
+      </fieldset>
+
+      <fieldset class="fieldset w-full">
+        <legend class="fieldset-legend">Correo electrónico</legend>
+        <input type="text" class="input" placeholder="Añade correo...." />
+      </fieldset>
+
+      <fieldset class="fieldset w-full">
+        <legend class="fieldset-legend">Mensaje</legend>
+        <textarea class="textarea h-24" placeholder="Deja un mensaje..."></textarea>
+      </fieldset>
+    </form>
+  </div>
+</section>

@@ -9,10 +9,12 @@ import { LocalStorageService } from '@/core/services/local-storage.service';
 import { NgClass } from '@angular/common';
 import { HomeService } from '../../services/home.service';
 import es from '@/i18n/es.json';
+import { TitlePage } from '@/shared/components/title-page/title-page';
+import { publicLayoutPage } from '../../utils';
 
 @Component({
   selector: 'out-releases-page',
-  imports: [ReleasePipe, NgClass, ReleaseMonthPipe],
+  imports: [ReleasePipe, NgClass, ReleaseMonthPipe, TitlePage],
   templateUrl: './releases-page.html',
 })
 export class ReleasesPage implements OnInit {
@@ -28,6 +30,7 @@ export class ReleasesPage implements OnInit {
     (this.localStorageService.getItem('release') as Release) ?? Release.CURRENT,
   );
   articlesApi = signal<ArticlesApi>({} as ArticlesApi);
+  layoutPage = signal<string>(publicLayoutPage);
 
   ngOnInit(): void {
     this.getArticlesData();

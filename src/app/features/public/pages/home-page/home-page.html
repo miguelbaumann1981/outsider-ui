@@ -2,18 +2,21 @@
   <!-- SLOGAN -->
   @if (releaseLocalStorage() === 'current') {
     <div class="flex items-center justify-center">
-      <h1 id="slogan" class="slogan" [class.fontFamily]="fontFamilyStyle()">
-        Revista Literaria Subterránea
+      <h1 id="slogan" class="slogan flex flex-col gap-2">
+        <span class="text-info title fredoka-regular">Outsider</span>
+        <span class="subtitle fredoka-regular">{{ i18n.slogan }}</span>
       </h1>
     </div>
   } @else {
     <div class="flex items-center justify-center">
-      <h2 class="slogan">{{ releaseLocalStorage() | release }}</h2>
+      <h2 class="slogan">
+        <span class="title fredoka-regular">{{ releaseLocalStorage() | release }}</span>
+      </h2>
     </div>
   }
 
   <!-- CARDS -->
-  <div class="grid grid-cols-1 gap-5 lg:grid-cols-2 lg:gap-10">
+  <div class="grid grid-cols-1 gap-5 xl:grid-cols-2 xl:gap-10">
     @for (article of articlesRelease(); track article.id) {
       <out-article-home-card
         [article]="article"
