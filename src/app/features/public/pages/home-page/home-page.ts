@@ -71,9 +71,8 @@ export class HomePage implements OnInit, AfterViewInit {
         author: item.author,
         id: item.id,
         slug: item.slug,
-        release: item.release,
+        release: item.release as unknown as Release,
         imageUrl: item.image,
-        imageLayout: layout.find((elem) => elem.category === item.category)?.orientation ?? 'left',
         position: layout.find((elem) => elem.category === item.category)?.position ?? 1,
       }))
       .sort((a, b) => a.position - b.position);
@@ -82,7 +81,6 @@ export class HomePage implements OnInit, AfterViewInit {
   ngOnInit(): void {
     this.getArticlesHomePage();
     this.getLayoutArticles();
-    console.log(this.articlesRelease());
   }
 
   async ngAfterViewInit(): Promise<void> {

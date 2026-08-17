@@ -3,6 +3,6 @@ export enum ArticleCategory {
   OPINION = 'opinion',
   TALES = 'tales',
   OUTSIDERS = 'outsiders',
-  BOOKSYEAR = 'booksyear',
+  POETRY = 'poetry',
   MICROSTORY = 'microstory',
 }

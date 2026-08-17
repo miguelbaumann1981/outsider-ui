@@ -1,4 +1,12 @@
-import { Component, DestroyRef, inject, OnInit, signal, ViewEncapsulation } from '@angular/core';
+import {
+  Component,
+  computed,
+  DestroyRef,
+  inject,
+  OnInit,
+  signal,
+  ViewEncapsulation,
+} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ArticleSectionPipe, SafeHtmlPipe } from '../../pipes';
 import { Release } from '../../enums';
@@ -8,7 +16,7 @@ import { HomeService } from '../../services/home.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TitlePage } from '@/shared/components/title-page/title-page';
 import { NgClass } from '@angular/common';
-import { publicLayoutPage } from '../../utils';
+import { getColorCategory, publicLayoutPage } from '../../utils';
 
 @Component({
   selector: 'out-article-detail-page',
@@ -39,6 +47,9 @@ export class ArticleDetailPage implements OnInit {
   slugSelected = signal<string>('');
   articleSelected = signal<Article>({} as Article);
   layoutPage = signal<string>(publicLayoutPage);
+  color = computed<string>(() => {
+    return getColorCategory(this.articleSelected()?.category);
+  });
 
   ngOnInit(): void {
     this.getRouteParams();

@@ -1,5 +1,8 @@
 <div class="flex items-center justify-between">
-  <h2 class="text-4xl font-semibold {{ fontFamilySelected }}">{{ text() }}</h2>
+  <div class="flex items-start gap-3">
+    <span class="material-icons icon-book {{ color }}"> auto_stories </span>
+    <h2 class="special-elite-regular text-4xl font-semibold">{{ text() }}</h2>
+  </div>
 
   <button class="btn btn-ghost text-primary" (click)="return.emit()">
     <span class="material-icons"> arrow_back </span>

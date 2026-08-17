@@ -8,8 +8,11 @@
   <div class="rounded-lg border border-gray-200 bg-white p-4 shadow-lg">
     <div class="grid grid-cols-1 gap-10 lg:grid-cols-3">
       <div class="col-span-2 flex flex-col gap-3">
-        <h3 class="text-info text-3xl font-semibold">{{ articleSelected()?.title }}</h3>
-        <h4 class="text-gray-500">{{ articleSelected()?.author }}</h4>
+        <h3 class="text-3xl font-semibold">{{ articleSelected()?.title }}</h3>
+        <h4 class="text-gray-500">
+          {{ articleSelected()?.author }}
+        </h4>
+        <div class="h-px w-full {{ color() }}"></div>
 
         <div class="content-article">
           <div

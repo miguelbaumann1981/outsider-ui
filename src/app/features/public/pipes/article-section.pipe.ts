@@ -10,7 +10,7 @@ export class ArticleSectionPipe implements PipeTransform {
 
   transform(value: ArticleCategory): string {
     switch (value) {
-      case ArticleCategory.BOOKSYEAR:
+      case ArticleCategory.POETRY:
         return this.i18n.category.booksYear;
       case ArticleCategory.EDITORIAL:
         return this.i18n.category.editorialArticle;

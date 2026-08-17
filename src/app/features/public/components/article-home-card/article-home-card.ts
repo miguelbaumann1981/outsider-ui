@@ -3,11 +3,11 @@ import { ArticleCard } from '../../interfaces/article-card.interface';
 import { NgClass } from '@angular/common';
 import { ArticleSectionPipe } from '../../pipes/article-section.pipe';
 import es from '@/i18n/es.json';
-import { getFontFamilyCategory } from '../../utils';
+import { getColorCategory, getColorHoverCategory, getFontFamilyCategory } from '../../utils';
 
 @Component({
   selector: 'out-article-home-card',
-  imports: [NgClass, ArticleSectionPipe],
+  imports: [ArticleSectionPipe],
   templateUrl: './article-home-card.html',
 })
 export class ArticleHomeCard {
@@ -16,5 +16,13 @@ export class ArticleHomeCard {
 
   fontFamily = computed<string>(() => {
     return getFontFamilyCategory(this.article()?.section);
+  });
+
+  color = computed<string>(() => {
+    return getColorCategory(this.article()?.section);
+  });
+
+  hoverColor = computed<string>(() => {
+    return getColorHoverCategory(this.article()?.section);
   });
 }

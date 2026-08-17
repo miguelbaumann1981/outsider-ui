@@ -1,35 +1,28 @@
 <div
-  class="flex cursor-pointer flex-col gap-5 rounded-lg bg-white shadow-md transition-all transition-discrete hover:bg-teal-50 hover:shadow-xl"
+  class="flex cursor-pointer flex-col gap-5 rounded-lg bg-white shadow-md transition-all transition-discrete {{
+    hoverColor()
+  }} hover:shadow-xl"
 >
-  <div
-    class="flex flex-col items-center gap-5"
-    [ngClass]="article()?.imageLayout === 'left' ? 'xl:flex-row' : 'xl:flex-row-reverse'"
-  >
+  <div class="flex flex-col items-center gap-5 xl:flex-row">
     <img
       [src]="article()?.imageUrl"
-      class="w-full rounded-t-lg lg:w-75"
-      [ngClass]="
-        article()?.imageLayout === 'left'
-          ? 'lg:rounded-t-none lg:rounded-l-lg'
-          : 'lg:rounded-t-none lg:rounded-r-lg'
-      "
+      class="w-full rounded-t-lg lg:w-75 lg:rounded-t-none lg:rounded-l-lg"
     />
 
     <div class="flex w-full flex-col justify-between gap-2 p-4 xl:h-50">
       <h2
-        class="xl:mt-3 flex text-lg lg:text-3xl justify-start {{ fontFamily() }}"
-        [ngClass]="article()?.imageLayout === 'left' ? 'xl:justify-end' : 'xl:justify-start'"
+        class="special-elite-regular flex justify-start text-lg lg:text-3xl xl:mt-3 xl:justify-end"
       >
         {{ article()?.section | articleSection }}
       </h2>
 
-      <div
-        class="flex flex-col items-start gap-2"
-        [ngClass]="article()?.imageLayout === 'left' ? 'xl:items-start' : 'xl:items-end'"
-      >
+      <div class="flex flex-col items-start gap-2">
         <h3 class="text-secondary text-base font-bold lg:text-2xl">{{ article()?.title }}</h3>
+        <div class="h-[2px] w-[30px] {{ color() }}"></div>
         <p class="text-sm font-semibold">{{ article()?.author }}</p>
       </div>
     </div>
+
+    <div class="h-[8px] lg:h-[200px] lg:w-[8px] w-full {{ color() }}"></div>
   </div>
 </div>

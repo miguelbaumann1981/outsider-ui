@@ -2,7 +2,7 @@ import { ArticleCategory } from '../enums';
 
 export const getFontFamilyCategory = (section: ArticleCategory): string => {
   switch (section) {
-    case ArticleCategory.BOOKSYEAR:
+    case ArticleCategory.POETRY:
       return 'gravitas-one-regular';
     case ArticleCategory.EDITORIAL:
       return 'homemade-apple-regular ';
