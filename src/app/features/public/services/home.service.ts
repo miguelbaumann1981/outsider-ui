@@ -3,7 +3,7 @@ import { inject, Service } from '@angular/core';
 import { Observable, tap } from 'rxjs';
 import { environment } from '@envs/environment.development';
 import { Release } from '../enums';
-import { Article, ArticlesApi, LayoutArticlesApi } from '../interfaces';
+import { Article, Article2, ArticlesApi, ArticlesApi2, LayoutArticlesApi } from '../interfaces';
 import { LocalStorageService } from '@/core/services/local-storage.service';
 
 @Service()
@@ -20,6 +20,16 @@ export class HomeService {
 
   getArticleBySlug(release: Release, slug: string): Observable<Article> {
     return this.http.get<Article>(`${this.baseUrl}/api/articles/${release}/${slug}`);
+  }
+
+  getArticles2(release: Release): Observable<ArticlesApi2> {
+    return this.http
+      .get<ArticlesApi2>(`${this.baseUrl}/api/articles/${release}`)
+      .pipe(tap(() => this.localStorageService.setItem('release', release)));
+  }
+
+  getArticleBySlug2(release: Release, slug: string): Observable<Article2> {
+    return this.http.get<Article2>(`${this.baseUrl}/api/articles/${release}/${slug}`);
   }
 
   getLayoutArticles(): Observable<LayoutArticlesApi[]> {
