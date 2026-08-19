@@ -1,9 +1,9 @@
-import { ArticleCategory } from '../enums/article-category.enum';
+import { ArticleCategory } from '../enums';
 import { Gender, Release } from '../types';
 
 export interface ArticlesApi {
   total: number;
-  articles: Article[];
+  articles: Article2[];
 }
 
 export interface Article {

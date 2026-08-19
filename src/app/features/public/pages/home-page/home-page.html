@@ -10,7 +10,7 @@
   } @else {
     <div class="flex items-center justify-center">
       <h2 class="slogan">
-        <span class="title fredoka-regular">{{ releaseLocalStorage() | release }}</span>
+        <span class="title fredoka-regular">{{ releaseLocalStorage() }}</span>
       </h2>
     </div>
   }
@@ -20,7 +20,7 @@
     @for (article of articlesRelease(); track article.id) {
       <out-article-home-card
         [article]="article"
-        (click)="navigateToDetail(article.release, article.slug)"
+        (click)="navigateToDetail($any(article.release), article.slug)"
       />
     } @empty {
       <p>No hay informacion</p>

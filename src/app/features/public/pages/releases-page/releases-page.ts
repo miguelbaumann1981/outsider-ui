@@ -27,7 +27,7 @@ export class ReleasesPage implements OnInit {
 
   releases = signal<ReleaseObj[]>([]);
   releaseSelected = signal<Release>(
-    (this.localStorageService.getItem('release') as Release) ?? Release.CURRENT,
+    (this.localStorageService.getItem('release') as Release) ?? 'current',
   );
   articlesApi = signal<ArticlesApi>({} as ArticlesApi);
   layoutPage = signal<string>(publicLayoutPage);
@@ -72,9 +72,9 @@ export class ReleasesPage implements OnInit {
     this.articlesApi()?.articles?.map((item) => {
       if (item.release === release) {
         articlesRelease.push({
-          title: item.title,
+          title: item.titleArticle,
           slug: item.slug,
-          author: item.author,
+          author: item.authorArticle,
         });
       }
     });

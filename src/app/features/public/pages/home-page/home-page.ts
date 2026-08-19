@@ -16,10 +16,11 @@ import es from '@/i18n/es.json';
 import { HomeService } from '../../services/home.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ArticlesApi, LayoutArticlesApi } from '../../interfaces';
-import { Release } from '../../enums';
 import { LocalStorageService } from '@/core/services/local-storage.service';
 import { ReleasePipe } from '../../pipes';
 import { Router } from '@angular/router';
+import { Release } from '../../types';
+import { Release as ReleaseEnum } from '../../enums/release.enum';
 
 @Component({
   selector: 'out-home-page',
@@ -54,9 +55,9 @@ export class HomePage implements OnInit, AfterViewInit {
   router = inject(Router);
 
   fontFamilyStyle = signal('fredoka-regular');
-  releaseDefault = signal<Release>(Release.CURRENT);
+  releaseDefault = signal<Release>('current');
   releaseLocalStorage = signal<Release>(
-    (this.localStorageService.getItem('release') as Release) ?? Release.CURRENT,
+    (this.localStorageService.getItem('release') as Release) ?? 'current',
   );
   articlesApi = signal<ArticlesApi>({} as ArticlesApi);
   layoutArticlesApi = signal<LayoutArticlesApi[]>([]);
@@ -67,11 +68,11 @@ export class HomePage implements OnInit, AfterViewInit {
     return articles
       .map((item) => ({
         section: item.category,
-        title: item.title,
-        author: item.author,
+        title: item.titleArticle,
+        author: item.authorArticle,
         id: item.id,
         slug: item.slug,
-        release: item.release as unknown as Release,
+        release: item.release as Release,
         imageUrl: item.image,
         position: layout.find((elem) => elem.category === item.category)?.position ?? 1,
       }))
@@ -106,7 +107,7 @@ export class HomePage implements OnInit, AfterViewInit {
 
   getArticlesHomePage(): void {
     this.homeService
-      .getArticles(this.releaseLocalStorage())
+      .getArticles(this.releaseLocalStorage() as unknown as ReleaseEnum)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((articlesData) => {
         this.articlesApi.set(articlesData);
