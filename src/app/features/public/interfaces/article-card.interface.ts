@@ -3,6 +3,7 @@ import { PositionLayoutArticles, Release } from '../types';
 
 export interface ArticleCard {
   section: ArticleCategory;
+  name: string;
   title: string;
   author: string;
   id: string;

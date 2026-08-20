@@ -17,14 +17,13 @@ import { HomeService } from '../../services/home.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ArticlesApi, LayoutArticlesApi } from '../../interfaces';
 import { LocalStorageService } from '@/core/services/local-storage.service';
-import { ReleasePipe } from '../../pipes';
 import { Router } from '@angular/router';
 import { Release } from '../../types';
 import { Release as ReleaseEnum } from '../../enums/release.enum';
 
 @Component({
   selector: 'out-home-page',
-  imports: [ArticleHomeCard, ReleasePipe],
+  imports: [ArticleHomeCard],
   templateUrl: './home-page.html',
   styles: `
     .slogan {
@@ -68,6 +67,7 @@ export class HomePage implements OnInit, AfterViewInit {
     return articles
       .map((item) => ({
         section: item.category,
+        name: item.titleCategory,
         title: item.titleArticle,
         author: item.authorArticle,
         id: item.id,

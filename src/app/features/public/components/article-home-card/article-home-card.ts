@@ -1,13 +1,11 @@
 import { Component, computed, input } from '@angular/core';
 import { ArticleCard } from '../../interfaces/article-card.interface';
-import { NgClass } from '@angular/common';
-import { ArticleSectionPipe } from '../../pipes/article-section.pipe';
 import es from '@/i18n/es.json';
 import { getColorCategory, getColorHoverCategory, getFontFamilyCategory } from '../../utils';
 
 @Component({
   selector: 'out-article-home-card',
-  imports: [ArticleSectionPipe],
+  imports: [],
   templateUrl: './article-home-card.html',
 })
 export class ArticleHomeCard {

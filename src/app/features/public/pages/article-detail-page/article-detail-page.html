@@ -15,10 +15,7 @@
         <div class="h-px w-full {{ color() }}"></div>
 
         <div class="content-article">
-          <div
-            [ngClass]="{ 'two-columns': articleSelected()?.category === 'tales' }"
-            [innerHTML]="articleSelected()?.content | safeHtml"
-          ></div>
+          <div [innerHTML]="articleSelected()?.content | safeHtml"></div>
         </div>
       </div>
 
@@ -26,5 +23,9 @@
         <img [src]="articleSelected()?.image" class="rounded-lg" width="100%" alt="foto" />
       </div>
     </div>
+  </div>
+
+  <div>
+    {{ articleSelected2() | json }}
   </div>
 </section>

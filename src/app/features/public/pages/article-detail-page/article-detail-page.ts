@@ -24,7 +24,7 @@ import {
 import { HomeService } from '../../services/home.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TitlePage } from '@/shared/components/title-page/title-page';
-import { NgClass } from '@angular/common';
+import { JsonPipe } from '@angular/common';
 import { getColorCategory, publicLayoutPage } from '../../utils';
 import { ArticleCategoryMapper } from '../../mappers';
 
@@ -38,19 +38,19 @@ type ArticleCategory =
 
 @Component({
   selector: 'out-article-detail-page',
-  imports: [SafeHtmlPipe, ArticleSectionPipe, TitlePage, NgClass],
+  imports: [SafeHtmlPipe, ArticleSectionPipe, TitlePage, JsonPipe],
   templateUrl: './article-detail-page.html',
   styles: `
-    .content-article {
-      p {
-        margin-bottom: 30px;
-      }
-    }
-    .two-columns {
-      column-count: 2;
-      column-gap: 2rem;
-      column-fill: balance;
-    }
+    // .content-article {
+    //   p {
+    //     margin-bottom: 30px;
+    //   }
+    // }
+    // .two-columns {
+    //   column-count: 2;
+    //   column-gap: 2rem;
+    //   column-fill: balance;
+    // }
   `,
   encapsulation: ViewEncapsulation.None,
 })
@@ -73,6 +73,7 @@ export class ArticleDetailPage implements OnInit {
   ngOnInit(): void {
     this.getRouteParams();
     this.getArticleData();
+    this.getArticleData2();
   }
 
   getRouteParams(): void {
