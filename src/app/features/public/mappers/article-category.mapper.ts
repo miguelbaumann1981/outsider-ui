@@ -18,9 +18,9 @@ export class ArticleCategoryMapper {
       gender: data.gender,
       id: data.id,
       image: data.image,
+      references: data.references,
       release: data.release,
       slug: data.slug,
-      template: 'basic',
       titleArticle: data.titleArticle,
       titleCategory: data.titleCategory,
     };
@@ -29,18 +29,17 @@ export class ArticleCategoryMapper {
   static tales(data: Article): CategoryTales {
     return {
       authorArticle: data.authorArticle,
-      authorInfo: data.authorInfo,
-      authorQuote: data.authorQuote,
+      authorInfo: data.authorInfo ?? '',
+      authorQuote: data.authorQuote ?? '',
       category: ArticleCategory.TALES,
       content: data.content,
       gender: data.gender,
       id: data.id,
       image: data.image,
-      quote: data.quote,
+      quote: data.quote ?? '',
       references: data.references,
       release: data.release,
       slug: data.slug,
-      template: 'full',
       titleArticle: data.titleArticle,
       titleCategory: data.titleCategory,
     };
@@ -54,9 +53,9 @@ export class ArticleCategoryMapper {
       gender: data.gender,
       id: data.id,
       image: data.image,
+      references: data.references,
       release: data.release,
       slug: data.slug,
-      template: 'basic',
       titleArticle: data.titleArticle,
       titleCategory: data.titleCategory,
     };
@@ -65,15 +64,15 @@ export class ArticleCategoryMapper {
   static microstory(data: Article): CategoryMicrostory {
     return {
       authorArticle: data.authorArticle,
-      authorInfo: data.authorInfo,
+      authorInfo: data.authorInfo ?? '',
       category: ArticleCategory.MICROSTORY,
       content: data.content,
       gender: data.gender,
       id: data.id,
       image: data.image,
+      references: data.references,
       release: data.release,
       slug: data.slug,
-      template: 'extended',
       titleArticle: data.titleArticle,
       titleCategory: data.titleCategory,
     };
@@ -82,15 +81,15 @@ export class ArticleCategoryMapper {
   static opinion(data: Article): CategoryOpinion {
     return {
       authorArticle: data.authorArticle,
-      authorInfo: data.authorInfo,
+      authorInfo: data.authorInfo ?? '',
       category: ArticleCategory.OPINION,
       content: data.content,
       gender: data.gender,
       id: data.id,
       image: data.image,
+      references: data.references,
       release: data.release,
       slug: data.slug,
-      template: 'extended',
       titleArticle: data.titleArticle,
       titleCategory: data.titleCategory,
     };
@@ -104,9 +103,9 @@ export class ArticleCategoryMapper {
       gender: data.gender,
       id: data.id,
       image: data.image,
+      references: data.references,
       release: data.release,
       slug: data.slug,
-      template: 'basic',
       titleArticle: data.titleArticle,
       titleCategory: data.titleCategory,
     };

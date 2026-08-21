@@ -1,16 +1,9 @@
-import { ArticleCategory } from '../enums';
 import { Gender, Release } from '../types';
 
-export interface ArticlesApi {
-  total: number;
-  articles: Article[];
-}
-
-export interface Article {
+export interface CategoryBasicProps {
   authorArticle: string;
   authorInfo?: string;
   authorQuote?: string;
-  category: ArticleCategory;
   content: string;
   gender: Gender;
   id: string;

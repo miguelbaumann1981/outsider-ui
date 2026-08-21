@@ -14,14 +14,13 @@ import { LocalStorageService } from '@/core/services/local-storage.service';
 import { HomeService } from '../../services/home.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TitlePage } from '@/shared/components/title-page/title-page';
-import { JsonPipe } from '@angular/common';
 import { getColorCategory, publicLayoutPage } from '../../utils';
 import { AnyCategory } from '../../types';
 import { ArticleDetail } from '../../interfaces';
 
 @Component({
   selector: 'out-article-detail-page',
-  imports: [SafeHtmlPipe, TitlePage, JsonPipe],
+  imports: [SafeHtmlPipe, TitlePage],
   templateUrl: './article-detail-page.html',
   encapsulation: ViewEncapsulation.None,
 })

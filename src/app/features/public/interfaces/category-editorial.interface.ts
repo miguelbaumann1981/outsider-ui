@@ -1,16 +1,6 @@
+import { CategoryBasicProps } from '.';
 import { ArticleCategory } from '../enums';
-import { Gender, Release, Template } from '../types';
 
-export interface CategoryEditorial {
-  authorArticle: string;
+export interface CategoryEditorial extends CategoryBasicProps {
   category: ArticleCategory.EDITORIAL;
-  content: string;
-  gender: Gender;
-  id: string;
-  image: string;
-  release: Release;
-  slug: string;
-  template: Template;
-  titleArticle: string;
-  titleCategory: string;
 }
