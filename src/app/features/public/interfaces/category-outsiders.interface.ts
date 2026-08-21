@@ -1,5 +1,5 @@
 import { ArticleCategory } from '../enums';
-import { Gender, Release } from '../types';
+import { Gender, Release, Template } from '../types';
 
 export interface CategoryOutsiders {
   authorArticle: string;
@@ -10,6 +10,7 @@ export interface CategoryOutsiders {
   image: string;
   release: Release;
   slug: string;
+  template: Template;
   titleArticle: string;
   titleCategory: string;
 }

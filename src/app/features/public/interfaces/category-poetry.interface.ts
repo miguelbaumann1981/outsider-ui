@@ -1,21 +1,16 @@
 import { ArticleCategory } from '../enums';
-import { Gender, Release } from '../types';
+import { Gender, Release, Template } from '../types';
 
 export interface CategoryPoetry {
   authorArticle: string;
-  authorInfo: string;
   category: ArticleCategory.POETRY;
-  contentGroup: PoetryContentGroup[];
+  content: string;
   gender: Gender;
   id: string;
   image: string;
   release: Release;
   slug: string;
+  template: Template;
   titleArticle: string;
   titleCategory: string;
-}
-
-export interface PoetryContentGroup {
-  title: string;
-  document: string;
 }

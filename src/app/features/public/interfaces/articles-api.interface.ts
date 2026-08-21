@@ -1,30 +1,12 @@
 import { ArticleCategory } from '../enums';
-import { Gender, Release } from '../types';
+import { Gender, Release, Template } from '../types';
 
 export interface ArticlesApi {
   total: number;
-  articles: Article2[];
+  articles: Article[];
 }
 
 export interface Article {
-  title: string;
-  subtitle: string;
-  slug: string;
-  category: ArticleCategory;
-  author: string;
-  image: string;
-  createdAt: Date;
-  release: Release;
-  content: string;
-  id: string;
-}
-
-export interface ArticlesApi2 {
-  total: number;
-  articles: Article2[];
-}
-
-export interface Article2 {
   authorArticle: string;
   authorInfo: string;
   authorQuote: string;
@@ -38,6 +20,7 @@ export interface Article2 {
   references: string;
   release: Release;
   slug: string;
+  template: Template;
   titleArticle: string;
   titleCategory: string;
 }

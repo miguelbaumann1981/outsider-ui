@@ -1,5 +1,5 @@
 import { ArticleCategory } from '../enums';
-import { Gender, Release } from '../types';
+import { Gender, Release, Template } from '../types';
 import { ContentArticlesGroup } from './articles-api.interface';
 
 export interface CategoryMicrostory {
@@ -12,6 +12,7 @@ export interface CategoryMicrostory {
   image: string;
   release: Release;
   slug: string;
+  template: Template;
   titleArticle: string;
   titleCategory: string;
 }

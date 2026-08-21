@@ -123,8 +123,9 @@ export class HomePage implements OnInit, AfterViewInit {
       });
   }
 
-  navigateToDetail(release: Release, slug: string) {
+  navigateToDetail(article: ArticleCard) {
+    const { release, slug, section } = article;
     this.localStorageService.setItem('release', release);
-    this.router.navigate([`/articles/${release}/${slug}`]);
+    this.router.navigate([`/articles/${release}/${section}/${slug}`]);
   }
 }

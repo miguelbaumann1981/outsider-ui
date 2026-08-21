@@ -1,10 +1,12 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Service } from '@angular/core';
-import { Observable, tap } from 'rxjs';
+import { map, Observable, tap } from 'rxjs';
 import { environment } from '@envs/environment.development';
 import { Release } from '../enums';
-import { Article, Article2, ArticlesApi, ArticlesApi2, LayoutArticlesApi } from '../interfaces';
+import { Article, ArticlesApi, LayoutArticlesApi } from '../interfaces';
 import { LocalStorageService } from '@/core/services/local-storage.service';
+import { AnyCategory, ArticleCategory } from '../types';
+import { ArticleCategoryMapper } from '../mappers';
 
 @Service()
 export class HomeService {
@@ -18,18 +20,17 @@ export class HomeService {
       .pipe(tap(() => this.localStorageService.setItem('release', release)));
   }
 
-  getArticleBySlug(release: Release, slug: string): Observable<Article> {
-    return this.http.get<Article>(`${this.baseUrl}/api/articles/${release}/${slug}`);
-  }
-
-  getArticles2(release: Release): Observable<ArticlesApi2> {
-    return this.http
-      .get<ArticlesApi2>(`${this.baseUrl}/api/articles/${release}`)
-      .pipe(tap(() => this.localStorageService.setItem('release', release)));
-  }
-
-  getArticleBySlug2(release: Release, slug: string): Observable<Article2> {
-    return this.http.get<Article2>(`${this.baseUrl}/api/articles/${release}/${slug}`);
+  getArticleBySlug(
+    release: Release,
+    slug: string,
+    category: ArticleCategory,
+  ): Observable<AnyCategory> {
+    const mapper = ArticleCategoryMapper[category];
+    return this.http.get<Article>(`${this.baseUrl}/api/articles/${release}/${slug}`).pipe(
+      map((article) => {
+        return mapper(article);
+      }),
+    );
   }
 
   getLayoutArticles(): Observable<LayoutArticlesApi[]> {

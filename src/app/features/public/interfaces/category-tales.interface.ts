@@ -1,5 +1,5 @@
 import { ArticleCategory } from '../enums';
-import { Gender, Release } from '../types';
+import { Gender, Release, Template } from '../types';
 
 export interface CategoryTales {
   authorArticle: string;
@@ -14,6 +14,7 @@ export interface CategoryTales {
   references: string;
   release: Release;
   slug: string;
+  template: Template;
   titleArticle: string;
   titleCategory: string;
 }
