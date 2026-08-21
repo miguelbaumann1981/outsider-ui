@@ -1,1 +1,1 @@
-export type Template = 'basic' | 'full' | 'extended' | 'multiple' | 'authors';
+export type Template = 'basic' | 'full' | 'extended';

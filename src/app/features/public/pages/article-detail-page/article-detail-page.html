@@ -1,31 +1,44 @@
 <section [class]="layoutPage()">
   <out-title-page
-    [text]="articleSelected2()?.titleCategory"
-    [category]="articleSelected2()?.category"
-    (return)="navigateToReleasePage(articleSelected2()?.release)"
+    [text]="articleSelected()?.titleCategory"
+    [category]="articleSelected()?.category"
+    (return)="navigateToReleasePage(articleSelected()?.release)"
   />
 
   <div class="rounded-lg border border-gray-200 bg-white p-4 shadow-lg">
     <div class="grid grid-cols-1 gap-10 lg:grid-cols-3">
       <div class="col-span-2 flex flex-col gap-3">
-        <h3 class="text-3xl font-semibold">{{ articleSelected2()?.titleArticle }}</h3>
+        <h3 class="text-3xl font-semibold">{{ articleSelected()?.titleArticle }}</h3>
         <h4 class="text-gray-500">
-          {{ articleSelected2()?.authorArticle }}
+          {{ articleSelected()?.authorArticle }}
         </h4>
         <div class="h-px w-full {{ color() }}"></div>
 
-        <!-- <div class="content-article">
-          <div [innerHTML]="articleSelected()?.content | safeHtml"></div>
-        </div> -->
+        @switch (articleSelected()?.template) {
+          @case ('basic') {
+            <div class="content-article">BASIC....</div>
+          }
+          @case ('full') {
+            <div class="content-article">FULL....</div>
+          }
+          @case ('extended') {
+            <div class="content-article">EXTENDED...</div>
+          }
+          @default {
+            <div class="content-article">
+              <div [innerHTML]="articleSelected()?.content | safeHtml"></div>
+            </div>
+          }
+        }
       </div>
 
       <div>
-        <img [src]="articleSelected2()?.image" class="rounded-lg" width="100%" alt="foto" />
+        <img [src]="articleSelected()?.image" class="rounded-lg" width="100%" alt="foto" />
       </div>
     </div>
   </div>
 
   <div>
-    {{ articleSelected2() | json }}
+    {{ articleSelected() | json }}
   </div>
 </section>

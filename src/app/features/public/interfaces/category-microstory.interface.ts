@@ -6,7 +6,7 @@ export interface CategoryMicrostory {
   authorArticle: string;
   authorInfo: string;
   category: ArticleCategory.MICROSTORY;
-  contentGroup: ContentArticlesGroup[];
+  content: string;
   gender: Gender;
   id: string;
   image: string;

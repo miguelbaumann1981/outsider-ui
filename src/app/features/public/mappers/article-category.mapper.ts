@@ -20,7 +20,7 @@ export class ArticleCategoryMapper {
       image: data.image,
       release: data.release,
       slug: data.slug,
-      template: data.template,
+      template: 'basic',
       titleArticle: data.titleArticle,
       titleCategory: data.titleCategory,
     };
@@ -40,7 +40,7 @@ export class ArticleCategoryMapper {
       references: data.references,
       release: data.release,
       slug: data.slug,
-      template: data.template,
+      template: 'full',
       titleArticle: data.titleArticle,
       titleCategory: data.titleCategory,
     };
@@ -56,7 +56,7 @@ export class ArticleCategoryMapper {
       image: data.image,
       release: data.release,
       slug: data.slug,
-      template: data.template,
+      template: 'basic',
       titleArticle: data.titleArticle,
       titleCategory: data.titleCategory,
     };
@@ -67,13 +67,13 @@ export class ArticleCategoryMapper {
       authorArticle: data.authorArticle,
       authorInfo: data.authorInfo,
       category: ArticleCategory.MICROSTORY,
-      contentGroup: data.contentGroup,
+      content: data.content,
       gender: data.gender,
       id: data.id,
       image: data.image,
       release: data.release,
       slug: data.slug,
-      template: data.template,
+      template: 'extended',
       titleArticle: data.titleArticle,
       titleCategory: data.titleCategory,
     };
@@ -90,7 +90,7 @@ export class ArticleCategoryMapper {
       image: data.image,
       release: data.release,
       slug: data.slug,
-      template: data.template,
+      template: 'extended',
       titleArticle: data.titleArticle,
       titleCategory: data.titleCategory,
     };
@@ -106,7 +106,7 @@ export class ArticleCategoryMapper {
       image: data.image,
       release: data.release,
       slug: data.slug,
-      template: data.template,
+      template: 'basic',
       titleArticle: data.titleArticle,
       titleCategory: data.titleCategory,
     };

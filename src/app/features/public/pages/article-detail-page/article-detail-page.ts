@@ -37,10 +37,10 @@ export class ArticleDetailPage implements OnInit {
     release: Release.CURRENT,
     slug: '',
   });
-  articleSelected2 = signal<AnyCategory>({} as AnyCategory);
+  articleSelected = signal<AnyCategory>({} as AnyCategory);
   layoutPage = signal<string>(publicLayoutPage);
   color = computed<string>(() => {
-    return getColorCategory(this.articleSelected2()?.category);
+    return getColorCategory(this.articleSelected()?.category);
   });
 
   ngOnInit(): void {
@@ -64,7 +64,7 @@ export class ArticleDetailPage implements OnInit {
       .getArticleBySlug(release as Release, slug, category)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((article) => {
-        this.articleSelected2.set(article);
+        this.articleSelected.set(article);
       });
   }
 
