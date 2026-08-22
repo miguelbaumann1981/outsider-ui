@@ -1,22 +1,90 @@
 <section [class]="layoutPage()">
-  <out-title-page [text]="i18n.menu.contact" (return)="navigateToHome()" />
+  <out-title-page [text]="i18n.menu.contact" [icon]="'email'" (return)="navigateToHome()" />
 
   <div class="rounded-lg border border-gray-200 bg-white p-4 shadow-lg">
-    <form class="flex flex-col justify-center gap-5">
-      <fieldset class="fieldset w-full">
-        <legend class="fieldset-legend">Nombre</legend>
-        <input type="text" class="input" placeholder="Añade nombre...." />
-      </fieldset>
+    <h2 class="text-lg font-medium max-lg:text-base">{{ i18n.contact.introduction }}</h2>
 
-      <fieldset class="fieldset w-full">
-        <legend class="fieldset-legend">Correo electrónico</legend>
-        <input type="text" class="input" placeholder="Añade correo...." />
-      </fieldset>
+    <div class="mt-10 mb-20 flex w-full flex-row justify-center max-lg:mt-3 max-lg:mb-10">
+      <form
+        class="flex w-lg flex-col gap-3 max-lg:w-full"
+        [formRoot]="contactForm"
+        (submit)="onSubmit($event)"
+      >
+        <!-- #region NAME FIELD -->
+        <fieldset class="fieldset w-full">
+          <legend class="fieldset-legend text-base max-lg:text-sm">
+            {{ i18n.contact.nameLabel }}
+            <span class="text-error">*</span>
+          </legend>
+          <input
+            type="text"
+            class="input w-full"
+            placeholder="{{ i18n.contact.namePlaceholder }}"
+            [formField]="contactForm.name"
+          />
+          @if (contactForm.name().touched() && contactForm.name().invalid()) {
+            <ul class="error-list">
+              @for (error of contactForm.name().errors(); track error) {
+                <li>{{ error.message }}</li>
+              }
+            </ul>
+          }
+        </fieldset>
+        <!-- #endregion NAME FIELD -->
 
-      <fieldset class="fieldset w-full">
-        <legend class="fieldset-legend">Mensaje</legend>
-        <textarea class="textarea h-24" placeholder="Deja un mensaje..."></textarea>
-      </fieldset>
-    </form>
+        <!-- #region EMAIL FIELD -->
+        <fieldset class="fieldset w-full">
+          <legend class="fieldset-legend text-base max-lg:text-sm">
+            {{ i18n.contact.emailLabel }} <span class="text-error">*</span>
+          </legend>
+          <input
+            type="email "
+            class="input w-full"
+            placeholder="{{ i18n.contact.emailPlaceholder }}"
+            [formField]="contactForm.email"
+          />
+          @if (contactForm.email().touched() && contactForm.email().invalid()) {
+            <ul class="error-list">
+              @for (error of contactForm.email().errors(); track error) {
+                <li>{{ error.message }}</li>
+              }
+            </ul>
+          }
+        </fieldset>
+        <!-- #endregion EMAIL FIELD -->
+
+        <!-- #region MESSAGE FIELD -->
+        <fieldset class="fieldset w-full">
+          <legend class="fieldset-legend text-base max-lg:text-sm">
+            {{ i18n.contact.messageLabel }} <span class="text-error">*</span>
+          </legend>
+          <textarea
+            class="textarea h-24 w-full"
+            placeholder="{{ i18n.contact.messagePlaceholder }}"
+            [formField]="contactForm.message"
+          ></textarea>
+          @if (contactForm.message().touched() && contactForm.message().invalid()) {
+            <ul class="error-list">
+              @for (error of contactForm.message().errors(); track error) {
+                <li>{{ error.message }}</li>
+              }
+            </ul>
+          }
+        </fieldset>
+        <!-- #endregion MESSAGE FIELD -->
+
+        <button
+          type="submit"
+          class="btn btn-accent mt-3 w-full"
+          [disabled]="contactForm().invalid()"
+        >
+          @if (isLoading()) {
+            <span class="loading loading-spinner text-white"></span>
+          } @else {
+            <span class="text-lg text-white">{{ i18n.contact.submit | uppercase }}</span>
+          }
+        </button>
+      </form>
+    </div>
   </div>
 </section>

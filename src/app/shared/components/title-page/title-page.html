@@ -1,6 +1,8 @@
 <div class="flex items-center justify-between">
   <div class="flex items-start gap-3">
-    <span class="material-icons icon-book {{ color }}"> auto_stories </span>
+    @if (icon()) {
+      <span class="material-icons icon-book {{ color }}"> {{ icon() }} </span>
+    }
     <h2 class="special-elite-regular text-2xl font-semibold lg:text-4xl">{{ text() }}</h2>
   </div>
 

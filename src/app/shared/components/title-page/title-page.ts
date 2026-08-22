@@ -18,6 +18,7 @@ export class TitlePage {
 
   text = input.required<string>();
   category = input<ArticleCategory | undefined>(undefined);
+  icon = input<string>('auto_stories');
   return = output<void>();
 
   get color(): string {

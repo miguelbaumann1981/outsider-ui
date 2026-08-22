@@ -43,5 +43,15 @@
     "october": "Octubre",
     "november": "Noviembre",
     "december": "Diciembre"
+  },
+  "contact": {
+    "nameLabel": "Nombre",
+    "emailLabel": "Correo electrónico",
+    "messageLabel": "Mensaje",
+    "namePlaceholder": "Añade un nombre...",
+    "emailPlaceholder": "Añade un correo electrónico...",
+    "messagePlaceholder": "Déjanos un mensaje...",
+    "submit": "Enviar",
+    "introduction": "Cuéntanos lo que quieras"
   }
 }
