@@ -1,5 +1,5 @@
 import { ArticleCategory } from '../enums';
-import { Gender, Release } from '../types';
+import { Release } from '../types';
 
 export interface ArticlesApi {
   total: number;
@@ -12,13 +12,13 @@ export interface Article {
   authorQuote?: string;
   category: ArticleCategory;
   content: string;
-  gender: Gender;
   id: string;
   image: string;
   quote?: string;
   references: string;
   release: Release;
   slug: string;
+  subtitle?: string;
   titleArticle: string;
   titleCategory: string;
 }

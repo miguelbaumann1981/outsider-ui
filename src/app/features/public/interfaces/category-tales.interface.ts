@@ -6,4 +6,5 @@ export interface CategoryTales extends CategoryBasicProps {
   authorQuote: string;
   category: ArticleCategory.TALES;
   quote: string;
+  subtitle: string;
 }

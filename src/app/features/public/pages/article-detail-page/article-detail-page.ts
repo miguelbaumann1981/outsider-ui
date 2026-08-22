@@ -50,9 +50,12 @@ export class ArticleDetailPage implements OnInit {
     return getColorCategory(this.articleSelected()?.category);
   });
 
+  texto: string = '';
+
   ngOnInit(): void {
     this.getRouteParams();
     this.getArticleData();
+    // console.log(this.texto.replaceAll('"', "'"));
   }
 
   getRouteParams(): void {

@@ -17,7 +17,17 @@
       </div>
 
       <!-- CONTENT -->
-      <div class="grid grid-cols-1 gap-10 lg:grid-cols-3">
+
+      @if (articleSelected()?.quote) {
+        <div class="block flex flex-col items-end gap-2 lg:hidden">
+          <blockquote
+            class="border-r-4 border-gray-400 pr-4 text-right text-sm italic"
+            [innerHTML]="articleSelected()?.quote! | safeHtml"
+          ></blockquote>
+          <label class="text-sm font-semibold">{{ articleSelected()?.authorQuote }}</label>
+        </div>
+      }
+      <article class="grid grid-cols-1 gap-5 lg:grid-cols-3 lg:gap-20">
         <div class="col-span-2 flex flex-col gap-3">
           <div class="content-article">
             <div
@@ -29,12 +39,16 @@
 
         <div class="col-span-1 flex flex-col gap-3">
           @if (articleSelected()?.quote) {
-            <div class="flex flex-col items-end gap-2">
+            <div class="flex hidden flex-col justify-end justify-items-end gap-3 lg:inline-block">
               <blockquote
                 class="border-r-4 border-gray-400 pr-4 text-right text-sm italic"
                 [innerHTML]="articleSelected()?.quote! | safeHtml"
               ></blockquote>
-              <label class="text-sm font-semibold">{{ articleSelected()?.authorQuote }}</label>
+              <div class="mt-3 flex justify-end">
+                <label class="text-right text-sm font-semibold">{{
+                  articleSelected()?.authorQuote
+                }}</label>
+              </div>
             </div>
           }
           <img [src]="articleSelected()?.image" class="rounded-lg" width="100%" alt="foto" />
@@ -42,22 +56,19 @@
             class="text-sm text-gray-500"
             [innerHTML]="articleSelected()?.references | safeHtml"
           ></span>
-        </div>
-      </div>
 
-      <!-- ABOUT AUTHOR -->
-      @if (articleSelected()?.authorInfo) {
-        <div class="mt-5 flex flex-col gap-2">
-          <hr class="border-gray-300" />
-          <p class="text-sm font-semibold lg:text-base">Sobre el autor</p>
-          <div class="content-info">
-            <div
-              class="text-sm lg:text-base"
-              [innerHTML]="articleSelected()?.authorInfo! | safeHtml"
-            ></div>
-          </div>
+          <!-- ABOUT AUTHOR -->
+          @if (articleSelected()?.authorInfo) {
+            <div class="mt-5 flex flex-col gap-2">
+              <hr class="border-gray-300" />
+              <p class="text-sm font-semibold lg:text-base">{{ articleSelected()?.subtitle }}</p>
+              <div class="content-info">
+                <div class="text-sm" [innerHTML]="articleSelected()?.authorInfo! | safeHtml"></div>
+              </div>
+            </div>
+          }
         </div>
-      }
+      </article>
     </div>
   </div>
 </section>
