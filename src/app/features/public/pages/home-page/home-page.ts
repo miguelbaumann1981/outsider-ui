@@ -53,7 +53,8 @@ export class HomePage implements OnInit, AfterViewInit {
   private localStorageService = inject(LocalStorageService);
   router = inject(Router);
 
-  fontFamilyStyle = signal('fredoka-regular');
+  // fontFamilyStyle = signal('fredoka-regular');
+  title = signal('Outsider');
   releaseDefault = signal<Release>('current');
   releaseLocalStorage = signal<Release>(
     (this.localStorageService.getItem('release') as Release) ?? 'current',

@@ -3,7 +3,7 @@
   @if (releaseLocalStorage() === 'current') {
     <div class="flex items-center justify-center">
       <h1 id="slogan" class="slogan flex flex-col gap-2">
-        <span class="text-info title fredoka-regular">Outsider</span>
+        <span class="text-info title">{{ title().toUpperCase() }}</span>
         <span class="subtitle special-elite-regular">{{ i18n.slogan }}</span>
       </h1>
     </div>

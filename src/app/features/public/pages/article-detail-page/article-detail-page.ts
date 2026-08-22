@@ -22,6 +22,14 @@ import { ArticleDetail } from '../../interfaces';
   selector: 'out-article-detail-page',
   imports: [SafeHtmlPipe, TitlePage],
   templateUrl: './article-detail-page.html',
+  styles: `
+    .content-article,
+    .content-info {
+      p {
+        margin-bottom: 1rem;
+      }
+    }
+  `,
   encapsulation: ViewEncapsulation.None,
 })
 export class ArticleDetailPage implements OnInit {
