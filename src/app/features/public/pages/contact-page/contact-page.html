@@ -1,8 +1,9 @@
 <section [class]="layoutPage()">
   <out-title-page [text]="i18n.menu.contact" [icon]="'email'" (return)="navigateToHome()" />
 
-  <div class="rounded-lg border border-gray-200 bg-white p-4 shadow-lg">
-    <h2 class="text-lg font-medium max-lg:text-base">{{ i18n.contact.introduction }}</h2>
+  <div class="rounded-lg border border-gray-200 bg-white px-4 py-4 shadow-lg lg:px-10">
+    <h2 class="mb-3 text-base font-medium lg:text-xl">{{ i18n.contact.introduction }}</h2>
+    <h3 class="text-sm lg:text-base">{{ i18n.contact.subtext }}</h3>
 
     <div class="mt-10 mb-20 flex w-full flex-row justify-center max-lg:mt-3 max-lg:mb-10">
       <form
@@ -19,13 +20,19 @@
           <input
             type="text"
             class="input w-full"
+            [ngClass]="{
+              'border border-red-300':
+                contactForm.name().touched() &&
+                contactForm.name().invalid() &&
+                contactForm.name().errors(),
+            }"
             placeholder="{{ i18n.contact.namePlaceholder }}"
             [formField]="contactForm.name"
           />
           @if (contactForm.name().touched() && contactForm.name().invalid()) {
-            <ul class="error-list">
+            <ul>
               @for (error of contactForm.name().errors(); track error) {
-                <li>{{ error.message }}</li>
+                <li class="text-error">{{ error.message }}</li>
               }
             </ul>
           }
@@ -40,13 +47,19 @@
           <input
             type="email "
             class="input w-full"
+            [ngClass]="{
+              'border border-red-300':
+                contactForm.email().touched() &&
+                contactForm.email().invalid() &&
+                contactForm.email().errors(),
+            }"
             placeholder="{{ i18n.contact.emailPlaceholder }}"
             [formField]="contactForm.email"
           />
           @if (contactForm.email().touched() && contactForm.email().invalid()) {
-            <ul class="error-list">
+            <ul>
               @for (error of contactForm.email().errors(); track error) {
-                <li>{{ error.message }}</li>
+                <li class="text-error">{{ error.message }}</li>
               }
             </ul>
           }
@@ -60,13 +73,19 @@
           </legend>
           <textarea
             class="textarea h-24 w-full"
+            [ngClass]="{
+              'border border-red-300':
+                contactForm.message().touched() &&
+                contactForm.message().invalid() &&
+                contactForm.message().errors(),
+            }"
             placeholder="{{ i18n.contact.messagePlaceholder }}"
             [formField]="contactForm.message"
           ></textarea>
           @if (contactForm.message().touched() && contactForm.message().invalid()) {
-            <ul class="error-list">
+            <ul>
               @for (error of contactForm.message().errors(); track error) {
-                <li>{{ error.message }}</li>
+                <li class="text-error">{{ error.message }}</li>
               }
             </ul>
           }

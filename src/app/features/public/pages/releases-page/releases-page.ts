@@ -11,6 +11,7 @@ import { HomeService } from '../../services/home.service';
 import es from '@/i18n/es.json';
 import { TitlePage } from '@/shared/components/title-page/title-page';
 import { publicLayoutPage } from '../../utils';
+import { ArticleCategory } from '../../types';
 
 @Component({
   selector: 'out-releases-page',
@@ -75,6 +76,7 @@ export class ReleasesPage implements OnInit {
           title: item.titleArticle,
           slug: item.slug,
           author: item.authorArticle,
+          category: item.category,
         });
       }
     });
@@ -88,8 +90,8 @@ export class ReleasesPage implements OnInit {
     this.router.navigate([currentRelease === Release.CURRENT ? '/' : `/release/${release}`]);
   }
 
-  navigateToArticleDetail(release: Release, slug: string) {
+  navigateToArticleDetail(release: Release, category: ArticleCategory, slug: string) {
     this.localStorageService.setItem('release', release);
-    this.router.navigate([`/articles/${release}/${slug}`]);
+    this.router.navigate([`/articles/${release}/${category}/${slug}`]);
   }
 }

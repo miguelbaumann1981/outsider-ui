@@ -49,7 +49,9 @@
                   @for (article of release.articles; track article.title) {
                     <li
                       class="hover:text-primary text-neutral cursor-pointer text-sm"
-                      (click)="navigateToArticleDetail(release.release, article.slug)"
+                      (click)="
+                        navigateToArticleDetail(release.release, article.category, article.slug)
+                      "
                     >
                       <span class="font-semibold">{{ article.title }}</span
                       >,
