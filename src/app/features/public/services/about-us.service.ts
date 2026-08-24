@@ -1,15 +1,15 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Service } from '@angular/core';
 import { environment } from '@envs/environment.development';
-import { ReleasesApi } from '../interfaces';
 import { Observable } from 'rxjs';
+import { AboutUsApi } from '../interfaces';
 
 @Service()
-export class ReleasesService {
+export class AboutUsService {
   private http = inject(HttpClient);
   private baseUrl: string = environment.url;
 
-  getReleases(): Observable<ReleasesApi> {
-    return this.http.get<ReleasesApi>(`${this.baseUrl}/api/releases`);
+  getAboutUsInfo(): Observable<AboutUsApi> {
+    return this.http.get<AboutUsApi>(`${this.baseUrl}/api/about-us`);
   }
 }

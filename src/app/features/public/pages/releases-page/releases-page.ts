@@ -1,5 +1,4 @@
 import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
-import { ReleasesService } from '../../services/releases.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ArticleAuthor, ArticlesApi, ReleaseObj } from '../../interfaces';
 import { ReleaseMonthPipe } from '../../pipes';
@@ -7,11 +6,11 @@ import { Router } from '@angular/router';
 import { Release } from '../../enums';
 import { LocalStorageService } from '@/core/services/local-storage.service';
 import { NgClass } from '@angular/common';
-import { HomeService } from '../../services/home.service';
 import es from '@/i18n/es.json';
 import { TitlePage } from '@/shared/components/title-page/title-page';
 import { publicLayoutPage } from '../../utils';
 import { ArticleCategory } from '../../types';
+import { HomeService, ReleasesService } from '../../services';
 
 @Component({
   selector: 'out-releases-page',

@@ -1,15 +1,15 @@
 <div
-  class="flex cursor-pointer flex-col gap-5 rounded-lg bg-white shadow-md transition-all transition-discrete {{
+  class="cursor-pointer overflow-hidden rounded-lg bg-white shadow-md transition-all transition-discrete relative z-0   {{
     hoverColor()
   }} hover:shadow-xl"
 >
-  <div class="flex flex-col items-center gap-5 xl:flex-row">
+  <!-- <div class="flex flex-col items-center gap-5 xl:flex-row">
     <img
       [src]="article()?.imageUrl"
-      class="w-full rounded-t-lg lg:w-75 lg:rounded-t-none lg:rounded-l-lg"
+      class="w-full rounded-t-lg lg:h-[250px] lg:rounded-t-none lg:rounded-l-lg"
     />
 
-    <div class="flex w-full flex-col justify-between gap-2 p-4 xl:h-50">
+    <div class="flex w-full flex-col justify-between gap-2 p-4 xl:min-h-[250px]">
       <h2
         class="special-elite-regular flex justify-start text-lg lg:text-3xl xl:mt-3 xl:justify-end"
       >
@@ -23,6 +23,34 @@
       </div>
     </div>
 
-    <div class="h-[8px] lg:h-[200px] lg:w-[8px] w-full {{ color() }}"></div>
+    <div class="h-[8px] lg:min-h-[250px] lg:w-[8px] w-full {{ color() }}"></div>
+  </div> -->
+  <div class="absolute -top-2.5 right-5 -z-1 h-[20px] w-[20px] rotate-45 {{ color() }}"></div>
+
+  <div class="grid grid-cols-1 gap-5 lg:grid-cols-3">
+    <div class="col-span-1">
+      <img
+        [src]="article()?.imageUrl"
+        class="w-full rounded-t-lg lg:rounded-t-none lg:rounded-l-lg"
+      />
+    </div>
+
+    <div class="col-span-2 w-full gap-2 p-4">
+      <div class="flex flex-row justify-between">
+        <div class="flex flex-col gap-3">
+          <h2
+            class="special-elite-regular flex justify-start text-lg lg:text-3xl xl:mt-3 xl:justify-end"
+          >
+            {{ article()?.name }}
+          </h2>
+
+          <div class="flex flex-col items-start gap-2">
+            <h3 class="text-secondary text-base font-bold lg:text-2xl">{{ article()?.title }}</h3>
+            <div class="h-[2px] w-[30px] {{ color() }}"></div>
+            <p class="text-sm font-semibold">{{ article()?.author }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>

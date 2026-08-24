@@ -13,14 +13,13 @@ import { isPlatformBrowser } from '@angular/common';
 import { ArticleHomeCard } from '../../components/article-home-card/article-home-card';
 import { ArticleCard } from '../../interfaces/article-card.interface';
 import es from '@/i18n/es.json';
-import { HomeService } from '../../services/home.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ArticlesApi, LayoutArticlesApi, ReleaseObj } from '../../interfaces';
 import { LocalStorageService } from '@/core/services/local-storage.service';
 import { Router } from '@angular/router';
 import { Release } from '../../types';
 import { Release as ReleaseEnum } from '../../enums/release.enum';
-import { ReleasesService } from '../../services/releases.service';
+import { HomeService, ReleasesService } from '../../services';
 
 @Component({
   selector: 'out-home-page',

@@ -64,5 +64,8 @@
       "messageMinLength": "El número mínimo de caracteres para el mensaje es",
       "emailPattern": "El formato del correo electrónico no es válido"
     }
+  },
+  "aboutUs": {
+    "subtitle": "¿Quiénes somos?"
   }
 }
