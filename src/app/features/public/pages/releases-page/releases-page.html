@@ -22,7 +22,7 @@
               class="hover:bg-base-200"
               [ngClass]="
                 release.release === releaseSelected()
-                  ? 'text-secondary bg-teal-50 hover:bg-teal-50'
+                  ? 'text-secondary bg-green-50 hover:bg-green-50'
                   : ''
               "
             >
@@ -42,7 +42,7 @@
                     : null
                 "
               >
-                {{ release.release | release }}
+                {{ release.name }}
               </td>
               <td>
                 <ul class="grid grid-cols-2 gap-2">
@@ -53,7 +53,11 @@
                         navigateToArticleDetail(release.release, article.category, article.slug)
                       "
                     >
-                      <span class="font-semibold">{{ article.title }}</span
+                      <span class="font-semibold">{{
+                        article.title.length > 50
+                          ? article.title.slice(0, 50) + '...'
+                          : article.title
+                      }}</span
                       >,
                       <span class="italic">{{ article.author }}</span>
                     </li>

@@ -15,11 +15,12 @@ import { ArticleCard } from '../../interfaces/article-card.interface';
 import es from '@/i18n/es.json';
 import { HomeService } from '../../services/home.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ArticlesApi, LayoutArticlesApi } from '../../interfaces';
+import { ArticlesApi, LayoutArticlesApi, ReleaseObj } from '../../interfaces';
 import { LocalStorageService } from '@/core/services/local-storage.service';
 import { Router } from '@angular/router';
 import { Release } from '../../types';
 import { Release as ReleaseEnum } from '../../enums/release.enum';
+import { ReleasesService } from '../../services/releases.service';
 
 @Component({
   selector: 'out-home-page',
@@ -48,17 +49,21 @@ import { Release as ReleaseEnum } from '../../enums/release.enum';
 export class HomePage implements OnInit, AfterViewInit {
   protected readonly i18n = es;
   private homeService = inject(HomeService);
+  private releasesService = inject(ReleasesService);
   private platformId = inject(PLATFORM_ID);
   private destroyRef = inject(DestroyRef);
   private localStorageService = inject(LocalStorageService);
   router = inject(Router);
 
-  // fontFamilyStyle = signal('fredoka-regular');
   title = signal('Outsider');
   releaseDefault = signal<Release>('current');
-  releaseLocalStorage = signal<Release>(
-    (this.localStorageService.getItem('release') as Release) ?? 'current',
+  releaseLocalStorage = computed<Release>(
+    () => (this.localStorageService.getItem('release') as Release) ?? this.releaseDefault(),
   );
+  releases = signal<ReleaseObj[]>([]);
+  releaseName = computed<string>(() => {
+    return this.releases().find((item) => item.release === this.releaseLocalStorage())?.name ?? '';
+  });
   articlesApi = signal<ArticlesApi>({} as ArticlesApi);
   layoutArticlesApi = signal<LayoutArticlesApi[]>([]);
   articlesRelease = computed<ArticleCard[]>(() => {
@@ -83,6 +88,7 @@ export class HomePage implements OnInit, AfterViewInit {
   ngOnInit(): void {
     this.getArticlesHomePage();
     this.getLayoutArticles();
+    this.getReleasesApi();
   }
 
   async ngAfterViewInit(): Promise<void> {
@@ -121,6 +127,15 @@ export class HomePage implements OnInit, AfterViewInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((layoutData) => {
         this.layoutArticlesApi.set(layoutData);
+      });
+  }
+
+  getReleasesApi(): void {
+    this.releasesService
+      .getReleases()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((data) => {
+        this.releases.set(data?.releases);
       });
   }
 

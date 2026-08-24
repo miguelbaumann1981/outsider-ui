@@ -8,10 +8,11 @@ export interface ReleasesApi {
 }
 
 export interface ReleaseObj {
-  month: ReleaseMonth;
-  year: number;
-  release: Release;
+  articles?: ArticleAuthor[];
   id: string;
   index: number;
-  articles?: ArticleAuthor[];
+  month: ReleaseMonth;
+  name: string;
+  release: Release;
+  year: number;
 }

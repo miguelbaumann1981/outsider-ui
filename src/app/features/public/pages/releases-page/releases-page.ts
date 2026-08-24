@@ -2,7 +2,7 @@ import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { ReleasesService } from '../../services/releases.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ArticleAuthor, ArticlesApi, ReleaseObj } from '../../interfaces';
-import { ReleaseMonthPipe, ReleasePipe } from '../../pipes';
+import { ReleaseMonthPipe } from '../../pipes';
 import { Router } from '@angular/router';
 import { Release } from '../../enums';
 import { LocalStorageService } from '@/core/services/local-storage.service';
@@ -15,7 +15,7 @@ import { ArticleCategory } from '../../types';
 
 @Component({
   selector: 'out-releases-page',
-  imports: [ReleasePipe, NgClass, ReleaseMonthPipe, TitlePage],
+  imports: [NgClass, ReleaseMonthPipe, TitlePage],
   templateUrl: './releases-page.html',
 })
 export class ReleasesPage implements OnInit {
@@ -52,6 +52,7 @@ export class ReleasesPage implements OnInit {
               year: item.year,
               release: item.release,
               articles: this.getArticlesByRelease(item.release),
+              name: item.name,
             }))
             .sort((a, b) => b.index - a.index),
         );

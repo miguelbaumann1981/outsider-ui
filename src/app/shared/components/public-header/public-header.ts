@@ -22,7 +22,7 @@ export class PublicHeader {
       url: '/about-us',
     },
     {
-      text: this.i18n.menu.lastReleases,
+      text: this.i18n.menu.allReleases,
       url: '/releases',
     },
     {

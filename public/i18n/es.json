@@ -6,7 +6,8 @@
   "menu": {
     "aboutUs": "Sobre nosotros",
     "lastReleases": "Números anteriores",
-    "contact": "Contacto"
+    "contact": "Contacto",
+    "allReleases": "Todos los números"
   },
   "category": {
     "editorialArticle": "Artículo de opinión",
