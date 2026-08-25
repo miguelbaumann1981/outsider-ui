@@ -6,7 +6,6 @@ export interface LayoutArticlesApi {
   color: ColorCategory;
   id: string;
   position: PositionLayoutArticles;
-  title: string;
 }
 
 export interface ColorCategory {

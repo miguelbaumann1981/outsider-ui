@@ -80,6 +80,9 @@ export class HomePage implements OnInit, AfterViewInit {
         release: item.release as Release,
         imageUrl: item.image,
         position: layout.find((elem) => elem.category === item.category)?.position ?? 1,
+        color: layout.find((elem) => elem.category === item.category)?.color?.solid ?? 'lightblue',
+        hoverColor:
+          layout.find((elem) => elem.category === item.category)?.color?.hover ?? '#FFDBD6',
       }))
       .sort((a, b) => a.position - b.position);
   });

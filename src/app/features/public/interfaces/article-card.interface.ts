@@ -2,13 +2,15 @@ import { ArticleCategory } from '../enums';
 import { PositionLayoutArticles, Release } from '../types';
 
 export interface ArticleCard {
-  section: ArticleCategory;
-  name: string;
-  title: string;
   author: string;
+  color: string;
+  hoverColor: string;
   id: string;
-  slug: string;
-  release: Release;
   imageUrl: string;
+  name: string;
   position: PositionLayoutArticles;
+  release: Release;
+  section: ArticleCategory;
+  slug: string;
+  title: string;
 }
