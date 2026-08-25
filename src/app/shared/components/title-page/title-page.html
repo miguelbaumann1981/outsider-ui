@@ -1,7 +1,7 @@
 <div class="flex items-center justify-between">
   <div class="flex items-start gap-3">
     @if (icon()) {
-      <span class="material-icons icon-book {{ color }}"> {{ icon() }} </span>
+      <span class="material-icons icon-book" [style.color]="colorIcon()"> {{ icon() }} </span>
     }
     <h2 class="special-elite-regular text-2xl font-semibold lg:text-4xl">{{ text() }}</h2>
   </div>

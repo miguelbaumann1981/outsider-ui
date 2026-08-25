@@ -16,11 +16,14 @@
   }
 
   <!-- CARDS -->
-  <div class="grid grid-cols-1 gap-5 xl:grid-cols-3 xl:gap-10">
-    @for (article of articlesRelease(); track article.id) {
-      <out-article-home-card [article]="article" (click)="navigateToDetail(article)" />
-    } @empty {
-      <p>No hay informacion</p>
-    }
+  <div class="mx-auto p-6">
+    <div class="columns-1 gap-6 space-y-6 md:columns-3 md:gap-10 md:space-y-10">
+      <!-- Render dinámico -->
+      @for (article of articlesRelease(); track article.id) {
+        <out-article-home-card [article]="article" (click)="navigateToDetail(article)" />
+      } @empty {
+        <p>No hay informacion</p>
+      }
+    </div>
   </div>
 </main>

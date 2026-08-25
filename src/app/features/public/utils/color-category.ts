@@ -1,5 +1,7 @@
 import { ArticleCategory } from '../enums';
 
+export const textTeal600: string = '#009689';
+
 export const getColorCategory = (section: ArticleCategory): string => {
   switch (section) {
     case ArticleCategory.POETRY:

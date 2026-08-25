@@ -2,6 +2,7 @@
   <out-title-page
     [text]="articleSelected()?.titleCategory"
     [category]="articleSelected()?.category"
+    [color]="color()"
     (return)="navigateToReleasePage(articleSelected()?.release)"
   />
 
@@ -13,7 +14,7 @@
         <h4 class="text-base text-gray-500 lg:text-lg">
           {{ articleSelected()?.authorArticle }}
         </h4>
-        <div class="h-px w-full {{ color() }}"></div>
+        <div class="h-px w-full" [style.backgroundColor]="color()"></div>
       </div>
 
       <!-- CONTENT -->
@@ -51,7 +52,13 @@
               </div>
             </div>
           }
-          <img [src]="articleSelected()?.image" class="rounded-lg" width="100%" alt="foto" />
+          <img
+            [src]="articleSelected()?.image"
+            appImgFallback="/assets/foto-libros.jpg"
+            class="rounded-lg"
+            width="100%"
+            alt="foto"
+          />
           <span
             class="text-sm text-gray-500"
             [innerHTML]="articleSelected()?.references | safeHtml"

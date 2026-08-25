@@ -1,11 +1,14 @@
 <div
-  class="cursor-pointer overflow-hidden rounded-lg bg-white shadow-md transition-all transition-discrete hover:shadow-xl {{
-    hoverColor()
-  }}"
+  class="mb-4 cursor-pointer overflow-hidden rounded-lg bg-white shadow-md transition-all transition-discrete hover:shadow-xl md:mb-10"
+  /* [style.backgroundColor]="article()?.hoverColor" */
 >
   <div class="flex flex-col gap-5">
     <div class="w-full">
-      <img [src]="article()?.imageUrl" class="w-full rounded-t-lg" />
+      <img
+        [src]="article()?.imageUrl"
+        class="w-full rounded-t-lg"
+        appImgFallback="/assets/foto-libros.jpg"
+      />
       <div class="h-[6px] w-full" [style.backgroundColor]="article()?.color"></div>
     </div>
 

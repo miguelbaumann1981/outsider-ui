@@ -14,13 +14,14 @@ import { LocalStorageService } from '@/core/services/local-storage.service';
 import { HomeService } from '../../services/home.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TitlePage } from '@/shared/components/title-page/title-page';
-import { getColorCategory, publicLayoutPage } from '../../utils';
+import { publicLayoutPage, textTeal600 } from '../../utils';
 import { AnyCategory } from '../../types';
-import { ArticleDetail } from '../../interfaces';
+import { ArticleDetail, LayoutArticlesApi } from '../../interfaces';
+import { ImgFallbackDirective } from '../../directives';
 
 @Component({
   selector: 'out-article-detail-page',
-  imports: [SafeHtmlPipe, TitlePage],
+  imports: [SafeHtmlPipe, TitlePage, ImgFallbackDirective],
   templateUrl: './article-detail-page.html',
   styles: `
     .content-article,
@@ -46,16 +47,19 @@ export class ArticleDetailPage implements OnInit {
   });
   articleSelected = signal<AnyCategory>({} as AnyCategory);
   layoutPage = signal<string>(publicLayoutPage);
-  color = computed<string>(() => {
-    return getColorCategory(this.articleSelected()?.category);
-  });
+  layoutArticlesApi = signal<LayoutArticlesApi[]>([]);
 
-  texto: string = '';
+  color = computed<string>(() => {
+    return (
+      this.layoutArticlesApi().find((elem) => elem.category === this.articleDetail().category)
+        ?.color?.solid ?? textTeal600
+    );
+  });
 
   ngOnInit(): void {
     this.getRouteParams();
+    this.getLayoutArticles();
     this.getArticleData();
-    // console.log(this.texto.replaceAll('"', "'"));
   }
 
   getRouteParams(): void {
@@ -75,6 +79,15 @@ export class ArticleDetailPage implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((article) => {
         this.articleSelected.set(article);
+      });
+  }
+
+  getLayoutArticles(): void {
+    this.homeService
+      .getLayoutArticles()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((layoutData) => {
+        this.layoutArticlesApi.set(layoutData);
       });
   }
 
