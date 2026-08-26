@@ -1,3 +1,5 @@
+@let loading = isLoadingReleases() || isLoadingArticles() || isLoadingLayout();
+
 <main class="flex flex-col gap-5">
   <!-- SLOGAN -->
   @if (releaseLocalStorage() === 'current') {
@@ -15,15 +17,32 @@
     </div>
   }
 
-  <!-- CARDS -->
-  <div class="mx-auto p-6">
-    <div class="columns-1 gap-6 space-y-6 md:columns-3 md:gap-10 md:space-y-10">
-      <!-- Render dinámico -->
-      @for (article of articlesRelease(); track article.id) {
-        <out-article-home-card [article]="article" (click)="navigateToDetail(article)" />
-      } @empty {
-        <p>No hay informacion</p>
-      }
+  @if (loading) {
+    <div>
+      <div class="mx-auto p-6">
+        <div class="columns-1 gap-6 space-y-6 md:columns-3 md:gap-10 md:space-y-10">
+          @for (item of [1, 2, 3, 4, 5, 6]; track item) {
+            <out-skeleton-card />
+          }
+        </div>
+      </div>
     </div>
-  </div>
+  } @else {
+    @if (errorMessageApi()) {
+      <div class="w-full">
+        <div role="alert" class="alert alert-error alert-soft w-full">
+          <span class="text-xl font-semibold">{{ errorMessageApi() }}</span>
+        </div>
+      </div>
+    } @else {
+      <!-- CARDS -->
+      <div class="mx-auto p-6">
+        <div class="columns-1 gap-6 space-y-6 md:columns-3 md:gap-10 md:space-y-10">
+          @for (article of articlesRelease(); track article.id) {
+            <out-article-home-card [article]="article" (click)="navigateToDetail(article)" />
+          }
+        </div>
+      </div>
+    }
+  }
 </main>

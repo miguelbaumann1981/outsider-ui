@@ -60,3 +60,13 @@ body {
   font-weight: 400;
   font-style: normal;
 }
+
+.spinner-container {
+  width: 100%;
+  min-height: 100px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}

@@ -11,10 +11,11 @@ import { TitlePage } from '@/shared/components/title-page/title-page';
 import { publicLayoutPage } from '../../utils';
 import { ArticleCategory } from '../../types';
 import { HomeService, ReleasesService } from '../../services';
+import { Spinner } from '@/shared/components/spinner/spinner';
 
 @Component({
   selector: 'out-releases-page',
-  imports: [NgClass, ReleaseMonthPipe, TitlePage],
+  imports: [NgClass, ReleaseMonthPipe, TitlePage, Spinner],
   templateUrl: './releases-page.html',
 })
 export class ReleasesPage implements OnInit {
@@ -25,6 +26,9 @@ export class ReleasesPage implements OnInit {
   private destroyRef = inject(DestroyRef);
   router = inject(Router);
 
+  isLoadingReleases = signal(false);
+  isLoadingArticles = signal(false);
+  errorMessageApi = signal<string>('');
   releases = signal<ReleaseObj[]>([]);
   releaseSelected = signal<Release>(
     (this.localStorageService.getItem('release') as Release) ?? 'current',
@@ -38,32 +42,52 @@ export class ReleasesPage implements OnInit {
   }
 
   getReleasesApi(): void {
+    this.isLoadingReleases.set(true);
     this.releasesService
       .getReleases()
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((data) => {
-        this.releases.set(
-          data?.releases
-            .map((item) => ({
-              id: item.id,
-              index: item.index,
-              month: item.month,
-              year: item.year,
-              release: item.release,
-              articles: this.getArticlesByRelease(item.release),
-              name: item.name,
-            }))
-            .sort((a, b) => b.index - a.index),
-        );
+      .subscribe({
+        next: (data) => {
+          this.releases.set(
+            data?.releases
+              .map((item) => ({
+                id: item.id,
+                index: item.index,
+                month: item.month,
+                year: item.year,
+                release: item.release,
+                articles: this.getArticlesByRelease(item.release),
+                name: item.name,
+              }))
+              .sort((a, b) => b.index - a.index),
+          );
+        },
+        error: (error) => {
+          this.errorMessageApi.set(error ?? this.i18n.common.serverError);
+          this.isLoadingReleases.set(false);
+        },
+        complete: () => {
+          this.isLoadingReleases.set(false);
+        },
       });
   }
 
   getArticlesData(): void {
+    this.isLoadingArticles.set(false);
     this.homeService
       .getAllArticles()
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((articlesData) => {
-        this.articlesApi.set(articlesData);
+      .subscribe({
+        next: (articlesData) => {
+          this.articlesApi.set(articlesData);
+        },
+        error: (error) => {
+          this.errorMessageApi.set(error ?? this.i18n.common.serverError);
+          this.isLoadingArticles.set(false);
+        },
+        complete: () => {
+          this.isLoadingArticles.set(false);
+        },
       });
   }
 

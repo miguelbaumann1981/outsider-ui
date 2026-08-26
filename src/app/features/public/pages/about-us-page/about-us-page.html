@@ -2,44 +2,58 @@
   <out-title-page [text]="i18n.menu.aboutUs" [icon]="'people_alt'" (return)="navigateToHome()" />
 
   <div class="rounded-lg border border-gray-200 bg-white px-4 py-8 shadow-lg lg:px-10">
-    <div class="flex flex-col gap-8">
-      <div
-        class="content-info text-base lg:text-lg"
-        [innerHTML]="info()?.mainText | safeHtml"
-      ></div>
-
-      <div class="flex flex-col gap-5">
-        <h2 class="text-lg font-semibold lg:text-2xl">{{ i18n.aboutUs.subtitle }}</h2>
-
-        <div class="flex flex-col gap-10">
-          @for (
-            collaborator of info()?.collaborators;
-            track collaborator.name;
-            let index = $index
-          ) {
-            <div
-              class="flex flex-col-reverse gap-8"
-              [ngClass]="(index + 1) % 2 === 1 ? 'lg:flex-row' : 'lg:flex-row-reverse'"
-            >
-              <img
-                class="w-full rounded-lg shadow-lg lg:w-[400px]"
-                [src]="collaborator.picture"
-                [alt]="'Foto ' + collaborator.name"
-              />
-              <div
-                class="flex flex-col gap-3"
-                [ngClass]="(index + 1) % 2 === 1 ? 'lg:text-left' : 'lg:text-right'"
-              >
-                <h3 class="text-accent text-base font-semibold lg:text-3xl">
-                  {{ collaborator.name }}
-                </h3>
-                <hr class="border-gray-300" />
-                <div class="content-info" [innerHTML]="collaborator.text | safeHtml"></div>
-              </div>
-            </div>
-          }
-        </div>
+    @if (isLoading()) {
+      <div class="spinner-container h-[600px]">
+        <out-spinner />
       </div>
-    </div>
+    } @else {
+      @if (errorMessageApi()) {
+        <div class="w-full">
+          <div role="alert" class="alert alert-error alert-soft w-full">
+            <span class="text-xl font-semibold">{{ errorMessageApi() }}</span>
+          </div>
+        </div>
+      } @else {
+        <div class="flex flex-col gap-8">
+          <div
+            class="content-info text-base lg:text-lg"
+            [innerHTML]="info()?.mainText | safeHtml"
+          ></div>
+
+          <div class="flex flex-col gap-5">
+            <h2 class="text-lg font-semibold lg:text-2xl">{{ i18n.aboutUs.subtitle }}</h2>
+
+            <div class="flex flex-col gap-10">
+              @for (
+                collaborator of info()?.collaborators;
+                track collaborator.name;
+                let index = $index
+              ) {
+                <div
+                  class="flex flex-col-reverse gap-8"
+                  [ngClass]="(index + 1) % 2 === 1 ? 'lg:flex-row' : 'lg:flex-row-reverse'"
+                >
+                  <img
+                    class="w-full rounded-lg shadow-lg lg:w-[400px]"
+                    [src]="collaborator.picture"
+                    [alt]="'Foto ' + collaborator.name"
+                  />
+                  <div
+                    class="flex flex-col gap-3"
+                    [ngClass]="(index + 1) % 2 === 1 ? 'lg:text-left' : 'lg:text-right'"
+                  >
+                    <h3 class="text-accent text-base font-semibold lg:text-3xl">
+                      {{ collaborator.name }}
+                    </h3>
+                    <hr class="border-gray-300" />
+                    <div class="content-info" [innerHTML]="collaborator.text | safeHtml"></div>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+      }
+    }
   </div>
 </section>

@@ -18,10 +18,12 @@ import { publicLayoutPage, textTeal600 } from '../../utils';
 import { AnyCategory } from '../../types';
 import { ArticleDetail, LayoutArticlesApi } from '../../interfaces';
 import { ImgFallbackDirective } from '../../directives';
+import { Spinner } from '@/shared/components/spinner/spinner';
+import es from '@/i18n/es.json';
 
 @Component({
   selector: 'out-article-detail-page',
-  imports: [SafeHtmlPipe, TitlePage, ImgFallbackDirective],
+  imports: [SafeHtmlPipe, TitlePage, ImgFallbackDirective, Spinner],
   templateUrl: './article-detail-page.html',
   styles: `
     .content-article,
@@ -34,6 +36,7 @@ import { ImgFallbackDirective } from '../../directives';
   encapsulation: ViewEncapsulation.None,
 })
 export class ArticleDetailPage implements OnInit {
+  protected readonly i18n = es;
   private localStorageService = inject(LocalStorageService);
   private homeService = inject(HomeService);
   private activatedRoute = inject(ActivatedRoute);
@@ -47,6 +50,9 @@ export class ArticleDetailPage implements OnInit {
   });
   articleSelected = signal<AnyCategory>({} as AnyCategory);
   layoutPage = signal<string>(publicLayoutPage);
+  isLoadingArticle = signal(false);
+  isLoadingLayout = signal(false);
+  errorMessageApi = signal<string>('');
   layoutArticlesApi = signal<LayoutArticlesApi[]>([]);
 
   color = computed<string>(() => {
@@ -73,21 +79,41 @@ export class ArticleDetailPage implements OnInit {
   }
 
   getArticleData(): void {
+    this.isLoadingArticle.set(true);
     const { category, release, slug } = this.articleDetail();
     this.homeService
       .getArticleBySlug(release as Release, slug, category)
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((article) => {
-        this.articleSelected.set(article);
+      .subscribe({
+        next: (article) => {
+          this.articleSelected.set(article);
+        },
+        error: (error) => {
+          this.errorMessageApi.set(error ?? this.i18n.common.serverError);
+          this.isLoadingArticle.set(false);
+        },
+        complete: () => {
+          this.isLoadingArticle.set(false);
+        },
       });
   }
 
   getLayoutArticles(): void {
+    this.isLoadingLayout.set(true);
     this.homeService
       .getLayoutArticles()
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((layoutData) => {
-        this.layoutArticlesApi.set(layoutData);
+      .subscribe({
+        next: (layoutData) => {
+          this.layoutArticlesApi.set(layoutData);
+        },
+        error: (error) => {
+          this.errorMessageApi.set(error ?? this.i18n.common.serverError);
+          this.isLoadingLayout.set(false);
+        },
+        complete: () => {
+          this.isLoadingLayout.set(false);
+        },
       });
   }
 

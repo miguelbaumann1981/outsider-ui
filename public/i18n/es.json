@@ -1,6 +1,7 @@
 {
   "common": {
-    "back": "Volver"
+    "back": "Volver",
+    "serverError": "Error inesperado. Vuelva a intentarlo pasado unos minutos."
   },
   "slogan": "Revista Literaria Subterránea",
   "menu": {

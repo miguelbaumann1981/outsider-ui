@@ -8,10 +8,11 @@ import { AboutUsApi } from '../../interfaces';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { SafeHtmlPipe } from '../../pipes';
 import { NgClass } from '@angular/common';
+import { Spinner } from '@/shared/components/spinner/spinner';
 
 @Component({
   selector: 'out-about-us-page',
-  imports: [TitlePage, SafeHtmlPipe, NgClass],
+  imports: [TitlePage, SafeHtmlPipe, NgClass, Spinner],
   templateUrl: './about-us-page.html',
   styles: `
     .content-info {
@@ -29,6 +30,8 @@ export class AboutUsPage implements OnInit {
   private aboutUsService = inject(AboutUsService);
 
   layoutPage = signal<string>(publicLayoutPage);
+  isLoading = signal(false);
+  errorMessageApi = signal<string>('');
   info = signal<AboutUsApi>({} as AboutUsApi);
 
   ngOnInit(): void {
@@ -36,11 +39,21 @@ export class AboutUsPage implements OnInit {
   }
 
   getAboutUsInfo(): void {
+    this.isLoading.set(true);
     this.aboutUsService
       .getAboutUsInfo()
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((data) => {
-        this.info.set(data);
+      .subscribe({
+        next: (data) => {
+          this.info.set(data);
+        },
+        error: (error) => {
+          this.errorMessageApi.set(error ?? this.i18n.common.serverError);
+          this.isLoading.set(false);
+        },
+        complete: () => {
+          this.isLoading.set(false);
+        },
       });
   }
 

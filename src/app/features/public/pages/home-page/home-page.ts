@@ -20,10 +20,11 @@ import { Router } from '@angular/router';
 import { Release } from '../../types';
 import { Release as ReleaseEnum } from '../../enums/release.enum';
 import { HomeService, ReleasesService } from '../../services';
+import { SkeletonCard } from '@/shared/components/skeleton-card/skeleton-card';
 
 @Component({
   selector: 'out-home-page',
-  imports: [ArticleHomeCard],
+  imports: [ArticleHomeCard, SkeletonCard],
   templateUrl: './home-page.html',
   styles: `
     .slogan {
@@ -55,6 +56,10 @@ export class HomePage implements OnInit, AfterViewInit {
   router = inject(Router);
 
   title = signal('Outsider');
+  isLoadingArticles = signal(false);
+  isLoadingLayout = signal(false);
+  isLoadingReleases = signal(false);
+  errorMessageApi = signal<string>('');
   releaseDefault = signal<Release>('current');
   releaseLocalStorage = computed<Release>(
     () => (this.localStorageService.getItem('release') as Release) ?? this.releaseDefault(),
@@ -115,29 +120,59 @@ export class HomePage implements OnInit, AfterViewInit {
   }
 
   getArticlesHomePage(): void {
+    this.isLoadingArticles.set(true);
     this.homeService
       .getArticles(this.releaseLocalStorage() as unknown as ReleaseEnum)
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((articlesData) => {
-        this.articlesApi.set(articlesData);
+      .subscribe({
+        next: (articlesData) => {
+          this.articlesApi.set(articlesData);
+        },
+        error: (error) => {
+          this.errorMessageApi.set(error ?? this.i18n.common.serverError);
+          this.isLoadingArticles.set(false);
+        },
+        complete: () => {
+          this.isLoadingArticles.set(false);
+        },
       });
   }
 
   getLayoutArticles(): void {
+    this.isLoadingLayout.set(true);
     this.homeService
       .getLayoutArticles()
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((layoutData) => {
-        this.layoutArticlesApi.set(layoutData);
+      .subscribe({
+        next: (layoutData) => {
+          this.layoutArticlesApi.set(layoutData);
+        },
+        error: (error) => {
+          this.errorMessageApi.set(error ?? this.i18n.common.serverError);
+          this.isLoadingLayout.set(false);
+        },
+        complete: () => {
+          this.isLoadingLayout.set(false);
+        },
       });
   }
 
   getReleasesApi(): void {
+    this.isLoadingReleases.set(true);
     this.releasesService
       .getReleases()
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((data) => {
-        this.releases.set(data?.releases);
+      .subscribe({
+        next: (data) => {
+          this.releases.set(data?.releases);
+        },
+        error: (error) => {
+          this.errorMessageApi.set(error ?? this.i18n.common.serverError);
+          this.isLoadingReleases.set(false);
+        },
+        complete: () => {
+          this.isLoadingReleases.set(false);
+        },
       });
   }
 
