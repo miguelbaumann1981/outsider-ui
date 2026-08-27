@@ -15,6 +15,7 @@ import {
 } from '@angular/forms/signals';
 import { ContactFormModel } from '../../interfaces';
 import { UpperCasePipe, NgClass } from '@angular/common';
+import { ContactService } from '../../services';
 
 @Component({
   selector: 'out-contact-page',
@@ -24,6 +25,7 @@ import { UpperCasePipe, NgClass } from '@angular/common';
 export class ContactPage {
   protected readonly i18n = es;
   router = inject(Router);
+  contactService = inject(ContactService);
 
   layoutPage = signal<string>(publicLayoutPage);
   minCharactersName = signal(3);
@@ -63,5 +65,19 @@ export class ContactPage {
     const formData = this.contactModel();
     console.log(formData);
     this.isLoading.set(false);
+
+    this.contactService.sendEmail(formData).subscribe({
+      next: () => {
+        // this.success.set(true);
+        // this.loading.set(false);
+        // this.form.reset();
+        console.log('Enviado!!!!!!!!!');
+      },
+      error: () => {
+        // this.error.set('No se pudo enviar el mensaje');
+        // this.loading.set(false);
+        console.log('Error!!!');
+      },
+    });
   }
 }
