@@ -11,6 +11,7 @@ import { provideClientHydration } from '@angular/platform-browser';
 import { provideHttpClient } from '@angular/common/http';
 import { LocalStorageService } from './core/services/local-storage.service';
 import { Release } from './features/public/enums';
+import { provideToastr } from 'ngx-toastr';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -22,5 +23,6 @@ export const appConfig: ApplicationConfig = {
       const localStorageService = inject(LocalStorageService);
       localStorageService.setItem('release', Release.CURRENT);
     }),
+    provideToastr(),
   ],
 };

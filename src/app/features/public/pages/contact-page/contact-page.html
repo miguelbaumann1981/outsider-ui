@@ -28,6 +28,7 @@
             }"
             placeholder="{{ i18n.contact.namePlaceholder }}"
             [formField]="contactForm.name"
+            [readOnly]="isLoading()"
           />
           @if (contactForm.name().touched() && contactForm.name().invalid()) {
             <ul>
@@ -55,6 +56,7 @@
             }"
             placeholder="{{ i18n.contact.emailPlaceholder }}"
             [formField]="contactForm.email"
+            [readOnly]="isLoading()"
           />
           @if (contactForm.email().touched() && contactForm.email().invalid()) {
             <ul>
@@ -81,6 +83,7 @@
             }"
             placeholder="{{ i18n.contact.messagePlaceholder }}"
             [formField]="contactForm.message"
+            [readOnly]="isLoading()"
           ></textarea>
           @if (contactForm.message().touched() && contactForm.message().invalid()) {
             <ul>
@@ -95,10 +98,10 @@
         <button
           type="submit"
           class="btn btn-accent mt-3 w-full"
-          [disabled]="contactForm().invalid()"
+          [disabled]="contactForm().invalid() || isLoading()"
         >
           @if (isLoading()) {
-            <span class="loading loading-spinner text-white"></span>
+            <span class="loading loading-spinner text-accent"></span>
           } @else {
             <span class="text-lg text-white">{{ i18n.contact.submit | uppercase }}</span>
           }

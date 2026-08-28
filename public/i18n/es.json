@@ -64,7 +64,11 @@
       "nameMinLength": "El número mínimo de caracteres para el nombre es",
       "messageMinLength": "El número mínimo de caracteres para el mensaje es",
       "emailPattern": "El formato del correo electrónico no es válido"
-    }
+    },
+    "successSendingTitle": "¡Felicidades!",
+    "successSendingSubtitle": "Tu mensaje ha sido enviado con éxito",
+    "errorSendingTitle": "Error inesperado",
+    "errorSendingSubtitle": "Tu mensaje no ha sido enviado. Inténtelo más tarde"
   },
   "aboutUs": {
     "subtitle": "¿Quiénes somos?"
