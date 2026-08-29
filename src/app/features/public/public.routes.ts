@@ -5,11 +5,13 @@ import { AboutUsPage } from './pages/about-us-page/about-us-page';
 import { ContactPage } from './pages/contact-page/contact-page';
 import { ReleasesPage } from './pages/releases-page/releases-page';
 import { ArticleDetailPage } from './pages/article-detail-page/article-detail-page';
+import { environment } from '@envs/environment.development';
+import { MaintenanceComponent } from '@/shared/components/maintenance/maintenance';
 
 export const publicRoutes: Routes = [
   {
     path: '',
-    component: PublicLayout,
+    component: environment.appIsActive ? PublicLayout : MaintenanceComponent,
     children: [
       {
         path: '',

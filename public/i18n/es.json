@@ -1,7 +1,8 @@
 {
   "common": {
     "back": "Volver",
-    "serverError": "Error inesperado. Vuelva a intentarlo pasado unos minutos."
+    "serverError": "Error inesperado. Vuelva a intentarlo pasado unos minutos.",
+    "underConstruction": "Aplicación en construcción"
   },
   "slogan": "Revista Literaria Subterránea",
   "menu": {
