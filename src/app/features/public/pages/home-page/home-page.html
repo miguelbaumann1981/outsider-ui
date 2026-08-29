@@ -4,10 +4,14 @@
   <!-- SLOGAN -->
   @if (releaseLocalStorage() === 'current') {
     <div class="flex items-center justify-center">
-      <h1 id="slogan" class="slogan flex flex-col gap-2">
-        <span class="text-info title">{{ title().toUpperCase() }}</span>
-        <span class="subtitle special-elite-regular">{{ i18n.slogan }}</span>
-      </h1>
+      <div class="flex w-full flex-col gap-2">
+        <h1 id="title" class="title">
+          <span class="text-info engagement-regular">{{ title() }}</span>
+        </h1>
+        <h2 id="slogan" class="slogan">
+          <span class="special-elite-regular">{{ i18n.slogan }}</span>
+        </h2>
+      </div>
     </div>
   } @else {
     <div class="flex items-center justify-center">

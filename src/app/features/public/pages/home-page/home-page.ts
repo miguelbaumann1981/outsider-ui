@@ -27,22 +27,26 @@ import { SkeletonCard } from '@/shared/components/skeleton-card/skeleton-card';
   imports: [ArticleHomeCard, SkeletonCard],
   templateUrl: './home-page.html',
   styles: `
-    .slogan {
-      color: gray;
+    .title {
+      font-size: clamp(3rem, 12rem, 7vw);
       line-height: 1.2;
       box-sizing: border-box;
-      padding: 2%;
       width: 100%;
       text-align: center;
       perspective: 500px;
       font-weight: 500;
       text-shadow: 1px 1px 2px rgba($color: #000, $alpha: 0.5);
-      .title {
-        font-size: clamp(2rem, 10rem, 4vw);
-      }
-      .subtitle {
-        font-size: clamp(0.75rem, 6rem, 2.5vw);
-      }
+    }
+    .slogan {
+      color: gray;
+      line-height: 1.2;
+      box-sizing: border-box;
+      width: 100%;
+      text-align: center;
+      perspective: 500px;
+      font-weight: 500;
+      text-shadow: 1px 1px 2px rgba($color: #000, $alpha: 0.5);
+      font-size: clamp(0.75rem, 6rem, 2.5vw);
     }
   `,
 })
@@ -106,11 +110,23 @@ export class HomePage implements OnInit, AfterViewInit {
     const { SplitText } = await import('gsap/SplitText');
     gsap.registerPlugin(SplitText);
 
-    const split = new SplitText('#slogan', {
+    const splitTitle = new SplitText('#title', {
       type: 'chars',
     });
 
-    gsap.from(split.chars, {
+    gsap.from(splitTitle.chars, {
+      x: 150,
+      opacity: 0,
+      duration: 1.5,
+      ease: 'power4',
+      stagger: 0.04,
+    });
+
+    const splitSlogan = new SplitText('#slogan', {
+      type: 'chars',
+    });
+
+    gsap.from(splitSlogan.chars, {
       x: 150,
       opacity: 0,
       duration: 0.7,
