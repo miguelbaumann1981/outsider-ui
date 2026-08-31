@@ -9,7 +9,8 @@
     "aboutUs": "Sobre nosotros",
     "lastReleases": "Números anteriores",
     "contact": "Contacto",
-    "allReleases": "Todos los números"
+    "allReleases": "Todos los números",
+    "privateZone": "Zona privada"
   },
   "category": {
     "editorialArticle": "Artículo de opinión",
@@ -73,5 +74,25 @@
   },
   "aboutUs": {
     "subtitle": "¿Quiénes somos?"
+  },
+  "auth": {
+    "login": "Iniciar sesión",
+    "back": "Volver",
+    "emailPlaceholder": "Añade un correo electrónico...",
+    "passwordPlaceholder": "Intruduzca la contraseña...",
+    "access": "Acceder",
+    "validations": {
+      "emailRequired": "El correo electrónico es obligatorio",
+      "emailPattern": "El formato del correo electrónico no es válido",
+      "passwordRequired": "La contraseña es obligatoria"
+    },
+    "errors": {
+      "errorAccessTitle": "Error al acceder",
+      "errorAccessSubtitle": "El correo o la contraseña no son válidos. Revise de nuevo"
+    },
+    "success": {
+      "accessTitle": "¡Bienvenido/a!",
+      "accessSubtitle": "Estás en tu panel de administrador/a"
+    }
   }
 }

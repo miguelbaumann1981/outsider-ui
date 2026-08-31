@@ -1,1 +1,16 @@
-<h1>AUTH LAYOUT</h1>
+<div class="flex min-h-screen items-center justify-center">
+  <div class="w-full max-w-lg rounded-lg bg-white p-10 shadow-2xl max-lg:w-full max-lg:px-5">
+    <div class="flex justify-center">
+      <img src="/assets/Outsider-logo.png" alt="Logo Outsider" class="h-[50px] max-lg:h-[40px]" />
+    </div>
+
+    <router-outlet />
+
+    <div class="mt-8 flex justify-start">
+      <button class="btn btn-ghost text-primary" routerLink="/">
+        <span class="material-icons">arrow_back</span>
+        <span>{{ i18n.auth.back }}</span>
+      </button>
+    </div>
+  </div>
+</div>

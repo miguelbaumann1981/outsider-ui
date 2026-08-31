@@ -1,0 +1,78 @@
+<h1 class="corp-color special-elite-regular my-6 text-center text-2xl font-semibold max-lg:text-lg">
+  {{ i18n.auth.login }}
+</h1>
+
+<form [formRoot]="loginForm" class="w-full" (submit)="onSubmit($event)">
+  <!-- #region EMAIL FIELD -->
+  <div class="mb-6">
+    <label
+      class="input input-lg w-full text-sm lg:text-base"
+      [ngClass]="{
+        'border border-red-300':
+          loginForm.email().touched() && loginForm.email().invalid() && loginForm.email().errors(),
+      }"
+    >
+      <app-icon-email />
+      <input
+        type="email "
+        class="w-full"
+        placeholder="{{ i18n.auth.emailPlaceholder }}"
+        [formField]="loginForm.email"
+        [readOnly]="isLoading()"
+      />
+    </label>
+    @if (loginForm.email().touched() && loginForm.email().invalid()) {
+      <ul class="mt-2">
+        @for (error of loginForm.email().errors(); track error) {
+          <li class="text-error text-sm">{{ error.message }}</li>
+        }
+      </ul>
+    }
+  </div>
+  <!-- #endregion EMAIL FIELD -->
+
+  <!-- #region PASSWORD FIELD -->
+  <div class="mb-6">
+    <label
+      class="input input-lg w-full text-sm lg:text-base"
+      [ngClass]="{
+        'border border-red-300':
+          loginForm.password().touched() &&
+          loginForm.password().invalid() &&
+          loginForm.password().errors(),
+      }"
+    >
+      <app-icon-password />
+      <input
+        type="{{ showPassword() ? 'text' : 'password' }}"
+        class="w-full"
+        placeholder="{{ i18n.auth.passwordPlaceholder }}"
+        [formField]="loginForm.password"
+        [readOnly]="isLoading()"
+      />
+      <span class="material-icons cursor-pointer" (click)="togglePassword()">{{
+        showPassword() ? 'visibility_off' : 'visibility'
+      }}</span>
+    </label>
+    @if (loginForm.password().touched() && loginForm.password().invalid()) {
+      <ul class="mt-2">
+        @for (error of loginForm.password().errors(); track error) {
+          <li class="text-error text-sm">{{ error.message }}</li>
+        }
+      </ul>
+    }
+  </div>
+  <!-- #endregion PASSWORD FIELD -->
+
+  <button
+    type="submit"
+    class="btn btn-accent btn-lg mb-6 w-full max-lg:text-sm"
+    [disabled]="loginForm().invalid() || isLoading()"
+  >
+    @if (isLoading()) {
+      <span class="loading loading-spinner text-accent"></span>
+    } @else {
+      <span class="text-lg text-white">{{ i18n.auth.access }}</span>
+    }
+  </button>
+</form>
