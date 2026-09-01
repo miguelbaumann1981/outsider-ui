@@ -1,1 +1,23 @@
-<p>about-us-crud works!</p>,
+<div class="flex flex-col gap-4">
+  <out-subtitle-page [text]="'Sobre nosotros'" [icon]="'people_alt'" />
+
+  <form [formRoot]="aboutUsForm" (submit)="onSubmit($event)">
+    <fieldset class="fieldset w-full">
+      <legend class="fieldset-legend text-base max-lg:text-sm">
+        {{ 'mainTextLabel' }}
+        <span class="text-error">*</span>
+      </legend>
+
+      <div class="editor">
+        <ngx-editor-menu [editor]="editor" [toolbar]="toolbar"></ngx-editor-menu>
+        <ngx-editor [editor]="editor" [formField]="aboutUsForm.mainText"></ngx-editor>
+      </div>
+    </fieldset>
+
+    <div class="flex flex-row justify-end gap-2">
+      <button type="submit" class="btn btn-primary">
+        {{ 'Save' }}
+      </button>
+    </div>
+  </form>
+</div>
