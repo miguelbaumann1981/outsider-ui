@@ -1,5 +1,4 @@
 import { Routes } from '@angular/router';
-import { MaintenanceComponent } from './shared/components/maintenance/maintenance';
 
 export const routes: Routes = [
   {

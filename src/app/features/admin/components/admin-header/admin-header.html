@@ -1,0 +1,41 @@
+<div class="navbar bg-neutral text-neutral-content px-2 shadow-sm lg:px-12">
+  <div class="navbar-start">
+    <div class="dropdown">
+      <div tabindex="0" role="button" class="btn btn-ghost lg:hidden">
+        <out-icon-menu />
+      </div>
+      <ul
+        tabindex="-1"
+        class="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow"
+      >
+        @for (item of menu(); track item.text) {
+          <li>
+            <a>{{ item.text }}</a>
+          </li>
+        }
+      </ul>
+    </div>
+
+    <div class="flex items-center gap-5">
+      <a class="cursor-pointer hover:opacity-75" (click)="navigateToMainPage()">
+        <img src="/assets/Outsider-logo-white.png" alt="Logo Outsider" class="h-[45px]" />
+      </a>
+    </div>
+  </div>
+
+  <div class="navbar-center hidden lg:flex">
+    <ul class="menu menu-horizontal hidden px-1 lg:flex">
+      @for (item of menu(); track item.text) {
+        <li class="px-5 text-sm font-semibold hover:text-gray-300 xl:text-lg">
+          <a [routerLink]="item.url" routerLinkActive="text-teal-600">{{ item.text }}</a>
+        </li>
+      }
+    </ul>
+  </div>
+
+  <div class="navbar-end">
+    <a class="btn btn-outline btn-secondary text-white" [routerLink]="'/auth'">{{
+      i18n.menu.logout
+    }}</a>
+  </div>
+</div>

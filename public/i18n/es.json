@@ -10,7 +10,12 @@
     "lastReleases": "Números anteriores",
     "contact": "Contacto",
     "allReleases": "Todos los números",
-    "privateZone": "Zona privada"
+    "privateZone": "Zona privada",
+    "logout": "Cerrar sesión",
+    "aboutUsCrud": "Sobre nosotros",
+    "releasesCrud": "Lanzamientos",
+    "articlesCrud": "Artículos",
+    "homeLayoutCrud": "Página de inicio"
   },
   "category": {
     "editorialArticle": "Artículo de opinión",
@@ -93,6 +98,12 @@
     "success": {
       "accessTitle": "¡Bienvenido/a!",
       "accessSubtitle": "Estás en tu panel de administrador/a"
+    }
+  },
+  "admin": {
+    "layout": {
+      "hi": "Hola",
+      "welcome": "Estás en tu zona de administración."
     }
   }
 }

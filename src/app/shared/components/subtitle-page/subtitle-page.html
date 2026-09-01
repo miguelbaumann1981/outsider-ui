@@ -1,0 +1,13 @@
+<div class="flex items-center justify-between">
+  <div class="flex items-center gap-3">
+    @if (icon()) {
+      <span class="material-icons icon" [style.color]="colorIcon()"> {{ icon() }} </span>
+    }
+    <h2 class="text-lg font-semibold lg:text-3xl">{{ text() }}</h2>
+  </div>
+
+  <button class="btn btn-accent">
+    <span class="material-icons"> add </span>
+    <span>{{ 'Crear artículo' }}</span>
+  </button>
+</div>

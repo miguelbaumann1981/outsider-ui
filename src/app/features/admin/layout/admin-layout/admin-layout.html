@@ -1,1 +1,14 @@
-<h1>ADMIN LAYOUT</h1>
+@let username = authService.user()?.name;
+
+<out-admin-header />
+
+<section [class]="layoutPage()">
+  <h1 class="special-elite-regular mt-3 text-base font-semibold lg:text-3xl">
+    {{ i18n.admin.layout.hi }}, <span class="text-accent">{{ username }}</span
+    >.
+    {{ i18n.admin.layout.welcome }}
+  </h1>
+  <div class="rounded-lg border border-gray-200 bg-white px-4 py-8 shadow-lg lg:px-10">
+    <router-outlet />
+  </div>
+</section>
