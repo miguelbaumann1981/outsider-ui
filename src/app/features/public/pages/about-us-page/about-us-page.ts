@@ -1,5 +1,13 @@
 import { TitlePage } from '@/shared/components/title-page/title-page';
-import { Component, DestroyRef, inject, OnInit, signal, ViewEncapsulation } from '@angular/core';
+import {
+  Component,
+  computed,
+  DestroyRef,
+  inject,
+  OnInit,
+  signal,
+  ViewEncapsulation,
+} from '@angular/core';
 import es from '@/i18n/es.json';
 import { Router } from '@angular/router';
 import { publicLayoutPage } from '../../utils';
@@ -9,6 +17,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { SafeHtmlPipe } from '../../pipes';
 import { NgClass } from '@angular/common';
 import { Spinner } from '@/shared/components/spinner/spinner';
+
+type AboutUsViewState = 'loading' | 'error' | 'available' | 'empty';
 
 @Component({
   selector: 'out-about-us-page',
@@ -33,6 +43,12 @@ export class AboutUsPage implements OnInit {
   isLoading = signal(false);
   errorMessageApi = signal<string>('');
   info = signal<AboutUsApi>({} as AboutUsApi);
+  viewState = computed<AboutUsViewState>(() => {
+    if (this.isLoading()) return 'loading';
+    if (this.errorMessageApi()) return 'error';
+    if (this.info()?.isPublished && !this.info()?.isDraft) return 'available';
+    return 'empty';
+  });
 
   ngOnInit(): void {
     this.getAboutUsInfo();

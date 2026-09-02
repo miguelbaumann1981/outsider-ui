@@ -1,10 +1,8 @@
-export interface AboutUsApi {
-  id: string;
+export interface AboutUsCrud {
   mainText: string;
-  collaborators: Collaborator[];
+  collaborator: Collaborator;
   isDraft: boolean;
   isPublished: boolean;
-  collaborator: string;
 }
 
 export interface Collaborator {

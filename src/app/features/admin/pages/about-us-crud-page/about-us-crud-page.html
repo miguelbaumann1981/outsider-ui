@@ -2,22 +2,69 @@
   <out-subtitle-page [text]="'Sobre nosotros'" [icon]="'people_alt'" />
 
   <form [formRoot]="aboutUsForm" (submit)="onSubmit($event)">
-    <fieldset class="fieldset w-full">
-      <legend class="fieldset-legend text-base max-lg:text-sm">
-        {{ 'mainTextLabel' }}
-        <span class="text-error">*</span>
-      </legend>
+    <div class="grid grid-cols-2 gap-10">
+      <div class="col-span-2">
+        <fieldset class="fieldset w-full">
+          <legend class="fieldset-legend text-sm lg:text-base">
+            {{ 'mainTextLabel' }}
+            <span class="text-error">*</span>
+          </legend>
 
-      <div class="editor">
-        <ngx-editor-menu [editor]="editor" [toolbar]="toolbar"></ngx-editor-menu>
-        <ngx-editor [editor]="editor" [formField]="aboutUsForm.mainText"></ngx-editor>
+          <out-input-text-rich-form [formField]="aboutUsForm.mainText" />
+        </fieldset>
       </div>
-    </fieldset>
 
-    <div class="flex flex-row justify-end gap-2">
-      <button type="submit" class="btn btn-primary">
-        {{ 'Save' }}
-      </button>
+      <div class="col-span-2">
+        <h3>Colaboradores</h3>
+      </div>
+
+      <!-- #region BLOCK COLLABORATOR -->
+      <div class="flex flex-col gap-4">
+        <fieldset class="fieldset w-full">
+          <legend class="fieldset-legend text-sm lg:text-base">
+            {{ 'Colaborador 1' }}
+            <span class="text-error">*</span>
+          </legend>
+
+          <input type="text" class="input w-full" [formField]="aboutUsForm.collaborator?.name" />
+        </fieldset>
+
+        <fieldset class="fieldset w-full">
+          <legend class="fieldset-legend text-sm lg:text-base">
+            {{ 'Texto 1' }}
+            <span class="text-error">*</span>
+          </legend>
+
+          <out-input-text-rich-form [formField]="aboutUsForm.collaborator?.text" />
+        </fieldset>
+
+        <fieldset class="fieldset w-full">
+          <legend class="fieldset-legend text-sm lg:text-base">
+            {{ 'Imagen 1' }}
+            <span class="text-error">*</span>
+          </legend>
+
+          <input type="text" class="input w-full" [formField]="aboutUsForm.collaborator?.picture" />
+        </fieldset>
+
+        <div class="flex gap-3">
+          <button type="submit" class="btn btn-primary">
+            {{ 'Save' }}
+          </button>
+          <button type="submit" class="btn btn-error">
+            {{ 'Delete' }}
+          </button>
+        </div>
+      </div>
+      <!-- #endregion BLOCK COLLABORATOR -->
+
+      <div class="col-span-2">
+        <div class="flex flex-row justify-end gap-2">
+          <button type="submit" class="btn btn-primary">
+            {{ 'Save' }}
+          </button>
+        </div>
+      </div>
     </div>
   </form>
 </div>
