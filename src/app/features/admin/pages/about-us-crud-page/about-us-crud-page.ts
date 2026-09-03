@@ -24,7 +24,10 @@ export class AboutUsCrudPage {
 
   aboutUsModel = signal<AboutUsCrud>({
     mainText: '',
-    collaborator: { name: '', text: '', picture: '' },
+    collaborators: [
+      { name: '', text: '', picture: '' },
+      { name: '', text: '', picture: '' },
+    ],
     isDraft: false,
     isPublished: false,
   });

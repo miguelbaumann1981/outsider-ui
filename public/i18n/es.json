@@ -79,7 +79,17 @@
     "errorSendingSubtitle": "Tu mensaje no ha sido enviado. Inténtelo más tarde"
   },
   "aboutUs": {
-    "subtitle": "¿Quiénes somos?"
+    "subtitle": "¿Quiénes somos?",
+    "mainTextLabel": "Texto principal",
+    "collaborators": "Colaboradores",
+    "collaboratorNameLabel": "Nombre",
+    "collaboratorTextLabel": "Contenido",
+    "collaboratorPictureLabel": "Imagen",
+    "collaboratorNamePlaceholder": "Añada un nombre",
+    "collaboratorTextPlaceholder": "Añada un texto",
+    "collaboratorPicturePlaceholder": "Añada una imagen",
+    "saveAsDraft": "Guardar",
+    "publish": "Publicar"
   },
   "auth": {
     "login": "Iniciar sesión",

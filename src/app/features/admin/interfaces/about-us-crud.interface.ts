@@ -1,6 +1,6 @@
 export interface AboutUsCrud {
   mainText: string;
-  collaborator: Collaborator;
+  collaborators: Collaborator[];
   isDraft: boolean;
   isPublished: boolean;
 }

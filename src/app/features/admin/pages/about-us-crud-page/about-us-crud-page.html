@@ -1,69 +1,127 @@
 <div class="flex flex-col gap-4">
-  <out-subtitle-page [text]="'Sobre nosotros'" [icon]="'people_alt'" />
+  <out-subtitle-page [text]="i18n.menu.aboutUs" [icon]="'people_alt'" />
 
   <form [formRoot]="aboutUsForm" (submit)="onSubmit($event)">
-    <div class="grid grid-cols-2 gap-10">
-      <div class="col-span-2">
-        <fieldset class="fieldset w-full">
-          <legend class="fieldset-legend text-sm lg:text-base">
-            {{ 'mainTextLabel' }}
-            <span class="text-error">*</span>
-          </legend>
+    <div class="flex flex-col gap-10">
+      <fieldset class="fieldset w-full">
+        <legend class="fieldset-legend text-sm lg:text-base">
+          {{ i18n.aboutUs.mainTextLabel }}
+          <span class="text-error">*</span>
+        </legend>
 
-          <out-input-text-rich-form [formField]="aboutUsForm.mainText" />
-        </fieldset>
-      </div>
+        <out-input-text-rich-form
+          [formField]="aboutUsForm.mainText"
+          [ariaPlaceholder]="'hola...'"
+        />
+      </fieldset>
 
-      <div class="col-span-2">
-        <h3>Colaboradores</h3>
-      </div>
+      <h3 class="text-secondary m-0 text-base lg:text-2xl">{{ i18n.aboutUs.collaborators }}</h3>
 
       <!-- #region BLOCK COLLABORATOR -->
-      <div class="flex flex-col gap-4">
-        <fieldset class="fieldset w-full">
-          <legend class="fieldset-legend text-sm lg:text-base">
-            {{ 'Colaborador 1' }}
-            <span class="text-error">*</span>
-          </legend>
+      <div class="grid grid-cols-2 gap-10">
+        <div class="flex flex-col gap-4">
+          <fieldset class="fieldset w-full">
+            <legend class="fieldset-legend text-sm lg:text-base">
+              {{ i18n.aboutUs.collaboratorNameLabel }}
+              <span class="text-error">*</span>
+            </legend>
 
-          <input type="text" class="input w-full" [formField]="aboutUsForm.collaborator?.name" />
-        </fieldset>
+            <input
+              type="text"
+              class="input w-full"
+              [formField]="aboutUsForm.collaborators[0]?.name"
+              [placeholder]="i18n.aboutUs.collaboratorNamePlaceholder"
+            />
+          </fieldset>
 
-        <fieldset class="fieldset w-full">
-          <legend class="fieldset-legend text-sm lg:text-base">
-            {{ 'Texto 1' }}
-            <span class="text-error">*</span>
-          </legend>
+          <fieldset class="fieldset w-full">
+            <legend class="fieldset-legend text-sm lg:text-base">
+              {{ i18n.aboutUs.collaboratorTextLabel }}
+              <span class="text-error">*</span>
+            </legend>
 
-          <out-input-text-rich-form [formField]="aboutUsForm.collaborator?.text" />
-        </fieldset>
+            <out-input-text-rich-form [formField]="aboutUsForm.collaborators[0]?.text" />
+          </fieldset>
+        </div>
 
-        <fieldset class="fieldset w-full">
-          <legend class="fieldset-legend text-sm lg:text-base">
-            {{ 'Imagen 1' }}
-            <span class="text-error">*</span>
-          </legend>
+        <div class="flex flex-col gap-4">
+          <fieldset class="fieldset w-full">
+            <legend class="fieldset-legend text-sm lg:text-base">
+              {{ i18n.aboutUs.collaboratorPictureLabel }}
+              <span class="text-error">*</span>
+            </legend>
 
-          <input type="text" class="input w-full" [formField]="aboutUsForm.collaborator?.picture" />
-        </fieldset>
+            <input
+              type="text"
+              class="input w-full"
+              [formField]="aboutUsForm.collaborators[0]?.picture"
+              [placeholder]="i18n.aboutUs.collaboratorPicturePlaceholder"
+            />
+          </fieldset>
 
-        <div class="flex gap-3">
-          <button type="submit" class="btn btn-primary">
-            {{ 'Save' }}
-          </button>
-          <button type="submit" class="btn btn-error">
-            {{ 'Delete' }}
-          </button>
+          <img [src]="'/assets/foto-libros.jpg'" width="50%" alt="Picture" />
         </div>
       </div>
       <!-- #endregion BLOCK COLLABORATOR -->
 
-      <div class="col-span-2">
-        <div class="flex flex-row justify-end gap-2">
-          <button type="submit" class="btn btn-primary">
-            {{ 'Save' }}
-          </button>
+      <hr class="border-gray-300" />
+
+      <!-- #region BLOCK COLLABORATOR -->
+      <div class="grid grid-cols-2 gap-10">
+        <div class="flex flex-col gap-4">
+          <fieldset class="fieldset w-full">
+            <legend class="fieldset-legend text-sm lg:text-base">
+              {{ i18n.aboutUs.collaboratorNameLabel }}
+              <span class="text-error">*</span>
+            </legend>
+
+            <input
+              type="text"
+              class="input w-full"
+              [formField]="aboutUsForm.collaborators[1]?.name"
+              [placeholder]="i18n.aboutUs.collaboratorNamePlaceholder"
+            />
+          </fieldset>
+
+          <fieldset class="fieldset w-full">
+            <legend class="fieldset-legend text-sm lg:text-base">
+              {{ i18n.aboutUs.collaboratorTextLabel }}
+              <span class="text-error">*</span>
+            </legend>
+
+            <out-input-text-rich-form [formField]="aboutUsForm.collaborators[1]?.text" />
+          </fieldset>
         </div>
+
+        <div class="flex flex-col gap-4">
+          <fieldset class="fieldset w-full">
+            <legend class="fieldset-legend text-sm lg:text-base">
+              {{ i18n.aboutUs.collaboratorPictureLabel }}
+              <span class="text-error">*</span>
+            </legend>
+
+            <input
+              type="text"
+              class="input w-full"
+              [formField]="aboutUsForm.collaborators[1]?.picture"
+              [placeholder]="i18n.aboutUs.collaboratorPicturePlaceholder"
+            />
+          </fieldset>
+
+          <img [src]="'/assets/foto-libros.jpg'" width="50%" alt="Picture" />
+        </div>
+      </div>
+      <!-- #endregion BLOCK COLLABORATOR -->
+
+      <div class="flex flex-row justify-end gap-2">
+        <button type="submit" class="btn btn-primary">
+          <span class="material-icons"> save </span>
+          {{ i18n.aboutUs.saveAsDraft }}
+        </button>
+        <button type="submit" class="btn btn-success">
+          <span class="material-icons"> send </span>
+          {{ i18n.aboutUs.publish }}
+        </button>
       </div>
     </div>
   </form>
