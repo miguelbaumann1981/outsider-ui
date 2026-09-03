@@ -3,7 +3,6 @@ import { IconMenu } from '../icon-menu/icon-menu';
 import { MenuItem } from '@/shared/interfaces/menu-item.interface';
 import es from '@/i18n/es.json';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
-import { Release } from '@/features/public/enums';
 import { LocalStorageService } from '@/core/services/local-storage.service';
 
 @Component({
@@ -32,7 +31,7 @@ export class PublicHeader {
   ]);
 
   navigateToHomePage(): void {
-    this.localStorageService.setItem('release', Release.CURRENT);
+    this.localStorageService.setItem('release', 'CURRENT');
     this.router.navigate(['/']);
   }
 }

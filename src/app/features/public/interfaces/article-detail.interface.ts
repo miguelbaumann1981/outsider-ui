@@ -1,7 +1,7 @@
-import { ArticleCategory, Release } from '../types';
+import { ArticleCategory } from '../types';
 
 export interface ArticleDetail {
   category: ArticleCategory;
-  release: Release;
+  release: string;
   slug: string;
 }

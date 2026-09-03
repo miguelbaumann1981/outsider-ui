@@ -1,5 +1,4 @@
 import { ArticleCategory } from '../enums';
-import { Release } from '../types';
 
 export interface ArticlesApi {
   total: number;
@@ -16,7 +15,7 @@ export interface Article {
   image: string;
   quote?: string;
   references: string;
-  release: Release;
+  release: string;
   slug: string;
   subtitle?: string;
   titleArticle: string;

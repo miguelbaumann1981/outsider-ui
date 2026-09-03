@@ -10,7 +10,6 @@ import { routes } from './app.routes';
 import { provideClientHydration } from '@angular/platform-browser';
 import { provideHttpClient } from '@angular/common/http';
 import { LocalStorageService } from './core/services/local-storage.service';
-import { Release } from './features/public/enums';
 import { provideToastr } from 'ngx-toastr';
 
 export const appConfig: ApplicationConfig = {
@@ -21,7 +20,7 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(),
     provideAppInitializer(() => {
       const localStorageService = inject(LocalStorageService);
-      localStorageService.setItem('release', Release.CURRENT);
+      localStorageService.setItem('release', 'CURRENT');
     }),
     provideToastr(),
   ],

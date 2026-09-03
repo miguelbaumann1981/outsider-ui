@@ -1,15 +1,14 @@
 import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ArticleAuthor, ArticlesApi, ReleaseObj } from '../../interfaces';
+import { ArticleAuthor, ArticlesApi, ReleasesApi } from '../../interfaces';
 import { ReleaseMonthPipe } from '../../pipes';
 import { Router } from '@angular/router';
-import { Release } from '../../enums';
 import { LocalStorageService } from '@/core/services/local-storage.service';
 import { NgClass } from '@angular/common';
 import es from '@/i18n/es.json';
 import { TitlePage } from '@/shared/components/title-page/title-page';
 import { publicLayoutPage } from '../../utils';
-import { ArticleCategory } from '../../types';
+import { ArticleCategory, Release } from '../../types';
 import { HomeService, ReleasesService } from '../../services';
 import { Spinner } from '@/shared/components/spinner/spinner';
 
@@ -29,9 +28,9 @@ export class ReleasesPage implements OnInit {
   isLoadingReleases = signal(false);
   isLoadingArticles = signal(false);
   errorMessageApi = signal<string>('');
-  releases = signal<ReleaseObj[]>([]);
+  releases = signal<ReleasesApi[]>([]);
   releaseSelected = signal<Release>(
-    (this.localStorageService.getItem('release') as Release) ?? 'current',
+    (this.localStorageService.getItem('release') as Release) ?? 'CURRENT',
   );
   articlesApi = signal<ArticlesApi>({} as ArticlesApi);
   layoutPage = signal<string>(publicLayoutPage);
@@ -48,19 +47,18 @@ export class ReleasesPage implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (data) => {
-          this.releases.set(
-            data?.releases
-              .map((item) => ({
-                id: item.id,
-                index: item.index,
-                month: item.month,
-                year: item.year,
-                release: item.release,
-                articles: this.getArticlesByRelease(item.release),
-                name: item.name,
-              }))
-              .sort((a, b) => b.index - a.index),
-          );
+          const info = data
+            .map((item) => ({
+              id: item.id,
+              index: item.index,
+              month: item.month,
+              year: item.year,
+              release: item.release as Release,
+              articles: this.getArticlesByRelease(item.release),
+              name: item.name,
+            }))
+            .sort((a, b) => b.index - a.index);
+          this.releases.set(info ?? []);
         },
         error: (error) => {
           this.errorMessageApi.set(error ?? this.i18n.common.serverError);
@@ -111,7 +109,7 @@ export class ReleasesPage implements OnInit {
     this.localStorageService.setItem('release', release);
     const currentRelease = this.localStorageService.getItem('release');
 
-    this.router.navigate([currentRelease === Release.CURRENT ? '/' : `/release/${release}`]);
+    this.router.navigate([currentRelease === 'CURRENT' ? '/' : `/release/${release}`]);
   }
 
   navigateToArticleDetail(release: Release, category: ArticleCategory, slug: string) {

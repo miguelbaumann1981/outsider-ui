@@ -4,7 +4,6 @@ import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import es from '@/i18n/es.json';
 import { MenuItem } from '@/shared/interfaces/menu-item.interface';
 import { LocalStorageService } from '@/core/services/local-storage.service';
-import { Release } from '@/features/public/enums';
 
 @Component({
   selector: 'out-admin-header',
@@ -31,12 +30,12 @@ export class AdminHeader {
     },
     {
       text: this.i18n.menu.releasesCrud,
-      url: '/admin/xxx',
+      url: '/admin/releases-crud',
     },
   ]);
 
   navigateToMainPage(): void {
-    this.localStorageService.setItem('release', Release.CURRENT);
-    this.router.navigate(['/admin/articles-crud']);
+    this.localStorageService.setItem('release', 'CURRENT');
+    this.router.navigate(['/admin/releases-crud']);
   }
 }

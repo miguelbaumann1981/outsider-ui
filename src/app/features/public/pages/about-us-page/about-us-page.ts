@@ -61,7 +61,13 @@ export class AboutUsPage implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (data) => {
-          this.info.set(data);
+          const currentVersion = data.find((item) => item.release === 'CURRENT');
+          if (!currentVersion) {
+            this.errorMessageApi.set(this.i18n.aboutUs.noCurrentVersion);
+            this.isLoading.set(false);
+            return;
+          }
+          this.info.set(currentVersion);
         },
         error: (error) => {
           this.errorMessageApi.set(error ?? this.i18n.common.serverError);

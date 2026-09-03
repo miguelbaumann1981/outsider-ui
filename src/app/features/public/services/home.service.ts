@@ -2,10 +2,9 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Service } from '@angular/core';
 import { map, Observable, tap } from 'rxjs';
 import { environment } from '@envs/environment.development';
-import { Release } from '../enums';
 import { Article, ArticlesApi, LayoutArticlesApi } from '../interfaces';
 import { LocalStorageService } from '@/core/services/local-storage.service';
-import { AnyCategory, ArticleCategory } from '../types';
+import { AnyCategory, ArticleCategory, Release } from '../types';
 import { ArticleCategoryMapper } from '../mappers';
 
 @Service()
@@ -21,7 +20,7 @@ export class HomeService {
   }
 
   getArticleBySlug(
-    release: Release,
+    release: string,
     slug: string,
     category: ArticleCategory,
   ): Observable<AnyCategory> {

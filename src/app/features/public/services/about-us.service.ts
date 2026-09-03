@@ -9,7 +9,7 @@ export class AboutUsService {
   private http = inject(HttpClient);
   private baseUrl: string = environment.url;
 
-  getAboutUsInfo(): Observable<AboutUsApi> {
-    return this.http.get<AboutUsApi>(`${this.baseUrl}/api/about-us`);
+  getAboutUsInfo(): Observable<AboutUsApi[]> {
+    return this.http.get<AboutUsApi[]>(`${this.baseUrl}/api/about-us`);
   }
 }

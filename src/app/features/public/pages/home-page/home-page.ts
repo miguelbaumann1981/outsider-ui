@@ -14,13 +14,12 @@ import { ArticleHomeCard } from '../../components/article-home-card/article-home
 import { ArticleCard } from '../../interfaces/article-card.interface';
 import es from '@/i18n/es.json';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ArticlesApi, LayoutArticlesApi, ReleaseObj } from '../../interfaces';
+import { ArticlesApi, LayoutArticlesApi, ReleasesApi } from '../../interfaces';
 import { LocalStorageService } from '@/core/services/local-storage.service';
 import { Router } from '@angular/router';
-import { Release } from '../../types';
-import { Release as ReleaseEnum } from '../../enums/release.enum';
 import { HomeService, ReleasesService } from '../../services';
 import { SkeletonCard } from '@/shared/components/skeleton-card/skeleton-card';
+import { Release } from '../../types';
 
 @Component({
   selector: 'out-home-page',
@@ -64,11 +63,11 @@ export class HomePage implements OnInit, AfterViewInit {
   isLoadingLayout = signal(false);
   isLoadingReleases = signal(false);
   errorMessageApi = signal<string>('');
-  releaseDefault = signal<Release>('current');
+  releaseDefault = signal<Release>('CURRENT');
   releaseLocalStorage = computed<Release>(
     () => (this.localStorageService.getItem('release') as Release) ?? this.releaseDefault(),
   );
-  releases = signal<ReleaseObj[]>([]);
+  releases = signal<ReleasesApi[]>([]);
   releaseName = computed<string>(() => {
     return this.releases().find((item) => item.release === this.releaseLocalStorage())?.name ?? '';
   });
@@ -138,7 +137,7 @@ export class HomePage implements OnInit, AfterViewInit {
   getArticlesHomePage(): void {
     this.isLoadingArticles.set(true);
     this.homeService
-      .getArticles(this.releaseLocalStorage() as unknown as ReleaseEnum)
+      .getArticles(this.releaseLocalStorage())
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (articlesData) => {
@@ -180,7 +179,7 @@ export class HomePage implements OnInit, AfterViewInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (data) => {
-          this.releases.set(data?.releases);
+          this.releases.set(data);
         },
         error: (error) => {
           this.errorMessageApi.set(error ?? this.i18n.common.serverError);

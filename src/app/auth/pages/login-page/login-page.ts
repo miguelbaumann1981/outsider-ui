@@ -72,7 +72,7 @@ export class LoginPage {
       .subscribe({
         next: (isLogged: boolean) => {
           if (isLogged) {
-            this.router.navigate(['/admin']);
+            this.router.navigate(['/admin/']);
             return;
           }
         },

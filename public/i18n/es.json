@@ -81,6 +81,7 @@
   "aboutUs": {
     "subtitle": "¿Quiénes somos?",
     "mainTextLabel": "Texto principal",
+    "releaseLabel": "Lanzamiento",
     "collaborators": "Colaboradores",
     "collaboratorNameLabel": "Nombre",
     "collaboratorTextLabel": "Contenido",
@@ -89,7 +90,8 @@
     "collaboratorTextPlaceholder": "Añada un texto",
     "collaboratorPicturePlaceholder": "Añada una imagen",
     "saveAsDraft": "Guardar",
-    "publish": "Publicar"
+    "publish": "Publicar",
+    "noCurrentVersion": "No hay una versión actual disponible. "
   },
   "auth": {
     "login": "Iniciar sesión",

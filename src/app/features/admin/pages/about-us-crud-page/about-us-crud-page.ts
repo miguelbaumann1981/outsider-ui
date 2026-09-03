@@ -28,6 +28,7 @@ export class AboutUsCrudPage {
       { name: '', text: '', picture: '' },
       { name: '', text: '', picture: '' },
     ],
+    release: 'CURRENT',
     isDraft: false,
     isPublished: false,
   });
@@ -35,9 +36,14 @@ export class AboutUsCrudPage {
 
   readonly aboutUsForm = form(this.aboutUsModel, this.aboutUsSchema);
 
+  saveAsDraft(): void {
+    const formData = this.aboutUsModel();
+    console.log('saveAsDraft:', formData);
+  }
+
   onSubmit(event: Event) {
     event.preventDefault();
     const formData = this.aboutUsModel();
-    console.log('Form Data:', formData);
+    console.log('onSubmit:', formData);
   }
 }

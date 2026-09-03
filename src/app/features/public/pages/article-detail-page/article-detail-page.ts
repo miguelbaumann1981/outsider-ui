@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SafeHtmlPipe } from '../../pipes';
-import { ArticleCategory, Release } from '../../enums';
+import { ArticleCategory } from '../../enums';
 import { LocalStorageService } from '@/core/services/local-storage.service';
 import { HomeService } from '../../services/home.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -45,7 +45,7 @@ export class ArticleDetailPage implements OnInit {
 
   articleDetail = signal<ArticleDetail>({
     category: ArticleCategory.EDITORIAL,
-    release: Release.CURRENT,
+    release: 'CURRENT',
     slug: '',
   });
   articleSelected = signal<AnyCategory>({} as AnyCategory);
@@ -82,7 +82,7 @@ export class ArticleDetailPage implements OnInit {
     this.isLoadingArticle.set(true);
     const { category, release, slug } = this.articleDetail();
     this.homeService
-      .getArticleBySlug(release as Release, slug, category)
+      .getArticleBySlug(release, slug, category)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (article) => {
@@ -117,9 +117,9 @@ export class ArticleDetailPage implements OnInit {
       });
   }
 
-  navigateToReleasePage(release: Release | string): void {
+  navigateToReleasePage(release: string): void {
     const currentRelease = this.localStorageService.getItem('release');
 
-    this.router.navigate([currentRelease === Release.CURRENT ? '/' : `/release/${release}`]);
+    this.router.navigate([currentRelease === 'CURRENT' ? '/' : `/release/${release}`]);
   }
 }

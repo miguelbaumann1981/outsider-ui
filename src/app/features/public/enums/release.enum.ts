@@ -1,5 +1,5 @@
 export enum Release {
-  CURRENT = 'current',
+  CURRENT = 'CURRENT',
   JAN26 = 'jan26',
   APR26 = 'apr26',
   JUL26 = 'jul26',
