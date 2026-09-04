@@ -14,7 +14,7 @@
     "privateZone": "Zona privada",
     "logout": "Cerrar sesión",
     "aboutUsCrud": "Sobre nosotros",
-    "releasesCrud": "Lanzamientos",
+    "releasesCrud": "Números",
     "articlesCrud": "Artículos",
     "homeLayoutCrud": "Página de inicio"
   },
@@ -38,7 +38,20 @@
       "year": "Año",
       "release": "Lanzamiento",
       "articles": "Artículos"
-    }
+    },
+    "seeDetail": "Ver detalle",
+    "nameLabel": "Nombre",
+    "namePlaceholder": "Añade un nombre...",
+    "monthLabel": "Mes",
+    "monthPlaceholder": "Añade un mes...",
+    "yearLabel": "Año",
+    "yearPlaceholder": "Añade un año...",
+    "releaseLabel": "Lanzamiento",
+    "releasePlaceholder": "Añade un lanzamiento...",
+    "indexLabel": "Número",
+    "indexPlaceholder": "Añade un número...",
+    "saveAsDraft": "Guardar",
+    "submit": "Publicar"
   },
   "months": {
     "january": "Enero",

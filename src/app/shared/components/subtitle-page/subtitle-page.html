@@ -6,8 +6,12 @@
     <h2 class="text-lg font-semibold lg:text-3xl">{{ text() }}</h2>
   </div>
 
-  <button class="btn btn-accent">
-    <span class="material-icons"> add </span>
-    <span>{{ 'Crear artículo' }}</span>
-  </button>
+  @if (actionText()) {
+    <button class="btn btn-accent" (click)="actionEvent.emit()">
+      @if (actionIcon()) {
+        <span class="material-icons"> {{ actionIcon() }} </span>
+      }
+      <span>{{ actionText() }}</span>
+    </button>
+  }
 </div>

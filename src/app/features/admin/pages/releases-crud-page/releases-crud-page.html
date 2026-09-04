@@ -1,20 +1,49 @@
 <div class="flex flex-col gap-4">
-  <out-subtitle-page [text]="i18n.menu.releasesCrud" [icon]="'people_alt'" />
+  <out-subtitle-page
+    [icon]="'format_list_numbered'"
+    [text]="i18n.menu.releasesCrud"
+    [actionText]="'Crear número'"
+    [actionIcon]="'add'"
+    (actionEvent)="createNewRelease()"
+  />
 
-  <form [formRoot]="releasesForm" (submit)="onSubmit($event)">
-    <div class="flex flex-col gap-4">
-      <fieldset class="fieldset w-full">
-        <legend class="fieldset-legend text-sm lg:text-base">
-          {{ i18n.aboutUs.collaboratorNameLabel }}
-          <span class="text-error">*</span>
-        </legend>
+  <div class="flex flex-row flex-wrap gap-10">
+    @for (release of releases(); track release.id) {
+      <div class="card w-96 border border-gray-200 bg-blue-50 shadow-sm">
+        <div class="card-body">
+          <div class="flex items-center justify-between">
+            <h2 class="card-title">{{ release.name }}</h2>
+            <div class="badge badge-error">
+              {{ release.isPublished ? 'Publicado' : 'No publicado' }}
+            </div>
+          </div>
 
-        <input
-          type="text"
-          class="input w-full"
-          [placeholder]="i18n.aboutUs.collaboratorNamePlaceholder"
-        />
-      </fieldset>
-    </div>
-  </form>
+          <div class="badge badge-secondary">{{ release.release }}</div>
+          <ul>
+            <li class="">
+              <span>{{ i18n.releases.table.index }}: </span>
+              <span class="font-semibold">{{ release.index }}</span>
+            </li>
+            <li>
+              <span>{{ i18n.releases.table.month }}: </span>
+              <span class="font-semibold">{{ release.month }}</span>
+            </li>
+            <li>
+              <span>{{ i18n.releases.table.year }}: </span>
+              <span class="font-semibold">{{ release.year }}</span>
+            </li>
+          </ul>
+          <div class="card-actions justify-end">
+            <button class="btn btn-accent" (click)="navigateToDetail(release.id)">
+              {{ i18n.releases.seeDetail }}
+            </button>
+
+            <button class="btn btn-primary">
+              {{ 'Publicar' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
 </div>

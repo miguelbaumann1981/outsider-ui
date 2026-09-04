@@ -56,6 +56,8 @@ export class ReleasesPage implements OnInit {
               release: item.release as Release,
               articles: this.getArticlesByRelease(item.release),
               name: item.name,
+              isDraft: item.isDraft,
+              isPublished: item.isPublished,
             }))
             .sort((a, b) => b.index - a.index);
           this.releases.set(info ?? []);

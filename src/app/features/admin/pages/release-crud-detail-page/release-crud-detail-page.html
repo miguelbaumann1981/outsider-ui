@@ -1,0 +1,91 @@
+<div class="flex flex-col gap-4">
+  <out-subtitle-page
+    [text]="'Detalle'"
+    [actionText]="'Volver'"
+    [actionIcon]="'arrow_back'"
+    (actionEvent)="navigateBack()"
+  />
+
+  <form [formRoot]="releaseForm" (submit)="onSubmit($event)">
+    <div class="grid grid-cols-1 gap-10 md:grid-cols-3">
+      <fieldset class="fieldset w-full">
+        <legend class="fieldset-legend text-sm lg:text-base">
+          {{ i18n.releases.nameLabel }}
+          <span class="text-error">*</span>
+        </legend>
+
+        <input
+          type="text"
+          class="input w-full"
+          [placeholder]="i18n.releases.namePlaceholder"
+          [formField]="releaseForm.name"
+        />
+      </fieldset>
+
+      <fieldset class="fieldset w-full">
+        <legend class="fieldset-legend text-sm lg:text-base">
+          {{ i18n.releases.releaseLabel }}
+          <span class="text-error">*</span>
+        </legend>
+
+        <input
+          type="text"
+          class="input w-full"
+          [placeholder]="i18n.releases.releasePlaceholder"
+          [formField]="releaseForm.release"
+        />
+      </fieldset>
+
+      <fieldset class="fieldset w-full">
+        <legend class="fieldset-legend text-sm lg:text-base">
+          {{ i18n.releases.monthLabel }}
+          <span class="text-error">*</span>
+        </legend>
+
+        <input
+          type="text"
+          class="input w-full"
+          [placeholder]="i18n.releases.monthPlaceholder"
+          [formField]="releaseForm.month"
+        />
+      </fieldset>
+
+      <fieldset class="fieldset w-full">
+        <legend class="fieldset-legend text-sm lg:text-base">
+          {{ i18n.releases.yearLabel }}
+          <span class="text-error">*</span>
+        </legend>
+
+        <input
+          type="number"
+          class="input w-full"
+          [placeholder]="i18n.releases.yearPlaceholder"
+          [formField]="releaseForm.year"
+        />
+      </fieldset>
+
+      <fieldset class="fieldset w-full">
+        <legend class="fieldset-legend text-sm lg:text-base">
+          {{ i18n.releases.indexLabel }}
+          <span class="text-error">*</span>
+        </legend>
+
+        <input
+          type="number"
+          class="input w-full"
+          [placeholder]="i18n.releases.indexPlaceholder"
+          [formField]="releaseForm.index"
+        />
+      </fieldset>
+    </div>
+
+    <div class="mt-10 flex flex-row-reverse gap-3">
+      <button type="button" class="btn btn-secondary" (click)="saveAsDraft()">
+        {{ i18n.releases.saveAsDraft }}
+      </button>
+      <button type="submit" class="btn btn-primary">
+        {{ i18n.releases.submit }}
+      </button>
+    </div>
+  </form>
+</div>

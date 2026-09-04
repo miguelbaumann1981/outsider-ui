@@ -1,10 +1,13 @@
 import { Routes } from '@angular/router';
 import { AdminLayout } from './layout/admin-layout/admin-layout';
 import { IsPrivateZoneGuard } from '@/auth/guards';
-import { AboutUsCrudPage } from './pages/about-us-crud-page/about-us-crud-page';
-import { ArticlesCrudPage } from './pages/articles-crud-page/articles-crud-page';
-import { HomeLayoutCrudPage } from './pages/home-layout-crud-page/home-layout-crud-page';
-import { ReleasesCrudPage } from './pages/releases-crud-page/releases-crud-page';
+import {
+  AboutUsCrudPage,
+  ArticlesCrudPage,
+  HomeLayoutCrudPage,
+  ReleaseCrudDetailPage,
+  ReleasesCrudPage,
+} from './pages';
 
 export const adminRoutes: Routes = [
   {
@@ -27,6 +30,10 @@ export const adminRoutes: Routes = [
       {
         path: 'releases-crud',
         component: ReleasesCrudPage,
+      },
+      {
+        path: 'releases-crud/:id',
+        component: ReleaseCrudDetailPage,
       },
       {
         path: '**',

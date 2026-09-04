@@ -9,4 +9,6 @@ export interface ReleasesApi {
   name: string;
   release: Release;
   year: number;
+  isDraft: boolean;
+  isPublished: boolean;
 }
