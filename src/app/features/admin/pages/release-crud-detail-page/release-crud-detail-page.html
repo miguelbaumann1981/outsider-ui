@@ -3,7 +3,7 @@
     [text]="'Detalle'"
     [actionText]="'Volver'"
     [actionIcon]="'arrow_back'"
-    (actionEvent)="navigateBack()"
+    (actionEvent)="navigateToPreviousPage()"
   />
 
   <form [formRoot]="releaseForm" (submit)="onSubmit($event)">
@@ -80,11 +80,8 @@
     </div>
 
     <div class="mt-10 flex flex-row-reverse gap-3">
-      <button type="button" class="btn btn-secondary" (click)="saveAsDraft()">
-        {{ i18n.releases.saveAsDraft }}
-      </button>
       <button type="submit" class="btn btn-primary">
-        {{ i18n.releases.submit }}
+        {{ i18n.releases.saveAsDraft }}
       </button>
     </div>
   </form>
