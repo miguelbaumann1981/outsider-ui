@@ -1,4 +1,4 @@
 export const environment = {
-  url: 'http://localhost:3000',
-  appIsActive: true,
+  API_URL: 'https://outsider-api-node-production.up.railway.app',
+  APP_IS_ACTIVE: false,
 };

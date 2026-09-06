@@ -11,7 +11,7 @@ import { ArticleCategoryMapper } from '../mappers';
 export class HomeService {
   private http = inject(HttpClient);
   private localStorageService = inject(LocalStorageService);
-  private baseUrl: string = environment.url;
+  private baseUrl: string = environment.API_URL;
 
   getArticles(release: Release): Observable<ArticlesApi> {
     return this.http

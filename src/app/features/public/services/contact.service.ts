@@ -6,7 +6,7 @@ import { ContactFormModel } from '../interfaces';
 @Service()
 export class ContactService {
   private http = inject(HttpClient);
-  private baseUrl: string = environment.url;
+  private baseUrl: string = environment.API_URL;
 
   sendEmail(data: ContactFormModel) {
     return this.http.post(`${this.baseUrl}/api/contact`, data);

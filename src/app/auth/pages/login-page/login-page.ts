@@ -29,8 +29,8 @@ export class LoginPage {
   showPassword = signal(false);
 
   loginModel = signal<LoginFormModel>({
-    email: 'mayte@test.com',
-    password: 'Aa1@11',
+    email: '',
+    password: '',
   });
 
   loginSchema = schema<LoginFormModel>((path) => {

@@ -7,7 +7,7 @@ import { AboutUsApi } from '../interfaces';
 @Service()
 export class AboutUsService {
   private http = inject(HttpClient);
-  private baseUrl: string = environment.url;
+  private baseUrl: string = environment.API_URL;
 
   getAboutUsInfo(): Observable<AboutUsApi[]> {
     return this.http.get<AboutUsApi[]>(`${this.baseUrl}/api/about-us`);

@@ -11,7 +11,7 @@ import { MaintenancePage } from '@/maintenance/pages/maintenance/maintenance-pag
 export const publicRoutes: Routes = [
   {
     path: '',
-    component: environment.appIsActive ? PublicLayout : MaintenancePage,
+    component: environment.APP_IS_ACTIVE ? PublicLayout : MaintenancePage,
     children: [
       {
         path: '',

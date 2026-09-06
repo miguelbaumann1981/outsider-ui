@@ -11,7 +11,7 @@ import { AuthApi } from '../interfaces/auth-api.interface';
 export class AuthService {
   private http = inject(HttpClient);
   private localStorageService = inject(LocalStorageService);
-  private baseUrl: string = environment.url;
+  private baseUrl: string = environment.API_URL;
 
   private _authStatus = signal<AuthStatus>('not-authenticated');
   private _user = signal<AuthUser | null>(null);
