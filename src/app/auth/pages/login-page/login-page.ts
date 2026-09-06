@@ -5,7 +5,6 @@ import { IconEmail } from '@/shared/components/icon-email/icon-email';
 import { IconPassword } from '@/shared/components/icon-password/icon-password';
 import es from '@/i18n/es.json';
 import { form, FormField, FormRoot, required, email, schema } from '@angular/forms/signals';
-import { ToastrService } from 'ngx-toastr';
 import { LoginFormModel } from '@/auth/interfaces';
 import { NgClass } from '@angular/common';
 import { AuthService } from '@/auth/services';
@@ -21,7 +20,6 @@ export class LoginPage {
   private authService = inject(AuthService);
   formBuilder = inject(FormBuilder);
   router = inject(Router);
-  toastr = inject(ToastrService);
 
   minLengthPassword: number = 6;
 
@@ -57,7 +55,7 @@ export class LoginPage {
         delay(1500),
         catchError((error) => {
           this.isLoading.set(false);
-          this.toastr.error(
+          console.error(
             this.i18n.auth.errors.errorAccessSubtitle,
             this.i18n.auth.errors.errorAccessTitle,
             {
@@ -79,14 +77,10 @@ export class LoginPage {
         },
         complete: () => {
           this.isLoading.set(false);
-          this.toastr.success(
-            this.i18n.auth.success.accessSubtitle,
-            this.i18n.auth.success.accessTitle,
-            {
-              timeOut: 3000,
-              closeButton: true,
-            },
-          );
+          console.log(this.i18n.auth.success.accessSubtitle, this.i18n.auth.success.accessTitle, {
+            timeOut: 3000,
+            closeButton: true,
+          });
         },
       });
   }

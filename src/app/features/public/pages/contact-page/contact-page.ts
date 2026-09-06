@@ -16,7 +16,6 @@ import {
 import { ContactFormModel } from '../../interfaces';
 import { UpperCasePipe, NgClass } from '@angular/common';
 import { ContactService } from '../../services';
-import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'out-contact-page',
@@ -27,7 +26,6 @@ export class ContactPage {
   protected readonly i18n = es;
   router = inject(Router);
   contactService = inject(ContactService);
-  toastr = inject(ToastrService);
 
   layoutPage = signal<string>(publicLayoutPage);
   minCharactersName = signal(3);
@@ -69,21 +67,17 @@ export class ContactPage {
 
     this.contactService.sendEmail(formData).subscribe({
       next: () => {
-        this.toastr.success(
+        console.log(
           this.i18n.contact.successSendingSubtitle,
           this.i18n.contact.successSendingTitle,
         );
         this.isLoading.set(false);
       },
       error: () => {
-        this.toastr.error(
-          this.i18n.contact.errorSendingSubtitle,
-          this.i18n.contact.errorSendingTitle,
-          {
-            timeOut: 3000,
-            closeButton: true,
-          },
-        );
+        console.error(this.i18n.contact.errorSendingSubtitle, this.i18n.contact.errorSendingTitle, {
+          timeOut: 3000,
+          closeButton: true,
+        });
         this.isLoading.set(false);
         console.log('Error!!!');
       },
