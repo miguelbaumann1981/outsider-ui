@@ -10,7 +10,6 @@ import { LoginFormModel } from '@/auth/interfaces';
 import { NgClass } from '@angular/common';
 import { AuthService } from '@/auth/services';
 import { catchError, delay } from 'rxjs';
-import { environment } from '@envs/environment.development';
 
 @Component({
   selector: 'out-login-page',
@@ -73,11 +72,8 @@ export class LoginPage {
       .subscribe({
         next: (isLogged: boolean) => {
           if (isLogged) {
-            if (environment.appIsActive) {
-              this.router.navigate(['/admin/']);
-            } else {
-              this.router.navigate(['/admin/prod']);
-            }
+            this.router.navigate(['/admin']);
+
             return;
           }
         },

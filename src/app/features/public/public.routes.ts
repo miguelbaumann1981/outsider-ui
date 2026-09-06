@@ -6,12 +6,12 @@ import { ContactPage } from './pages/contact-page/contact-page';
 import { ReleasesPage } from './pages/releases-page/releases-page';
 import { ArticleDetailPage } from './pages/article-detail-page/article-detail-page';
 import { environment } from '@envs/environment.development';
-import { MaintenanceComponent } from '@/shared/components/maintenance/maintenance';
+import { MaintenancePage } from '@/maintenance/pages/maintenance/maintenance-page';
 
 export const publicRoutes: Routes = [
   {
     path: '',
-    component: environment.appIsActive ? PublicLayout : MaintenanceComponent,
+    component: environment.appIsActive ? PublicLayout : MaintenancePage,
     children: [
       {
         path: '',
@@ -37,6 +37,7 @@ export const publicRoutes: Routes = [
         path: 'contact',
         component: ContactPage,
       },
+
       {
         path: '**',
         redirectTo: '',

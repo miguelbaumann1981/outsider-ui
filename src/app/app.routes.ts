@@ -9,6 +9,7 @@ export const routes: Routes = [
     path: 'admin',
     loadChildren: () => import('./features/admin/admin.routes'),
   },
+
   {
     path: '',
     loadChildren: () => import('./features/public/public.routes'),
