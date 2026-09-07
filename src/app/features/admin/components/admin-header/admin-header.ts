@@ -4,6 +4,7 @@ import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import es from '@/i18n/es.json';
 import { MenuItem } from '@/shared/interfaces/menu-item.interface';
 import { LocalStorageService } from '@/core/services/local-storage.service';
+import { AuthService } from '@/auth/services';
 
 @Component({
   selector: 'out-admin-header',
@@ -13,6 +14,7 @@ import { LocalStorageService } from '@/core/services/local-storage.service';
 export class AdminHeader {
   protected readonly i18n = es;
   private localStorageService = inject(LocalStorageService);
+  private authService = inject(AuthService);
   router = inject(Router);
 
   menu = signal<MenuItem[]>([
@@ -37,5 +39,10 @@ export class AdminHeader {
   navigateToMainPage(): void {
     this.localStorageService.setItem('release', 'CURRENT');
     this.router.navigate(['/admin/releases-crud']);
+  }
+
+  logout(): void {
+    this.authService.logout();
+    this.router.navigate(['/']);
   }
 }

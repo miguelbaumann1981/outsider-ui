@@ -34,8 +34,8 @@
   </div>
 
   <div class="navbar-end">
-    <a class="btn btn-outline btn-secondary text-white" [routerLink]="'/auth'">{{
-      i18n.menu.logout
-    }}</a>
+    <button class="btn btn-outline btn-secondary text-white" (click)="logout()">
+      {{ i18n.menu.logout }}
+    </button>
   </div>
 </div>

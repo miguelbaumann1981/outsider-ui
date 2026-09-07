@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ArticleAuthor, ArticlesApi, ReleasesApi } from '../../interfaces';
 import { ReleaseMonthPipe } from '../../pipes';
@@ -8,7 +8,7 @@ import { NgClass } from '@angular/common';
 import es from '@/i18n/es.json';
 import { TitlePage } from '@/shared/components/title-page/title-page';
 import { publicLayoutPage } from '../../utils';
-import { ArticleCategory, Release } from '../../types';
+import { ViewState, ArticleCategory, Release } from '../../types';
 import { HomeService, ReleasesService } from '../../services';
 import { Spinner } from '@/shared/components/spinner/spinner';
 
@@ -34,6 +34,12 @@ export class ReleasesPage implements OnInit {
   );
   articlesApi = signal<ArticlesApi>({} as ArticlesApi);
   layoutPage = signal<string>(publicLayoutPage);
+  viewState = computed<ViewState>(() => {
+    if (this.isLoadingReleases() || this.isLoadingArticles()) return 'loading';
+    if (this.errorMessageApi()) return 'error';
+    if (this.releases().length > 0) return 'available';
+    return 'empty';
+  });
 
   ngOnInit(): void {
     this.getArticlesData();

@@ -40,16 +40,28 @@
             <div class="badge badge-secondary">{{ release.release }}</div>
           </div>
           <div class="card-actions justify-end">
-            <button class="btn btn-outline btn-accent" (click)="navigateToDetail(release.id)">
+            <button class="btn btn-outline btn-accent" (click)="navigateToDetailForm(release.id)">
               {{ i18n.common.edit }}
             </button>
 
-            <button class="btn btn-outline btn-primary" [disabled]="release.isPublished">
+            <button
+              class="btn btn-outline btn-primary"
+              (click)="publish(release)"
+              [disabled]="release.isPublished"
+            >
               {{ i18n.common.publish }}
             </button>
+
+            @if (releaseId() === release.id) {
+              @if (isLoading()) {
+                <span class="loading loading-spinner text-accent"></span>
+              }
+            }
           </div>
         </div>
       </div>
     }
   </div>
 </div>
+
+<ngx-sonner-toaster position="top-center" richColors />

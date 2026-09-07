@@ -1,5 +1,3 @@
-@let loading = isLoadingReleases() || isLoadingArticles();
-
 <section [class]="layoutPage()">
   <out-title-page
     [text]="i18n.menu.allReleases"
@@ -8,18 +6,22 @@
   />
 
   <div class="rounded-lg border border-gray-200 bg-white p-4 shadow-lg">
-    @if (loading) {
-      <div class="spinner-container h-[600px]">
-        <out-spinner />
-      </div>
-    } @else {
-      @if (errorMessageApi()) {
+    @switch (viewState()) {
+      @case ('loading') {
+        <div class="spinner-container h-[600px]">
+          <out-spinner />
+        </div>
+      }
+
+      @case ('error') {
         <div class="w-full">
           <div role="alert" class="alert alert-error alert-soft w-full">
             <span class="text-xl font-semibold">{{ errorMessageApi() }}</span>
           </div>
         </div>
-      } @else {
+      }
+
+      @case ('available') {
         <div class="overflow-x-auto">
           <table class="table text-base">
             <thead>
@@ -33,56 +35,70 @@
             </thead>
             <tbody>
               @for (release of releases(); track release.id) {
-                <tr
-                  class="hover:bg-base-200"
-                  [ngClass]="
-                    release.release === releaseSelected()
-                      ? 'text-secondary bg-green-50 hover:bg-green-50'
-                      : ''
-                  "
-                >
-                  <th>{{ release.index }}</th>
-                  <td>{{ release.month | releaseMonth }}</td>
-                  <td>{{ release.year }}</td>
-                  <td
-                    class="font-semibold"
+                @if (release.isPublished && !release.isDraft) {
+                  <tr
+                    class="hover:bg-base-200"
                     [ngClass]="
                       release.release === releaseSelected()
-                        ? 'cursor-auto'
-                        : 'hover:text-primary cursor-pointer'
-                    "
-                    (click)="
-                      release.release !== releaseSelected()
-                        ? navigateToReleasePage(release.release)
-                        : null
+                        ? 'text-secondary bg-green-50 hover:bg-green-50'
+                        : ''
                     "
                   >
-                    {{ release.name }}
-                  </td>
-                  <td>
-                    <ul class="grid grid-cols-2 gap-2">
-                      @for (article of release.articles; track article.title) {
-                        <li
-                          class="hover:text-primary text-neutral cursor-pointer text-sm"
-                          (click)="
-                            navigateToArticleDetail(release.release, article.category, article.slug)
-                          "
-                        >
-                          <span class="font-semibold">{{
-                            article.title.length > 50
-                              ? article.title.slice(0, 50) + '...'
-                              : article.title
-                          }}</span
-                          >,
-                          <span class="italic">{{ article.author }}</span>
-                        </li>
-                      }
-                    </ul>
-                  </td>
-                </tr>
+                    <th>{{ release.index }}</th>
+                    <td>{{ release.month | releaseMonth }}</td>
+                    <td>{{ release.year }}</td>
+                    <td
+                      class="font-semibold"
+                      [ngClass]="
+                        release.release === releaseSelected()
+                          ? 'cursor-auto'
+                          : 'hover:text-primary cursor-pointer'
+                      "
+                      (click)="
+                        release.release !== releaseSelected()
+                          ? navigateToReleasePage(release.release)
+                          : null
+                      "
+                    >
+                      {{ release.name }}
+                    </td>
+                    <td>
+                      <ul class="grid grid-cols-2 gap-2">
+                        @for (article of release.articles; track article.title) {
+                          <li
+                            class="hover:text-primary text-neutral cursor-pointer text-sm"
+                            (click)="
+                              navigateToArticleDetail(
+                                release.release,
+                                article.category,
+                                article.slug
+                              )
+                            "
+                          >
+                            <span class="font-semibold">{{
+                              article.title.length > 50
+                                ? article.title.slice(0, 50) + '...'
+                                : article.title
+                            }}</span
+                            >,
+                            <span class="italic">{{ article.author }}</span>
+                          </li>
+                        }
+                      </ul>
+                    </td>
+                  </tr>
+                }
               }
             </tbody>
           </table>
+        </div>
+      }
+
+      @case ('empty') {
+        <div class="w-full">
+          <div role="alert" class="alert alert-info alert-soft w-full">
+            <span class="text-xl font-semibold">{{ i18n.common.contentNoAvailable }}</span>
+          </div>
         </div>
       }
     }

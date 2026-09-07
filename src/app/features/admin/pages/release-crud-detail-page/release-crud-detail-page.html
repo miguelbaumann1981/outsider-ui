@@ -1,13 +1,15 @@
+@let submitDisable = releaseForm().invalid() || isLoading();
+
 <div class="flex flex-col gap-4">
   <out-subtitle-page
-    [text]="'Detalle'"
-    [actionText]="'Volver'"
+    [text]="subtitlePage()"
+    [actionText]="i18n.common.back"
     [actionIcon]="'arrow_back'"
     (actionEvent)="navigateToPreviousPage()"
   />
 
   <form [formRoot]="releaseForm" (submit)="onSubmit($event)">
-    <div class="grid grid-cols-1 gap-10 md:grid-cols-3">
+    <div class="grid grid-cols-1 gap-3 lg:grid-cols-5 lg:gap-6">
       <fieldset class="fieldset w-full">
         <legend class="fieldset-legend text-sm lg:text-base">
           {{ i18n.releases.nameLabel }}
@@ -20,6 +22,14 @@
           [placeholder]="i18n.releases.namePlaceholder"
           [formField]="releaseForm.name"
         />
+
+        @if (releaseForm.name().touched() && releaseForm.name().invalid()) {
+          <ul>
+            @for (error of releaseForm.name().errors(); track error) {
+              <li class="text-error">{{ error.message }}</li>
+            }
+          </ul>
+        }
       </fieldset>
 
       <fieldset class="fieldset w-full">
@@ -34,6 +44,14 @@
           [placeholder]="i18n.releases.releasePlaceholder"
           [formField]="releaseForm.release"
         />
+
+        @if (releaseForm.release().touched() && releaseForm.release().invalid()) {
+          <ul>
+            @for (error of releaseForm.release().errors(); track error) {
+              <li class="text-error">{{ error.message }}</li>
+            }
+          </ul>
+        }
       </fieldset>
 
       <fieldset class="fieldset w-full">
@@ -48,6 +66,14 @@
           [placeholder]="i18n.releases.monthPlaceholder"
           [formField]="releaseForm.month"
         />
+
+        @if (releaseForm.month().touched() && releaseForm.month().invalid()) {
+          <ul>
+            @for (error of releaseForm.month().errors(); track error) {
+              <li class="text-error">{{ error.message }}</li>
+            }
+          </ul>
+        }
       </fieldset>
 
       <fieldset class="fieldset w-full">
@@ -62,6 +88,13 @@
           [placeholder]="i18n.releases.yearPlaceholder"
           [formField]="releaseForm.year"
         />
+        @if (releaseForm.year().touched() && releaseForm.year().invalid()) {
+          <ul>
+            @for (error of releaseForm.year().errors(); track error) {
+              <li class="text-error">{{ error.message }}</li>
+            }
+          </ul>
+        }
       </fieldset>
 
       <fieldset class="fieldset w-full">
@@ -75,14 +108,29 @@
           class="input w-full"
           [placeholder]="i18n.releases.indexPlaceholder"
           [formField]="releaseForm.index"
+          /* [readonly]="activeParam() !== 'new'" */
+          /* [style.backgroundColor]="activeParam() !== 'new' ? '#eee' : ''" */
         />
+        @if (releaseForm.index().touched() && releaseForm.index().invalid()) {
+          <ul>
+            @for (error of releaseForm.index().errors(); track error) {
+              <li class="text-error">{{ error.message }}</li>
+            }
+          </ul>
+        }
       </fieldset>
     </div>
 
     <div class="mt-10 flex flex-row-reverse gap-3">
-      <button type="submit" class="btn btn-primary">
-        {{ i18n.releases.saveAsDraft }}
+      <button type="submit" class="btn btn-primary" [disabled]="submitDisable">
+        @if (isLoading()) {
+          <span class="loading loading-spinner text-accent"></span>
+        } @else {
+          <span class="text-white">{{ i18n.releases.saveAsDraft }}</span>
+        }
       </button>
     </div>
   </form>
 </div>
+
+<ngx-sonner-toaster position="top-center" richColors />

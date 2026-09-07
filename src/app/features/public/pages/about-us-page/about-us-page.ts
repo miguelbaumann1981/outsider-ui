@@ -17,8 +17,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { SafeHtmlPipe } from '../../pipes';
 import { NgClass } from '@angular/common';
 import { Spinner } from '@/shared/components/spinner/spinner';
-
-type AboutUsViewState = 'loading' | 'error' | 'available' | 'empty';
+import { ViewState } from '../../types';
 
 @Component({
   selector: 'out-about-us-page',
@@ -43,7 +42,7 @@ export class AboutUsPage implements OnInit {
   isLoading = signal(false);
   errorMessageApi = signal<string>('');
   info = signal<AboutUsApi>({} as AboutUsApi);
-  viewState = computed<AboutUsViewState>(() => {
+  viewState = computed<ViewState>(() => {
     if (this.isLoading()) return 'loading';
     if (this.errorMessageApi()) return 'error';
     if (this.info()?.isPublished && !this.info()?.isDraft) return 'available';
