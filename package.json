@@ -3,12 +3,12 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
-    "start-proxy": "ng serve --proxy-config proxy.conf.json",
+    "dev": "ng serve",
+    "dev-proxy": "ng serve --proxy-config proxy.conf.json",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "serve:ssr:Outsider-UI": "node dist/Outsider-UI/server/server.mjs"
+    "start": "node dist/Outsider-UI/server/server.mjs"
   },
   "private": true,
   "packageManager": "npm@11.12.1",
