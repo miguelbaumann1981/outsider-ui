@@ -3,7 +3,10 @@
     "back": "Volver",
     "serverError": "Error inesperado. Vuelva a intentarlo pasado unos minutos.",
     "underConstruction": "Próximamente...",
-    "contentNoAvailable": "Contenido no disponible"
+    "contentNoAvailable": "Contenido no disponible",
+    "edit": "Editar",
+    "save": "Guardar",
+    "publish": "Publicar"
   },
   "slogan": "Revista Literaria Subterránea",
   "menu": {
@@ -86,10 +89,8 @@
       "messageMinLength": "El número mínimo de caracteres para el mensaje es",
       "emailPattern": "El formato del correo electrónico no es válido"
     },
-    "successSendingTitle": "¡Felicidades!",
-    "successSendingSubtitle": "Tu mensaje ha sido enviado con éxito",
-    "errorSendingTitle": "Error inesperado",
-    "errorSendingSubtitle": "Tu mensaje no ha sido enviado. Inténtelo más tarde"
+    "successSendingTitle": "¡Felicidades! Tu mensaje ha sido enviado con éxito",
+    "errorSendingTitle": "Tu mensaje no ha sido enviado. Inténtelo más tarde"
   },
   "aboutUs": {
     "subtitle": "¿Quiénes somos?",

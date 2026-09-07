@@ -16,10 +16,11 @@ import { Router } from '@angular/router';
 import { ReleasesApi } from '@/features/public/interfaces';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Release } from '@/features/public/types';
+import { NgClass } from '@angular/common';
 
 @Component({
   selector: 'out-releases-crud-page',
-  imports: [SubtitlePage],
+  imports: [SubtitlePage, NgClass],
   templateUrl: './releases-crud-page.html',
 })
 export class ReleasesCrudPage implements OnInit {
