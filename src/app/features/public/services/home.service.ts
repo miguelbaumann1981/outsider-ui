@@ -4,7 +4,7 @@ import { map, Observable, tap } from 'rxjs';
 import { environment } from '@envs/environment.development';
 import { Article, ArticlesApi, LayoutArticlesApi } from '../interfaces';
 import { LocalStorageService } from '@/core/services/local-storage.service';
-import { AnyCategory, ArticleCategory, Release } from '../types';
+import { AnyCategory, ArticleCategory, ReleaseCode } from '../types';
 import { ArticleCategoryMapper } from '../mappers';
 
 @Service()
@@ -13,19 +13,19 @@ export class HomeService {
   private localStorageService = inject(LocalStorageService);
   private baseUrl: string = environment.API_URL;
 
-  getArticles(release: Release): Observable<ArticlesApi> {
+  getArticles(code: ReleaseCode): Observable<ArticlesApi> {
     return this.http
-      .get<ArticlesApi>(`${this.baseUrl}/api/articles/${release}`)
-      .pipe(tap(() => this.localStorageService.setItem('release', release)));
+      .get<ArticlesApi>(`${this.baseUrl}/api/articles/${code}`)
+      .pipe(tap(() => this.localStorageService.setItem('release', code)));
   }
 
   getArticleBySlug(
-    release: string,
+    code: ReleaseCode,
     slug: string,
     category: ArticleCategory,
   ): Observable<AnyCategory> {
     const mapper = ArticleCategoryMapper[category];
-    return this.http.get<Article>(`${this.baseUrl}/api/articles/${release}/${slug}`).pipe(
+    return this.http.get<Article>(`${this.baseUrl}/api/articles/${code}/${slug}`).pipe(
       map((article) => {
         return mapper(article);
       }),

@@ -28,8 +28,8 @@ export const releaseSchemaBase = (path: SchemaPathTree<ReleasesCrud>) =>
       message: `${i18n.releases.validations.nameMaxLength} ${maxCharactersName}`,
     });
 
-    required(path.release, { message: i18n.releases.validations.releaseRequired });
-    pattern(path.release, /^[A-Z]{3}[0-9]{3}$/, {
+    required(path.releaseCode, { message: i18n.releases.validations.releaseRequired });
+    pattern(path.releaseCode, /^[A-Z]{3}[0-9]{3}$/, {
       message: i18n.releases.validations.releasePattern,
     });
 

@@ -37,7 +37,7 @@ export class AdminHeader {
   ]);
 
   navigateToMainPage(): void {
-    this.localStorageService.setItem('release', 'CURRENT');
+    this.localStorageService.setItem('release', '');
     this.router.navigate(['/admin/releases-crud']);
   }
 

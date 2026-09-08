@@ -42,12 +42,12 @@
           type="text"
           class="input w-full"
           [placeholder]="i18n.releases.releasePlaceholder"
-          [formField]="releaseForm.release"
+          [formField]="$any(releaseForm.releaseCode)"
         />
 
-        @if (releaseForm.release().touched() && releaseForm.release().invalid()) {
+        @if (releaseForm.releaseCode().touched() && releaseForm.releaseCode().invalid()) {
           <ul>
-            @for (error of releaseForm.release().errors(); track error) {
+            @for (error of releaseForm.releaseCode().errors(); track error) {
               <li class="text-error">{{ error.message }}</li>
             }
           </ul>

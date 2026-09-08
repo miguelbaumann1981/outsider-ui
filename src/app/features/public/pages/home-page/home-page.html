@@ -2,24 +2,24 @@
 
 <main class="flex flex-col gap-5">
   <!-- SLOGAN -->
-  @if (releaseLocalStorage() === 'CURRENT') {
-    <div class="flex items-center justify-center">
-      <div class="flex w-full flex-col gap-2">
-        <h1 id="title" class="title">
-          <span class="text-info engagement-regular">{{ title() }}</span>
-        </h1>
-        <h2 id="slogan" class="slogan">
-          <span class="special-elite-regular">{{ i18n.slogan }}</span>
-        </h2>
-      </div>
+  <!-- @if (releaseLocalStorage() === 'CURRENT') { -->
+  <div class="flex items-center justify-center">
+    <div class="flex w-full flex-col gap-2">
+      <h1 id="title" class="title">
+        <span class="engagement-regular">{{ title() }}</span>
+      </h1>
+      <h2 id="slogan" class="slogan">
+        <span class="special-elite-regular">{{ i18n.slogan }}</span>
+      </h2>
     </div>
-  } @else {
+  </div>
+  <!-- } @else {
     <div class="flex items-center justify-center">
       <h2 class="slogan">
         <span class="subtitle special-elite-regular">{{ releaseName() }}</span>
       </h2>
     </div>
-  }
+  } -->
 
   @if (loading) {
     <div>

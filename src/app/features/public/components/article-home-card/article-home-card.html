@@ -1,8 +1,8 @@
 <div
-  class="mb-4 cursor-pointer rounded-lg bg-white shadow-md transition-all transition-discrete hover:shadow-xl md:mb-10"
+  class="mb-4 cursor-pointer break-inside-avoid rounded-lg bg-white shadow-md transition-all transition-discrete hover:shadow-xl md:mb-10"
   /* [style.backgroundColor]="article()?.hoverColor" */
 >
-  <div class="flex flex-col gap-5">
+  <div class="flex flex-col flex-nowrap gap-5">
     <div class="w-full">
       <img
         [src]="article()?.imageUrl"
@@ -12,7 +12,7 @@
       <div class="h-[6px] w-full" [style.backgroundColor]="article()?.color"></div>
     </div>
 
-    <div class="flex min-h-[200px] flex-col justify-between gap-8 px-6 pb-6">
+    <div class="flex min-h-[200px] flex-col flex-nowrap justify-between gap-8 px-6 pb-6">
       <h2
         class="special-elite-regular flex w-full items-center justify-center text-center text-lg lg:text-3xl xl:mt-3"
       >

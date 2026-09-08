@@ -60,7 +60,7 @@ export class AboutUsPage implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (data) => {
-          const currentVersion = data.find((item) => item.release === 'CURRENT');
+          const currentVersion = data.find((item) => item.releaseCode === 'XXX111');
           if (!currentVersion) {
             this.errorMessageApi.set(this.i18n.aboutUs.noCurrentVersion);
             this.isLoading.set(false);

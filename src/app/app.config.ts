@@ -19,7 +19,7 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(),
     provideAppInitializer(() => {
       const localStorageService = inject(LocalStorageService);
-      localStorageService.setItem('release', 'CURRENT');
+      localStorageService.setItem('release', '');
     }),
   ],
 };

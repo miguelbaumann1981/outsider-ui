@@ -1,5 +1,5 @@
 import { ArticleCategory } from '../enums';
-import { PositionLayoutArticles, Release } from '../types';
+import { PositionLayoutArticles, ReleaseCode } from '../types';
 
 export interface ArticleCard {
   author: string;
@@ -9,7 +9,7 @@ export interface ArticleCard {
   imageUrl: string;
   name: string;
   position: PositionLayoutArticles;
-  release: Release;
+  releaseCode: ReleaseCode;
   section: ArticleCategory;
   slug: string;
   title: string;

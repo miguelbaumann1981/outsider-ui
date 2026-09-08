@@ -28,7 +28,7 @@ export class AboutUsCrudPage {
       { name: '', text: '', picture: '' },
       { name: '', text: '', picture: '' },
     ],
-    release: 'CURRENT',
+    release: '',
     isDraft: false,
     isPublished: false,
   });

@@ -31,7 +31,7 @@ export class PublicHeader {
   ]);
 
   navigateToHomePage(): void {
-    this.localStorageService.setItem('release', 'CURRENT');
+    this.localStorageService.setItem('release', '');
     this.router.navigate(['/']);
   }
 }

@@ -10,15 +10,17 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { releaseSchemaBase } from './release-crud-form-schema';
 import { toast, NgxSonnerToaster } from 'ngx-sonner';
 import { delay } from 'rxjs';
+import { ReleaseCode } from '@/features/public/types';
 
 const RELEASE_MODEL: ReleasesCrud = {
   name: '',
   month: '',
   year: 0,
-  release: '',
+  releaseCode: '',
   index: 0,
   isDraft: false,
   isPublished: false,
+  isCurrentRelease: false,
 };
 
 @Component({
@@ -47,7 +49,7 @@ export class ReleaseCrudDetailPage implements OnInit {
 
   releaseSchema = schema<ReleasesCrud>((path) => {
     releaseSchemaBase(path);
-    disabled(path.release, { when: () => this.activeParam() !== 'new' });
+    disabled(path.releaseCode, { when: () => this.activeParam() !== 'new' });
     disabled(path.index);
   });
 
@@ -111,8 +113,8 @@ export class ReleaseCrudDetailPage implements OnInit {
       });
   }
 
-  checkCodeReleaseIsAvailable(codeRelease: any): boolean {
-    return this.allReleases().some((item) => item.release === codeRelease);
+  checkCodeReleaseIsAvailable(code: ReleaseCode): boolean {
+    return this.allReleases().some((item) => item.releaseCode === code);
   }
 
   createNewRelease(formData: ReleasesCrud): void {
@@ -166,7 +168,7 @@ export class ReleaseCrudDetailPage implements OnInit {
     const formData = this.releaseModel();
 
     if (this.activeParam() === 'new') {
-      if (this.checkCodeReleaseIsAvailable(this.releaseModel().release)) {
+      if (this.checkCodeReleaseIsAvailable(this.releaseModel().releaseCode)) {
         this.isLoading.set(false);
         toast.error(this.i18n.releases.validations.codeReleaseAlreadyExists);
         return;

@@ -19,7 +19,7 @@ import { LocalStorageService } from '@/core/services/local-storage.service';
 import { Router } from '@angular/router';
 import { HomeService, ReleasesService } from '../../services';
 import { SkeletonCard } from '@/shared/components/skeleton-card/skeleton-card';
-import { Release } from '../../types';
+import { ReleaseCode } from '../../types';
 
 @Component({
   selector: 'out-home-page',
@@ -35,6 +35,12 @@ import { Release } from '../../types';
       perspective: 500px;
       font-weight: 500;
       text-shadow: 1px 1px 2px rgba($color: #000, $alpha: 0.5);
+      background: linear-gradient(to right, #2c3e50, #0490b5);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      // color: transparent;
+      // display: inline-block;
     }
     .slogan {
       color: gray;
@@ -63,13 +69,15 @@ export class HomePage implements OnInit, AfterViewInit {
   isLoadingLayout = signal(false);
   isLoadingReleases = signal(false);
   errorMessageApi = signal<string>('');
-  releaseDefault = signal<Release>('CURRENT');
-  releaseLocalStorage = computed<Release>(
-    () => (this.localStorageService.getItem('release') as Release) ?? this.releaseDefault(),
+  releaseCodeDefault = signal<ReleaseCode>('XXX111' as ReleaseCode);
+  releaseCodeLocalStorage = computed<ReleaseCode>(
+    () => (this.localStorageService.getItem('release') as ReleaseCode) ?? this.releaseCodeDefault(),
   );
   releases = signal<ReleasesApi[]>([]);
   releaseName = computed<string>(() => {
-    return this.releases().find((item) => item.release === this.releaseLocalStorage())?.name ?? '';
+    return (
+      this.releases().find((item) => item.releaseCode === this.releaseCodeDefault())?.name ?? ''
+    );
   });
   articlesApi = signal<ArticlesApi>({} as ArticlesApi);
   layoutArticlesApi = signal<LayoutArticlesApi[]>([]);
@@ -85,7 +93,7 @@ export class HomePage implements OnInit, AfterViewInit {
         author: item.authorArticle,
         id: item.id,
         slug: item.slug,
-        release: item.release as Release,
+        releaseCode: item.releaseCode,
         imageUrl: item.image,
         position: layout.find((elem) => elem.category === item.category)?.position ?? 1,
         color: layout.find((elem) => elem.category === item.category)?.color?.solid ?? 'lightblue',
@@ -137,7 +145,7 @@ export class HomePage implements OnInit, AfterViewInit {
   getArticlesHomePage(): void {
     this.isLoadingArticles.set(true);
     this.homeService
-      .getArticles(this.releaseLocalStorage())
+      .getArticles(this.releaseCodeDefault())
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (articlesData) => {
@@ -192,8 +200,8 @@ export class HomePage implements OnInit, AfterViewInit {
   }
 
   navigateToDetail(article: ArticleCard) {
-    const { release, slug, section } = article;
-    this.localStorageService.setItem('release', release);
-    this.router.navigate([`/articles/${release}/${section}/${slug}`]);
+    const { releaseCode, slug, section } = article;
+    this.localStorageService.setItem('release', releaseCode);
+    this.router.navigate([`/articles/${releaseCode}/${section}/${slug}`]);
   }
 }

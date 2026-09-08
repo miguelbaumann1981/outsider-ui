@@ -1,10 +1,10 @@
-import { Release } from '../types';
+import { ReleaseCode } from '../types';
 
 export interface AboutUsApi {
   id: string;
   mainText: string;
   collaborators: Collaborator[];
-  release: Release;
+  releaseCode: ReleaseCode;
   isDraft: boolean;
   isPublished: boolean;
 }

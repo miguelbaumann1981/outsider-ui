@@ -45,7 +45,7 @@ export class ArticleDetailPage implements OnInit {
 
   articleDetail = signal<ArticleDetail>({
     category: ArticleCategory.EDITORIAL,
-    release: 'CURRENT',
+    releaseCode: '',
     slug: '',
   });
   articleSelected = signal<AnyCategory>({} as AnyCategory);
@@ -72,7 +72,7 @@ export class ArticleDetailPage implements OnInit {
     this.activatedRoute.params.subscribe((params) => {
       this.articleDetail.set({
         category: params['category'],
-        release: params['release'],
+        releaseCode: params['releaseCode'],
         slug: params['slug'],
       });
     });
@@ -80,9 +80,9 @@ export class ArticleDetailPage implements OnInit {
 
   getArticleData(): void {
     this.isLoadingArticle.set(true);
-    const { category, release, slug } = this.articleDetail();
+    const { category, releaseCode, slug } = this.articleDetail();
     this.homeService
-      .getArticleBySlug(release, slug, category)
+      .getArticleBySlug(releaseCode, slug, category)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (article) => {
@@ -120,6 +120,6 @@ export class ArticleDetailPage implements OnInit {
   navigateToReleasePage(release: string): void {
     const currentRelease = this.localStorageService.getItem('release');
 
-    this.router.navigate([currentRelease === 'CURRENT' ? '/' : `/release/${release}`]);
+    this.router.navigate([currentRelease === '' ? '/' : `/release/${release}`]);
   }
 }

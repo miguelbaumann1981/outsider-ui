@@ -8,7 +8,7 @@ import { NgClass } from '@angular/common';
 import es from '@/i18n/es.json';
 import { TitlePage } from '@/shared/components/title-page/title-page';
 import { publicLayoutPage } from '../../utils';
-import { ViewState, ArticleCategory, Release } from '../../types';
+import { ViewState, ArticleCategory, ReleaseCode } from '../../types';
 import { HomeService, ReleasesService } from '../../services';
 import { Spinner } from '@/shared/components/spinner/spinner';
 
@@ -29,8 +29,8 @@ export class ReleasesPage implements OnInit {
   isLoadingArticles = signal(false);
   errorMessageApi = signal<string>('');
   releases = signal<ReleasesApi[]>([]);
-  releaseSelected = signal<Release>(
-    (this.localStorageService.getItem('release') as Release) ?? 'CURRENT',
+  releaseCodeSelected = signal<ReleaseCode>(
+    (this.localStorageService.getItem('release') as ReleaseCode) ?? '',
   );
   articlesApi = signal<ArticlesApi>({} as ArticlesApi);
   layoutPage = signal<string>(publicLayoutPage);
@@ -59,11 +59,12 @@ export class ReleasesPage implements OnInit {
               index: item.index,
               month: item.month,
               year: item.year,
-              release: item.release as Release,
-              articles: this.getArticlesByRelease(item.release),
+              releaseCode: item.releaseCode,
+              articles: this.getArticlesByRelease(item.releaseCode),
               name: item.name,
               isDraft: item.isDraft,
               isPublished: item.isPublished,
+              isCurrentRelease: item.isCurrentRelease,
             }))
             .sort((a, b) => b.index - a.index);
           this.releases.set(info ?? []);
@@ -97,11 +98,11 @@ export class ReleasesPage implements OnInit {
       });
   }
 
-  getArticlesByRelease(release: Release): ArticleAuthor[] {
+  getArticlesByRelease(code: ReleaseCode): ArticleAuthor[] {
     let articlesRelease: ArticleAuthor[] = [];
 
     this.articlesApi()?.articles?.map((item) => {
-      if (item.release === release) {
+      if (item.releaseCode === code) {
         articlesRelease.push({
           title: item.titleArticle,
           slug: item.slug,
@@ -113,15 +114,18 @@ export class ReleasesPage implements OnInit {
     return articlesRelease;
   }
 
-  navigateToReleasePage(release: Release): void {
-    this.localStorageService.setItem('release', release);
-    const currentRelease = this.localStorageService.getItem('release');
+  navigateToReleasePage(code: ReleaseCode): void {
+    this.localStorageService.setItem('release', code);
+    const currentReleaseCode = this.localStorageService.getItem('release');
+    const isCurrent = this.releases().find(
+      (item) => item.releaseCode === currentReleaseCode,
+    )?.isCurrentRelease;
 
-    this.router.navigate([currentRelease === 'CURRENT' ? '/' : `/release/${release}`]);
+    this.router.navigate([isCurrent ? '/' : `/release/${code}`]);
   }
 
-  navigateToArticleDetail(release: Release, category: ArticleCategory, slug: string) {
-    this.localStorageService.setItem('release', release);
-    this.router.navigate([`/articles/${release}/${category}/${slug}`]);
+  navigateToArticleDetail(code: ReleaseCode, category: ArticleCategory, slug: string) {
+    this.localStorageService.setItem('release', code);
+    this.router.navigate([`/articles/${code}/${category}/${slug}`]);
   }
 }

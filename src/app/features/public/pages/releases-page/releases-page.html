@@ -2,7 +2,7 @@
   <out-title-page
     [text]="i18n.menu.allReleases"
     [icon]="'format_list_numbered'"
-    (return)="navigateToReleasePage(releaseSelected())"
+    (return)="navigateToReleasePage(releaseCodeSelected())"
   />
 
   <div class="rounded-lg border border-gray-200 bg-white p-4 shadow-lg">
@@ -39,7 +39,7 @@
                   <tr
                     class="hover:bg-base-200"
                     [ngClass]="
-                      release.release === releaseSelected()
+                      release.releaseCode === releaseCodeSelected()
                         ? 'text-secondary bg-green-50 hover:bg-green-50'
                         : ''
                     "
@@ -50,13 +50,13 @@
                     <td
                       class="font-semibold"
                       [ngClass]="
-                        release.release === releaseSelected()
+                        release.releaseCode === releaseCodeSelected()
                           ? 'cursor-auto'
                           : 'hover:text-primary cursor-pointer'
                       "
                       (click)="
-                        release.release !== releaseSelected()
-                          ? navigateToReleasePage(release.release)
+                        release.releaseCode !== releaseCodeSelected()
+                          ? navigateToReleasePage(release.releaseCode)
                           : null
                       "
                     >
@@ -69,7 +69,7 @@
                             class="hover:text-primary text-neutral cursor-pointer text-sm"
                             (click)="
                               navigateToArticleDetail(
-                                release.release,
+                                release.releaseCode,
                                 article.category,
                                 article.slug
                               )

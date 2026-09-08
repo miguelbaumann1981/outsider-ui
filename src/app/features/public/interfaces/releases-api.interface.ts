@@ -1,4 +1,4 @@
-import { Release, ReleaseMonth } from '../types';
+import { ReleaseCode, ReleaseMonth } from '../types';
 import { ArticleAuthor } from './article-author.interface';
 
 export interface ReleasesApi {
@@ -6,9 +6,10 @@ export interface ReleasesApi {
   index: number;
   isDraft: boolean;
   isPublished: boolean;
+  isCurrentRelease: boolean;
   month: ReleaseMonth;
   name: string;
-  release: Release;
+  releaseCode: ReleaseCode;
   year: number;
   articles?: ArticleAuthor[];
 }
