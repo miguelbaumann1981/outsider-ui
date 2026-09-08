@@ -8,10 +8,13 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NgClass } from '@angular/common';
 import { toast, NgxSonnerToaster } from 'ngx-sonner';
 import { delay } from 'rxjs';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { ConfirmPublishReleaseDialog } from './dialogs/confirm-publish-release-dialog/confirm-publish-release-dialog';
+import { ConfirmCurrentReleaseDialog } from './dialogs/confirm-current-release-dialog/confirm-current-release-dialog';
 
 @Component({
   selector: 'out-releases-crud-page',
-  imports: [SubtitlePage, NgClass, NgxSonnerToaster],
+  imports: [SubtitlePage, NgClass, NgxSonnerToaster, MatDialogModule],
   templateUrl: './releases-crud-page.html',
 })
 export class ReleasesCrudPage implements OnInit {
@@ -19,6 +22,7 @@ export class ReleasesCrudPage implements OnInit {
   private releasesService = inject(ReleasesService);
   private destroyRef = inject(DestroyRef);
   router = inject(Router);
+  readonly dialog = inject(MatDialog);
 
   isLoadingReleases = signal(false);
   errorMessageApi = signal<string>('');
@@ -81,5 +85,29 @@ export class ReleasesCrudPage implements OnInit {
       });
   }
 
-  onToggleChange(id: string): void {}
+  openConfirmPublishDialog(release: ReleasesApi): void {
+    const dialogRef = this.dialog.open(ConfirmPublishReleaseDialog, {
+      data: {},
+      width: '600px',
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.publish(release);
+      }
+    });
+  }
+
+  openConfirmChangeCurrentDialog(release: ReleasesApi): void {
+    const dialogRef = this.dialog.open(ConfirmCurrentReleaseDialog, {
+      data: {},
+      width: '600px',
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        // this.publish(release);
+      }
+    });
+  }
 }

@@ -82,7 +82,11 @@
     "successPublishMessageForm": "El número ha sido publicado con éxito",
     "errorPublishMessageForm": "El número no ha sido publicado. Intente más tarde",
     "createNewRelease": "Crear nuevo número",
-    "editRelease": "Editar número"
+    "editRelease": "Editar número",
+    "publishRelease": "Publicar número",
+    "publishReleaseConfirmation": "¿Estás seguro que quieres publicar este número?",
+    "changeCurrentRelease": "Cambiar a número actual",
+    "changeCurrentReleaseConfirmation": "¿Estás seguro que quieres poner este número como actual?"
   },
   "months": {
     "january": "Enero",
