@@ -108,8 +108,6 @@
           class="input w-full"
           [placeholder]="i18n.releases.indexPlaceholder"
           [formField]="releaseForm.index"
-          /* [readonly]="activeParam() !== 'new'" */
-          /* [style.backgroundColor]="activeParam() !== 'new' ? '#eee' : ''" */
         />
         @if (releaseForm.index().touched() && releaseForm.index().invalid()) {
           <ul>

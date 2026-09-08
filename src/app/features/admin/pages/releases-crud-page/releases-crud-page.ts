@@ -80,4 +80,6 @@ export class ReleasesCrudPage implements OnInit {
         },
       });
   }
+
+  onToggleChange(id: string): void {}
 }

@@ -6,7 +6,10 @@
     "contentNoAvailable": "Contenido no disponible",
     "edit": "Editar",
     "save": "Guardar",
-    "publish": "Publicar"
+    "publish": "Publicar",
+    "close": "Cerrar",
+    "cancel": "Cancelar",
+    "accept": "Aceptar"
   },
   "slogan": "Revista Literaria Subterránea",
   "menu": {
@@ -72,12 +75,14 @@
       "codeReleaseAlreadyExists": "El código del lanzamiento ya existe. Introduzca otro",
       "indexAlreadyExists": "El número ya existe. Introduzca otro"
     },
-    "successEditMessageForm": "El lanzamiento ha sido editado con éxito",
-    "errorEditMessageForm": "El lanzamiento no ha sido editado. Intenete más tarde",
-    "successCreateMessageForm": "El nuevo lanzamiento ha sido creado con éxito",
-    "errorCreateMessageForm": "El nuevo lanzamiento no ha sido creado. Intente más tarde",
-    "successPublishMessageForm": "El lanzamiento ha sido publicado con éxito",
-    "errorPublishMessageForm": "El lanzamiento no ha sido publicado. Intente más tarde"
+    "successEditMessageForm": "El número ha sido editado con éxito",
+    "errorEditMessageForm": "El número no ha sido editado. Intenete más tarde",
+    "successCreateMessageForm": "El nuevo número ha sido creado con éxito",
+    "errorCreateMessageForm": "El nuevo número no ha sido creado. Intente más tarde",
+    "successPublishMessageForm": "El número ha sido publicado con éxito",
+    "errorPublishMessageForm": "El número no ha sido publicado. Intente más tarde",
+    "createNewRelease": "Crear nuevo número",
+    "editRelease": "Editar número"
   },
   "months": {
     "january": "Enero",

@@ -1,13 +1,13 @@
 import { SubtitlePage } from '@/shared/components/subtitle-page/subtitle-page';
 import { Component, DestroyRef, inject, signal, OnInit, computed } from '@angular/core';
 import es from '@/i18n/es.json';
-import { form, FormField, FormRoot } from '@angular/forms/signals';
+import { disabled, form, FormField, FormRoot, schema } from '@angular/forms/signals';
 import { ReleasesCrud } from '../../interfaces';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ReleasesApi } from '@/features/public/interfaces';
 import { ReleasesService } from '@/features/public/services';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { releaseSchema } from './release-crud-form-schema';
+import { releaseSchemaBase } from './release-crud-form-schema';
 import { toast, NgxSonnerToaster } from 'ngx-sonner';
 import { delay } from 'rxjs';
 
@@ -16,7 +16,7 @@ const RELEASE_MODEL: ReleasesCrud = {
   month: '',
   year: 0,
   release: '',
-  index: 1,
+  index: 0,
   isDraft: false,
   isPublished: false,
 };
@@ -39,12 +39,21 @@ export class ReleaseCrudDetailPage implements OnInit {
   selectedRelease = signal<ReleasesApi>({} as ReleasesApi);
   isLoading = signal(false);
   subtitlePage = computed<string>(() =>
-    this.activeParam() === 'new' ? 'Crear nuevo lanzamiento' : 'Editar lanzamiento',
+    this.activeParam() === 'new'
+      ? this.i18n.releases.createNewRelease
+      : this.i18n.releases.editRelease,
   );
+  newIndexRelease = computed<number>(() => this.allReleases().length + 1);
 
-  releaseModel = signal<ReleasesCrud>(RELEASE_MODEL);
+  releaseSchema = schema<ReleasesCrud>((path) => {
+    releaseSchemaBase(path);
+    disabled(path.release, { when: () => this.activeParam() !== 'new' });
+    disabled(path.index);
+  });
 
-  readonly releaseForm = form(this.releaseModel, releaseSchema);
+  releaseModel = signal<ReleasesCrud>({ ...RELEASE_MODEL, index: this.newIndexRelease() });
+
+  readonly releaseForm = form(this.releaseModel, this.releaseSchema);
 
   ngOnInit(): void {
     this.getReleasesApi();
@@ -68,6 +77,12 @@ export class ReleaseCrudDetailPage implements OnInit {
       .subscribe({
         next: (data) => {
           this.allReleases.set(data ?? []);
+          if (this.activeParam() === 'new') {
+            this.releaseModel.update((model) => ({
+              ...model,
+              index: this.newIndexRelease(),
+            }));
+          }
         },
         error: (error) => {
           toast.error(error ?? this.i18n.common.serverError);
@@ -96,11 +111,7 @@ export class ReleaseCrudDetailPage implements OnInit {
       });
   }
 
-  checkIndexIsAvailable(indexInput: number): boolean {
-    return this.allReleases().some((item) => item.index === indexInput);
-  }
-
-  checkCodeReleaseIsAvailable(codeRelease: string): boolean {
+  checkCodeReleaseIsAvailable(codeRelease: any): boolean {
     return this.allReleases().some((item) => item.release === codeRelease);
   }
 
@@ -155,12 +166,6 @@ export class ReleaseCrudDetailPage implements OnInit {
     const formData = this.releaseModel();
 
     if (this.activeParam() === 'new') {
-      if (this.checkIndexIsAvailable(this.releaseModel().index)) {
-        this.isLoading.set(false);
-        toast.error(this.i18n.releases.validations.indexAlreadyExists);
-        return;
-      }
-
       if (this.checkCodeReleaseIsAvailable(this.releaseModel().release)) {
         this.isLoading.set(false);
         toast.error(this.i18n.releases.validations.codeReleaseAlreadyExists);

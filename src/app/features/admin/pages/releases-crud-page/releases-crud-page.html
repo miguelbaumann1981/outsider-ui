@@ -39,14 +39,16 @@
 
             <div class="badge badge-secondary">{{ release.release }}</div>
           </div>
-          <div class="card-actions justify-end">
+
+          <div class="card-actions items-center justify-end">
             <button class="btn btn-outline btn-accent" (click)="navigateToDetailForm(release.id)">
               {{ i18n.common.edit }}
             </button>
 
             <button
               class="btn btn-outline btn-primary"
-              (click)="publish(release)"
+              /* (click)="publish(release)" */
+              onclick="my_modal_3.showModal()"
               [disabled]="release.isPublished"
             >
               {{ i18n.common.publish }}
@@ -58,6 +60,16 @@
               }
             }
           </div>
+
+          <div class="mt-2 flex justify-center">
+            <button
+              class="btn btn-link"
+              onclick="my_modal_2.showModal()"
+              [disabled]="release.release === 'CURRENT'"
+            >
+              Cambiar a Número actual
+            </button>
+          </div>
         </div>
       </div>
     }
@@ -65,3 +77,47 @@
 </div>
 
 <ngx-sonner-toaster position="top-center" richColors />
+
+<!-- DIALOG PUBLISH RELEASE -->
+<dialog id="my_modal_3" class="modal">
+  <div class="modal-box">
+    <form method="dialog">
+      <button class="btn btn-sm btn-circle btn-ghost absolute top-2 right-2">✕</button>
+    </form>
+    <h3 class="text-lg font-bold">Publicar número</h3>
+    <p class="py-4">Press ESC key or click on ✕ button to close</p>
+
+    <div class="mt-2 flex items-center justify-end gap-2">
+      <form method="dialog">
+        <button class="btn btn-soft btn-error">
+          {{ i18n.common.cancel }}
+        </button>
+      </form>
+      <button class="btn btn-soft btn-success">
+        {{ i18n.common.publish }}
+      </button>
+    </div>
+  </div>
+</dialog>
+
+<!-- DIALOG CHANGE A CURRENT RELEASE -->
+<dialog id="my_modal_2" class="modal">
+  <div class="modal-box">
+    <form method="dialog">
+      <button class="btn btn-sm btn-circle btn-ghost absolute top-2 right-2">✕</button>
+    </form>
+    <h3 class="text-lg font-bold">Cambiar a Número actual</h3>
+    <p class="py-4">Press ESC key or click on ✕ button to close</p>
+
+    <div class="mt-2 flex items-center justify-end gap-2">
+      <form method="dialog">
+        <button class="btn btn-soft btn-error">
+          {{ i18n.common.cancel }}
+        </button>
+      </form>
+      <button class="btn btn-soft btn-success">
+        {{ i18n.common.accept }}
+      </button>
+    </div>
+  </div>
+</dialog>
