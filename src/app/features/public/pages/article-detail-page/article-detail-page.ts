@@ -15,8 +15,8 @@ import { HomeService } from '../../services/home.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TitlePage } from '@/shared/components/title-page/title-page';
 import { publicLayoutPage, textTeal600 } from '../../utils';
-import { AnyCategory } from '../../types';
-import { ArticleDetail, LayoutArticlesApi } from '../../interfaces';
+import { AnyCategory, ReleaseCode, ViewState } from '../../types';
+import { ArticleDetail, LayoutArticlesApi, ReleaseLocalStorage } from '../../interfaces';
 import { ImgFallbackDirective } from '../../directives';
 import { Spinner } from '@/shared/components/spinner/spinner';
 import es from '@/i18n/es.json';
@@ -60,6 +60,12 @@ export class ArticleDetailPage implements OnInit {
       this.layoutArticlesApi().find((elem) => elem.category === this.articleDetail().category)
         ?.color?.solid ?? textTeal600
     );
+  });
+  viewState = computed<ViewState>(() => {
+    if (this.isLoadingLayout() || this.isLoadingArticle()) return 'loading';
+    if (this.errorMessageApi()) return 'error';
+    if (this.articleSelected() !== null) return 'available';
+    return 'empty';
   });
 
   ngOnInit(): void {
@@ -117,9 +123,11 @@ export class ArticleDetailPage implements OnInit {
       });
   }
 
-  navigateToReleasePage(release: string): void {
-    const currentRelease = this.localStorageService.getItem('release');
+  navigateToReleasePage(releaseCode: ReleaseCode): void {
+    const releaseLS: ReleaseLocalStorage = JSON.parse(
+      this.localStorageService.getItem('release') ?? '',
+    );
 
-    this.router.navigate([currentRelease === '' ? '/' : `/release/${release}`]);
+    this.router.navigate([releaseLS.isCurrent ? '/' : `/release/${releaseCode.toLowerCase()}`]);
   }
 }

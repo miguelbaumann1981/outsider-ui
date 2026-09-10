@@ -1,28 +1,30 @@
-@let loading = isLoadingReleases() || isLoadingArticles() || isLoadingLayout();
+@let isCurrentRelease =
+  releases().find((item) => item.releaseCode === releaseCodeLocalStorage())?.isCurrentRelease;
 
 <main class="flex flex-col gap-5">
   <!-- SLOGAN -->
-  <!-- @if (releaseLocalStorage() === 'CURRENT') { -->
-  <div class="flex items-center justify-center">
-    <div class="flex w-full flex-col gap-2">
-      <h1 id="title" class="title">
-        <span class="engagement-regular">{{ title() }}</span>
-      </h1>
-      <h2 id="slogan" class="slogan">
-        <span class="special-elite-regular">{{ i18n.slogan }}</span>
-      </h2>
+  @if (isCurrentRelease) {
+    <div class="flex items-center justify-center">
+      <div class="flex w-full flex-col gap-2">
+        <h1 id="title" class="title">
+          <span class="engagement-regular text-info">{{ title() }}</span>
+        </h1>
+        <h2 id="slogan" class="slogan">
+          <span class="special-elite-regular">{{ i18n.slogan }}</span>
+        </h2>
+      </div>
     </div>
-  </div>
-  <!-- } @else {
+  } @else {
     <div class="flex items-center justify-center">
       <h2 class="slogan">
         <span class="subtitle special-elite-regular">{{ releaseName() }}</span>
       </h2>
     </div>
-  } -->
+  }
 
-  @if (loading) {
-    <div>
+  <!-- CONTENT -->
+  @switch (viewState()) {
+    @case ('loading') {
       <div class="mx-auto p-6">
         <div class="columns-1 gap-6 space-y-6 md:columns-3 md:gap-10 md:space-y-10">
           @for (item of [1, 2, 3, 4, 5, 6]; track item) {
@@ -30,21 +32,31 @@
           }
         </div>
       </div>
-    </div>
-  } @else {
-    @if (errorMessageApi()) {
+    }
+
+    @case ('error') {
       <div class="w-full">
         <div role="alert" class="alert alert-error alert-soft w-full">
           <span class="text-xl font-semibold">{{ errorMessageApi() }}</span>
         </div>
       </div>
-    } @else {
+    }
+
+    @case ('available') {
       <!-- CARDS -->
       <div class="mx-auto p-6">
         <div class="columns-1 gap-6 space-y-6 md:columns-3 md:gap-10 md:space-y-10">
           @for (article of articlesRelease(); track article.id) {
             <out-article-home-card [article]="article" (click)="navigateToDetail(article)" />
           }
+        </div>
+      </div>
+    }
+
+    @case ('empty') {
+      <div class="w-full">
+        <div role="alert" class="alert alert-info alert-soft w-full">
+          <span class="text-xl font-semibold">{{ i18n.common.contentNoAvailable }}</span>
         </div>
       </div>
     }

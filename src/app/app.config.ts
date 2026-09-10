@@ -9,7 +9,7 @@ import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
 import { provideClientHydration } from '@angular/platform-browser';
 import { provideHttpClient } from '@angular/common/http';
-import { LocalStorageService } from './core/services/local-storage.service';
+import { SetInitReleaseService } from './core/services';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -18,8 +18,7 @@ export const appConfig: ApplicationConfig = {
     provideClientHydration(),
     provideHttpClient(),
     provideAppInitializer(() => {
-      const localStorageService = inject(LocalStorageService);
-      localStorageService.setItem('release', '');
+      inject(SetInitReleaseService).setInitReleaseLocalStorage();
     }),
   ],
 };

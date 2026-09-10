@@ -14,12 +14,12 @@ import { ArticleHomeCard } from '../../components/article-home-card/article-home
 import { ArticleCard } from '../../interfaces/article-card.interface';
 import es from '@/i18n/es.json';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ArticlesApi, LayoutArticlesApi, ReleasesApi } from '../../interfaces';
+import { ArticlesApi, LayoutArticlesApi, ReleaseLocalStorage, ReleasesApi } from '../../interfaces';
 import { LocalStorageService } from '@/core/services/local-storage.service';
 import { Router } from '@angular/router';
 import { HomeService, ReleasesService } from '../../services';
 import { SkeletonCard } from '@/shared/components/skeleton-card/skeleton-card';
-import { ReleaseCode } from '../../types';
+import { ReleaseCode, ViewState } from '../../types';
 
 @Component({
   selector: 'out-home-page',
@@ -35,13 +35,8 @@ import { ReleaseCode } from '../../types';
       perspective: 500px;
       font-weight: 500;
       text-shadow: 1px 1px 2px rgba($color: #000, $alpha: 0.5);
-      background: linear-gradient(to right, #2c3e50, #0490b5);
-      -webkit-background-clip: text;
-      background-clip: text;
-      -webkit-text-fill-color: transparent;
-      // color: transparent;
-      // display: inline-block;
     }
+
     .slogan {
       color: gray;
       line-height: 1.2;
@@ -69,14 +64,21 @@ export class HomePage implements OnInit, AfterViewInit {
   isLoadingLayout = signal(false);
   isLoadingReleases = signal(false);
   errorMessageApi = signal<string>('');
-  releaseCodeDefault = signal<ReleaseCode>('XXX111' as ReleaseCode);
-  releaseCodeLocalStorage = computed<ReleaseCode>(
-    () => (this.localStorageService.getItem('release') as ReleaseCode) ?? this.releaseCodeDefault(),
-  );
+  releaseCodeLocalStorage = computed<ReleaseCode>(() => {
+    if (this.localStorageService.getItem('release')) {
+      const releaseLS: ReleaseLocalStorage = JSON.parse(
+        this.localStorageService.getItem('release') ?? '',
+      );
+      return releaseLS.code;
+    }
+    return '';
+  });
+
   releases = signal<ReleasesApi[]>([]);
   releaseName = computed<string>(() => {
     return (
-      this.releases().find((item) => item.releaseCode === this.releaseCodeDefault())?.name ?? ''
+      this.releases().find((item) => item.releaseCode === this.releaseCodeLocalStorage())?.name ??
+      ''
     );
   });
   articlesApi = signal<ArticlesApi>({} as ArticlesApi);
@@ -101,6 +103,13 @@ export class HomePage implements OnInit, AfterViewInit {
           layout.find((elem) => elem.category === item.category)?.color?.hover ?? '#FFDBD6',
       }))
       .sort((a, b) => a.position - b.position);
+  });
+  viewState = computed<ViewState>(() => {
+    if (this.isLoadingReleases() || this.isLoadingArticles() || this.isLoadingLayout())
+      return 'loading';
+    if (this.errorMessageApi()) return 'error';
+    if (this.articlesRelease().length > 0) return 'available';
+    return 'empty';
   });
 
   ngOnInit(): void {
@@ -145,7 +154,7 @@ export class HomePage implements OnInit, AfterViewInit {
   getArticlesHomePage(): void {
     this.isLoadingArticles.set(true);
     this.homeService
-      .getArticles(this.releaseCodeDefault())
+      .getArticles(this.releaseCodeLocalStorage())
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (articlesData) => {
@@ -201,7 +210,12 @@ export class HomePage implements OnInit, AfterViewInit {
 
   navigateToDetail(article: ArticleCard) {
     const { releaseCode, slug, section } = article;
-    this.localStorageService.setItem('release', releaseCode);
-    this.router.navigate([`/articles/${releaseCode}/${section}/${slug}`]);
+    const release: ReleaseLocalStorage = {
+      code: releaseCode,
+      isCurrent:
+        this.releases().find((item) => item.releaseCode === releaseCode)?.isCurrentRelease ?? false,
+    };
+    this.localStorageService.setItem('release', JSON.stringify(release));
+    this.router.navigate([`/articles/${releaseCode.toLowerCase()}/${section}/${slug}`]);
   }
 }

@@ -13,3 +13,4 @@ export * from './category-tales.interface';
 export * from './contact-form.interface';
 export * from './layout-articles-api.interface';
 export * from './releases-api.interface';
+export * from './release-local-storage.interface';

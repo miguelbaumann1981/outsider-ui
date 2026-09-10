@@ -1,6 +1,6 @@
 import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ArticleAuthor, ArticlesApi, ReleasesApi } from '../../interfaces';
+import { ArticleAuthor, ArticlesApi, ReleaseLocalStorage, ReleasesApi } from '../../interfaces';
 import { ReleaseMonthPipe } from '../../pipes';
 import { Router } from '@angular/router';
 import { LocalStorageService } from '@/core/services/local-storage.service';
@@ -29,9 +29,15 @@ export class ReleasesPage implements OnInit {
   isLoadingArticles = signal(false);
   errorMessageApi = signal<string>('');
   releases = signal<ReleasesApi[]>([]);
-  releaseCodeSelected = signal<ReleaseCode>(
-    (this.localStorageService.getItem('release') as ReleaseCode) ?? '',
-  );
+  releaseCodeSelected = computed<ReleaseCode>(() => {
+    if (this.localStorageService.getItem('release')) {
+      const releaseLS: ReleaseLocalStorage = JSON.parse(
+        this.localStorageService.getItem('release') ?? '',
+      );
+      return releaseLS.code;
+    }
+    return '';
+  });
   articlesApi = signal<ArticlesApi>({} as ArticlesApi);
   layoutPage = signal<string>(publicLayoutPage);
   viewState = computed<ViewState>(() => {
@@ -115,17 +121,22 @@ export class ReleasesPage implements OnInit {
   }
 
   navigateToReleasePage(code: ReleaseCode): void {
-    this.localStorageService.setItem('release', code);
-    const currentReleaseCode = this.localStorageService.getItem('release');
-    const isCurrent = this.releases().find(
-      (item) => item.releaseCode === currentReleaseCode,
-    )?.isCurrentRelease;
-
-    this.router.navigate([isCurrent ? '/' : `/release/${code}`]);
+    const releaseLS: ReleaseLocalStorage = {
+      code,
+      isCurrent:
+        this.releases().find((item) => item.releaseCode === code)?.isCurrentRelease ?? false,
+    };
+    this.localStorageService.setItem('release', JSON.stringify(releaseLS));
+    this.router.navigate([releaseLS.isCurrent ? '/' : `/release/${code.toLowerCase()}`]);
   }
 
   navigateToArticleDetail(code: ReleaseCode, category: ArticleCategory, slug: string) {
-    this.localStorageService.setItem('release', code);
-    this.router.navigate([`/articles/${code}/${category}/${slug}`]);
+    const releaseLS: ReleaseLocalStorage = {
+      code,
+      isCurrent:
+        this.releases().find((item) => item.releaseCode === code)?.isCurrentRelease ?? false,
+    };
+    this.localStorageService.setItem('release', JSON.stringify(releaseLS));
+    this.router.navigate([`/articles/${code.toLowerCase()}/${category}/${slug}`]);
   }
 }

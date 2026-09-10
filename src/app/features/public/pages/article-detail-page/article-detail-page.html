@@ -1,18 +1,20 @@
-@let loading = isLoadingArticle() || isLoadingLayout();
-
 <section [class]="layoutPage()">
-  @if (loading) {
-    <div class="spinner-container h-[600px]">
-      <out-spinner />
-    </div>
-  } @else {
-    @if (errorMessageApi()) {
+  @switch (viewState()) {
+    @case ('loading') {
+      <div class="spinner-container h-[600px]">
+        <out-spinner />
+      </div>
+    }
+
+    @case ('error') {
       <div class="w-full">
         <div role="alert" class="alert alert-error alert-soft w-full">
           <span class="text-xl font-semibold">{{ errorMessageApi() }}</span>
         </div>
       </div>
-    } @else {
+    }
+
+    @case ('available') {
       <out-title-page
         [text]="articleSelected()?.titleCategory"
         [category]="articleSelected()?.category"
@@ -97,6 +99,14 @@
               }
             </div>
           </article>
+        </div>
+      </div>
+    }
+
+    @case ('empty') {
+      <div class="w-full">
+        <div role="alert" class="alert alert-info alert-soft w-full">
+          <span class="text-xl font-semibold">{{ i18n.common.contentNoAvailable }}</span>
         </div>
       </div>
     }

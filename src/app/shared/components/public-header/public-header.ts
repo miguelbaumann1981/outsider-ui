@@ -3,7 +3,7 @@ import { IconMenu } from '../icon-menu/icon-menu';
 import { MenuItem } from '@/shared/interfaces/menu-item.interface';
 import es from '@/i18n/es.json';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
-import { LocalStorageService } from '@/core/services/local-storage.service';
+import { SetInitReleaseService } from '../../../core/services/set-init-release.service';
 
 @Component({
   selector: 'out-public-header',
@@ -11,7 +11,7 @@ import { LocalStorageService } from '@/core/services/local-storage.service';
   templateUrl: './public-header.html',
 })
 export class PublicHeader {
-  private localStorageService = inject(LocalStorageService);
+  private setInitiReleaseService = inject(SetInitReleaseService);
   router = inject(Router);
   protected readonly i18n = es;
 
@@ -31,7 +31,7 @@ export class PublicHeader {
   ]);
 
   navigateToHomePage(): void {
-    this.localStorageService.setItem('release', '');
+    this.setInitiReleaseService.setInitReleaseLocalStorage();
     this.router.navigate(['/']);
   }
 }
