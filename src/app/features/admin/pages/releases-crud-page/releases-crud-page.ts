@@ -1,5 +1,5 @@
 import { SubtitlePage } from '@/shared/components/subtitle-page/subtitle-page';
-import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import es from '@/i18n/es.json';
 import { ReleasesService } from '@/features/public/services';
 import { Router } from '@angular/router';
@@ -11,10 +11,12 @@ import { delay } from 'rxjs';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { ConfirmPublishReleaseDialog } from './dialogs/confirm-publish-release-dialog/confirm-publish-release-dialog';
 import { ConfirmCurrentReleaseDialog } from './dialogs/confirm-current-release-dialog/confirm-current-release-dialog';
+import { ReleaseCode, ViewState } from '@/features/public/types';
+import { Spinner } from '@/shared/components/spinner/spinner';
 
 @Component({
   selector: 'out-releases-crud-page',
-  imports: [SubtitlePage, NgClass, NgxSonnerToaster, MatDialogModule],
+  imports: [SubtitlePage, NgClass, NgxSonnerToaster, MatDialogModule, Spinner],
   templateUrl: './releases-crud-page.html',
 })
 export class ReleasesCrudPage implements OnInit {
@@ -29,6 +31,16 @@ export class ReleasesCrudPage implements OnInit {
   releases = signal<ReleasesApi[]>([]);
   releaseId = signal('');
   isLoading = signal(false);
+  viewState = computed<ViewState>(() => {
+    if (this.isLoadingReleases()) return 'loading';
+    if (this.errorMessageApi()) return 'error';
+    if (this.releases().length > 0) return 'available';
+    return 'empty';
+  });
+
+  currentRelease = computed<ReleasesApi>(() => {
+    return this.releases().find((item) => item.isCurrentRelease) ?? ({} as ReleasesApi);
+  });
 
   ngOnInit(): void {
     this.getReleasesApi();
@@ -61,22 +73,30 @@ export class ReleasesCrudPage implements OnInit {
     this.router.navigate([`/admin/releases-crud/new`]);
   }
 
-  publish(release: ReleasesApi): void {
+  publish(release: ReleasesApi, isPublished: boolean): void {
     this.isLoading.set(true);
     this.releaseId.set(release.id);
     let formData = release;
-    formData['isDraft'] = false;
-    formData['isPublished'] = true;
+    formData['isDraft'] = isPublished;
+    formData['isPublished'] = !isPublished;
 
     this.releasesService
       .updateRelease(this.releaseId(), formData)
       .pipe(takeUntilDestroyed(this.destroyRef), delay(1500))
       .subscribe({
         next: () => {
-          toast.success(this.i18n.releases.successPublishMessageForm);
+          toast.success(
+            isPublished
+              ? this.i18n.releases.successUnpublishMessageForm
+              : this.i18n.releases.successPublishMessageForm,
+          );
         },
         error: () => {
-          toast.error(this.i18n.releases.errorPublishMessageForm);
+          toast.error(
+            isPublished
+              ? this.i18n.releases.errorUnpublishMessageForm
+              : this.i18n.releases.errorPublishMessageForm,
+          );
           this.isLoading.set(false);
         },
         complete: () => {
@@ -85,15 +105,40 @@ export class ReleasesCrudPage implements OnInit {
       });
   }
 
-  openConfirmPublishDialog(release: ReleasesApi): void {
+  setAsCurrent(release: ReleasesApi, isNewCurrent: boolean): void {
+    this.isLoading.set(true);
+    this.releaseId.set(release.id);
+    let formData = release;
+    formData['isCurrentRelease'] = isNewCurrent;
+
+    this.releasesService
+      .updateRelease(this.releaseId(), formData)
+      .pipe(takeUntilDestroyed(this.destroyRef), delay(1500))
+      .subscribe({
+        next: () => {
+          toast.success('this.i18n.releases.successPublishMessageForm');
+        },
+        error: () => {
+          toast.error('this.i18n.releases.errorPublishMessageForm');
+          this.isLoading.set(false);
+        },
+        complete: () => {
+          this.isLoading.set(false);
+        },
+      });
+  }
+
+  openConfirmPublishDialog(release: ReleasesApi, isPublished: boolean): void {
     const dialogRef = this.dialog.open(ConfirmPublishReleaseDialog, {
-      data: {},
+      data: {
+        isPublished,
+      },
       width: '600px',
     });
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.publish(release);
+        this.publish(release, isPublished);
       }
     });
   }
@@ -106,7 +151,10 @@ export class ReleasesCrudPage implements OnInit {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        // this.publish(release);
+        console.log(this.currentRelease());
+
+        this.setAsCurrent(this.currentRelease(), false);
+        // this.setAsCurrent(release, true);
       }
     });
   }

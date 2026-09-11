@@ -15,11 +15,11 @@ import { ArticleCard } from '../../interfaces/article-card.interface';
 import es from '@/i18n/es.json';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ArticlesApi, LayoutArticlesApi, ReleaseLocalStorage, ReleasesApi } from '../../interfaces';
-import { LocalStorageService } from '@/core/services/local-storage.service';
 import { Router } from '@angular/router';
 import { HomeService, ReleasesService } from '../../services';
 import { SkeletonCard } from '@/shared/components/skeleton-card/skeleton-card';
 import { ReleaseCode, ViewState } from '../../types';
+import { LocalStorageService } from '@/core/services';
 
 @Component({
   selector: 'out-home-page',

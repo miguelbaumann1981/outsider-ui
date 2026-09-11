@@ -9,7 +9,11 @@
     "publish": "Publicar",
     "close": "Cerrar",
     "cancel": "Cancelar",
-    "accept": "Aceptar"
+    "accept": "Aceptar",
+    "published": "Publicado",
+    "notPublished": "No publicado",
+    "unpublish": "Retirar",
+    "confirm": "Confirmar"
   },
   "slogan": "Revista Literaria Subterránea",
   "menu": {
@@ -80,11 +84,15 @@
     "successCreateMessageForm": "El nuevo número ha sido creado con éxito",
     "errorCreateMessageForm": "El nuevo número no ha sido creado. Intente más tarde",
     "successPublishMessageForm": "El número ha sido publicado con éxito",
+    "successUnpublishMessageForm": "El número ha sido retirado con éxito",
     "errorPublishMessageForm": "El número no ha sido publicado. Intente más tarde",
+    "errorUnpublishMessageForm": "El número no ha sido retirado. Intente más tarde",
     "createNewRelease": "Crear nuevo número",
     "editRelease": "Editar número",
     "publishRelease": "Publicar número",
+    "unpublishRelease": "Retirar número",
     "publishReleaseConfirmation": "¿Estás seguro que quieres publicar este número?",
+    "unpublishReleaseConfirmation": "¿Estás seguro que quieres retirar este número?",
     "changeCurrentRelease": "Cambiar a número actual",
     "changeCurrentReleaseConfirmation": "¿Estás seguro que quieres poner este número como actual?"
   },

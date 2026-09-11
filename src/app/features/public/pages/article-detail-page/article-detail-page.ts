@@ -10,7 +10,6 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import { SafeHtmlPipe } from '../../pipes';
 import { ArticleCategory } from '../../enums';
-import { LocalStorageService } from '@/core/services/local-storage.service';
 import { HomeService } from '../../services/home.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TitlePage } from '@/shared/components/title-page/title-page';
@@ -20,6 +19,7 @@ import { ArticleDetail, LayoutArticlesApi, ReleaseLocalStorage } from '../../int
 import { ImgFallbackDirective } from '../../directives';
 import { Spinner } from '@/shared/components/spinner/spinner';
 import es from '@/i18n/es.json';
+import { LocalStorageService } from '@/core/services';
 
 @Component({
   selector: 'out-article-detail-page',

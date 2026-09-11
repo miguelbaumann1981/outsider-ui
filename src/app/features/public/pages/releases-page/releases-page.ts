@@ -3,7 +3,6 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ArticleAuthor, ArticlesApi, ReleaseLocalStorage, ReleasesApi } from '../../interfaces';
 import { ReleaseMonthPipe } from '../../pipes';
 import { Router } from '@angular/router';
-import { LocalStorageService } from '@/core/services/local-storage.service';
 import { NgClass } from '@angular/common';
 import es from '@/i18n/es.json';
 import { TitlePage } from '@/shared/components/title-page/title-page';
@@ -11,6 +10,7 @@ import { publicLayoutPage } from '../../utils';
 import { ViewState, ArticleCategory, ReleaseCode } from '../../types';
 import { HomeService, ReleasesService } from '../../services';
 import { Spinner } from '@/shared/components/spinner/spinner';
+import { LocalStorageService } from '@/core/services';
 
 @Component({
   selector: 'out-releases-page',
