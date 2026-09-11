@@ -1,9 +1,9 @@
-<div class="flex flex-col gap-4">
+<div class="flex flex-col gap-5">
   <out-subtitle-page
     [icon]="'format_list_numbered'"
     [text]="i18n.menu.releasesCrud"
     [actionText]="'Crear número'"
-    [actionIcon]="'add'"
+    [actionIcon]="'add_circle'"
     (actionEvent)="createNewRelease()"
   />
 
@@ -23,30 +23,43 @@
     }
 
     @case ('available') {
-      <div class="flex flex-row flex-wrap gap-10">
+      <div class="grid grid-cols-1 gap-3 lg:gap-10 xl:grid-cols-4">
         @for (release of releases(); track release.id) {
           <div
-            class="card w-96 border border-gray-200 shadow-sm"
+            class="card w-full border border-gray-200 shadow-sm"
             [ngClass]="
               release.releaseCode === currentRelease().releaseCode ? 'bg-orange-50' : 'bg-blue-50'
             "
           >
             <div class="card-body">
-              <div class="flex items-baseline justify-between gap-3">
+              <div class="flex flex-col items-baseline justify-between gap-3 xl:flex-row">
                 <div class="flex flex-col gap-1">
                   <h2 class="card-title">{{ release.name }}</h2>
 
-                  <div
-                    class="badge"
-                    [ngClass]="
-                      release.releaseCode === currentRelease().releaseCode
-                        ? 'badge-warning'
-                        : 'badge-secondary'
-                    "
-                  >
-                    {{ release.releaseCode }}
+                  <div class="flex flex-col items-center gap-2 xl:flex-row">
+                    <div
+                      class="badge"
+                      [ngClass]="
+                        release.releaseCode === currentRelease().releaseCode
+                          ? 'badge-warning'
+                          : 'badge-secondary'
+                      "
+                    >
+                      {{ release.releaseCode }}
+                    </div>
+
+                    @if (release.isPublished) {
+                      <button
+                        class="btn btn-link"
+                        (click)="openConfirmChangeCurrentDialog(release)"
+                        [disabled]="release.isCurrentRelease || isLoading()"
+                      >
+                        {{ i18n.releases.changeCurrentRelease }}
+                      </button>
+                    }
                   </div>
                 </div>
+
                 <div
                   class="badge"
                   [ngClass]="release.isPublished ? 'badge-success' : 'badge-error text-white'"
@@ -55,7 +68,7 @@
                 </div>
               </div>
 
-              <div class="flex items-center justify-between">
+              <div class="flex gap-3">
                 <ul>
                   <li class="flex gap-3">
                     <span class="min-w-[50px]">{{ i18n.releases.table.index }}</span>
@@ -72,12 +85,16 @@
                 </ul>
               </div>
 
-              <div class="card-actions items-center justify-end">
+              <div
+                class="card-actions items-center justify-end"
+                [class.mt-3]="!release.isPublished"
+              >
                 <button
-                  class="btn btn-outline btn-info"
+                  class="btn btn-outline btn-primary"
                   (click)="navigateToDetailForm(release.id)"
                   [disabled]="release.isCurrentRelease || isLoading()"
                 >
+                  <span class="material-icons"> edit </span>
                   {{ i18n.common.edit }}
                 </button>
 
@@ -87,6 +104,9 @@
                   (click)="openConfirmPublishDialog(release, release.isPublished)"
                   [disabled]="release.isCurrentRelease || isLoading()"
                 >
+                  <span class="material-icons">
+                    {{ release.isPublished ? 'block' : 'publish' }}
+                  </span>
                   {{ release.isPublished ? i18n.common.unpublish : i18n.common.publish }}
                 </button>
 
@@ -96,18 +116,6 @@
                   }
                 }
               </div>
-
-              @if (release.isPublished) {
-                <div class="mt-2 flex justify-center">
-                  <button
-                    class="btn btn-link"
-                    (click)="openConfirmChangeCurrentDialog(release)"
-                    [disabled]="release.isCurrentRelease || isLoading()"
-                  >
-                    {{ i18n.releases.changeCurrentRelease }}
-                  </button>
-                </div>
-              }
             </div>
           </div>
         }

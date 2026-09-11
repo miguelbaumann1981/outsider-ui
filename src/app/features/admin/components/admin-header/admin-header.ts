@@ -3,7 +3,6 @@ import { Component, inject, signal } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import es from '@/i18n/es.json';
 import { MenuItem } from '@/shared/interfaces/menu-item.interface';
-import { LocalStorageService } from '@/core/services/local-storage.service';
 import { AuthService } from '@/auth/services';
 
 @Component({
@@ -13,31 +12,29 @@ import { AuthService } from '@/auth/services';
 })
 export class AdminHeader {
   protected readonly i18n = es;
-  private localStorageService = inject(LocalStorageService);
   private authService = inject(AuthService);
   router = inject(Router);
 
   menu = signal<MenuItem[]>([
     {
-      text: this.i18n.menu.articlesCrud,
-      url: '/admin/articles-crud',
+      text: this.i18n.menu.releasesCrud,
+      url: '/admin/releases-crud',
     },
     {
       text: this.i18n.menu.homeLayoutCrud,
       url: '/admin/home-layout-crud',
     },
     {
-      text: this.i18n.menu.aboutUsCrud,
-      url: '/admin/about-us-crud',
+      text: this.i18n.menu.articlesCrud,
+      url: '/admin/articles-crud',
     },
     {
-      text: this.i18n.menu.releasesCrud,
-      url: '/admin/releases-crud',
+      text: this.i18n.menu.aboutUsCrud,
+      url: '/admin/about-us-crud',
     },
   ]);
 
   navigateToMainPage(): void {
-    // this.localStorageService.setItem('release', '');
     this.router.navigate(['/admin/releases-crud']);
   }
 

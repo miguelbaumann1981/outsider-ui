@@ -120,10 +120,11 @@
     </div>
 
     <div class="mt-10 flex flex-row-reverse gap-3">
-      <button type="submit" class="btn btn-primary" [disabled]="submitDisable">
+      <button type="submit" class="btn btn-accent" [disabled]="submitDisable">
         @if (isLoading()) {
           <span class="loading loading-spinner text-accent"></span>
         } @else {
+          <span class="material-icons"> save </span>
           <span class="text-white">{{ i18n.releases.saveAsDraft }}</span>
         }
       </button>

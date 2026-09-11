@@ -26,7 +26,7 @@
     "aboutUsCrud": "Sobre nosotros",
     "releasesCrud": "Números",
     "articlesCrud": "Artículos",
-    "homeLayoutCrud": "Página de inicio"
+    "homeLayoutCrud": "Configuración general"
   },
   "category": {
     "editorialArticle": "Artículo de opinión",
@@ -85,15 +85,17 @@
     "errorCreateMessageForm": "El nuevo número no ha sido creado. Intente más tarde",
     "successPublishMessageForm": "El número ha sido publicado con éxito",
     "successUnpublishMessageForm": "El número ha sido retirado con éxito",
+    "successSetAsCurrentMessageForm": "El número ha sido actualizado como actual",
     "errorPublishMessageForm": "El número no ha sido publicado. Intente más tarde",
     "errorUnpublishMessageForm": "El número no ha sido retirado. Intente más tarde",
+    "errorSetAsCurrentMessageForm": "El número no ha sido actualizado. Intente más tarde",
     "createNewRelease": "Crear nuevo número",
     "editRelease": "Editar número",
     "publishRelease": "Publicar número",
     "unpublishRelease": "Retirar número",
     "publishReleaseConfirmation": "¿Estás seguro que quieres publicar este número?",
     "unpublishReleaseConfirmation": "¿Estás seguro que quieres retirar este número?",
-    "changeCurrentRelease": "Cambiar a número actual",
+    "changeCurrentRelease": "Establecer como actual",
     "changeCurrentReleaseConfirmation": "¿Estás seguro que quieres poner este número como actual?"
   },
   "months": {
