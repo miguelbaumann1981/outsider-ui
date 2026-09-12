@@ -1,0 +1,107 @@
+<div class="flex flex-col gap-4">
+  <out-subtitle-page
+    [text]="subtitlePage()"
+    [actionText]="i18n.common.back"
+    [actionIcon]="'arrow_back'"
+    /* (actionEvent)="navigateToPreviousPage()" */
+  />
+
+  <form class="flex flex-col gap-3 lg:gap-6">
+    <div class="grid grid-cols-1 gap-3 lg:grid-cols-5 lg:gap-6">
+      <fieldset class="fieldset w-full">
+        <legend class="fieldset-legend text-sm lg:text-base">
+          {{ i18n.aboutUs.releaseLabel }}
+          <span class="text-error">*</span>
+        </legend>
+
+        <select class="select">
+          <option selected>current</option>
+          <option>jan26</option>
+          <option>apr26</option>
+        </select>
+      </fieldset>
+    </div>
+
+    <div class="grid grid-cols-1 gap-3 lg:grid-cols-5 lg:gap-6">
+      <div>
+        <p>CATEGORIA: EDITORIAL - {{ colorPicker() }}</p>
+        <out-color-picker [(color)]="colorPicker" />
+      </div>
+
+      <fieldset class="fieldset w-full">
+        <legend class="fieldset-legend text-sm lg:text-base">
+          {{ 'Category' }}
+          <span class="text-error">*</span>
+        </legend>
+
+        <input type="text" class="input w-full" [placeholder]="i18n.releases.namePlaceholder" />
+
+        <!-- @if (releaseForm.name().touched() && releaseForm.name().invalid()) {
+          <ul>
+            @for (error of releaseForm.name().errors(); track error) {
+              <li class="text-error">{{ error.message }}</li>
+            }
+          </ul>
+        } -->
+      </fieldset>
+
+      <fieldset class="fieldset w-full">
+        <legend class="fieldset-legend text-sm lg:text-base">
+          {{ 'Position' }}
+          <span class="text-error">*</span>
+        </legend>
+
+        <input
+          type="number"
+          min="1"
+          class="input w-full"
+          [placeholder]="i18n.releases.namePlaceholder"
+        />
+
+        <!-- @if (releaseForm.name().touched() && releaseForm.name().invalid()) {
+          <ul>
+            @for (error of releaseForm.name().errors(); track error) {
+              <li class="text-error">{{ error.message }}</li>
+            }
+          </ul>
+        } -->
+      </fieldset>
+
+      <fieldset class="fieldset w-full">
+        <legend class="fieldset-legend text-sm lg:text-base">
+          {{ 'Color solid' }}
+          <span class="text-error">*</span>
+        </legend>
+
+        <input type="text" class="input w-full" [placeholder]="i18n.releases.namePlaceholder" />
+
+        <!-- @if (releaseForm.name().touched() && releaseForm.name().invalid()) {
+          <ul>
+            @for (error of releaseForm.name().errors(); track error) {
+              <li class="text-error">{{ error.message }}</li>
+            }
+          </ul>
+        } -->
+      </fieldset>
+
+      <fieldset class="fieldset w-full">
+        <legend class="fieldset-legend text-sm lg:text-base">
+          {{ 'Color hover' }}
+          <span class="text-error">*</span>
+        </legend>
+
+        <input type="text" class="input w-full" [placeholder]="i18n.releases.namePlaceholder" />
+
+        <!-- @if (releaseForm.name().touched() && releaseForm.name().invalid()) {
+          <ul>
+            @for (error of releaseForm.name().errors(); track error) {
+              <li class="text-error">{{ error.message }}</li>
+            }
+          </ul>
+        } -->
+      </fieldset>
+    </div>
+  </form>
+</div>
+
+<ngx-sonner-toaster position="top-center" richColors />

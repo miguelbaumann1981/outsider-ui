@@ -4,6 +4,7 @@ import { IsPrivateZoneGuard } from '@/auth/guards';
 import {
   AboutUsCrudPage,
   ArticlesCrudPage,
+  HomeLayoutCrudDetailPage,
   HomeLayoutCrudPage,
   ReleaseCrudDetailPage,
   ReleasesCrudPage,
@@ -26,6 +27,10 @@ export const adminRoutes: Routes = [
       {
         path: 'home-layout-crud',
         component: HomeLayoutCrudPage,
+      },
+      {
+        path: 'home-layout-crud/:id',
+        component: HomeLayoutCrudDetailPage,
       },
       {
         path: 'releases-crud',

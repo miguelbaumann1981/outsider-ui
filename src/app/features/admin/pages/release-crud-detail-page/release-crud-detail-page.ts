@@ -30,7 +30,6 @@ const RELEASE_MODEL: ReleasesCrud = {
 })
 export class ReleaseCrudDetailPage implements OnInit {
   protected readonly i18n = es;
-
   private destroyRef = inject(DestroyRef);
   router = inject(Router);
   private activatedRoute = inject(ActivatedRoute);
@@ -89,7 +88,6 @@ export class ReleaseCrudDetailPage implements OnInit {
         error: (error) => {
           toast.error(error ?? this.i18n.common.serverError);
         },
-        complete: () => {},
       });
   }
 

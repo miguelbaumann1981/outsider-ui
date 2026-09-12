@@ -11,7 +11,7 @@ import { HomeLayoutApi, ReleasesApi } from '@/features/public/interfaces';
 import { HomeService, ReleasesService } from '@/features/public/services';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
-interface HomeLayoutCrud extends HomeLayoutApi {
+interface HomeLayoutCard extends HomeLayoutApi {
   title: string;
 }
 
@@ -31,7 +31,7 @@ export class HomeLayoutCrudPage implements OnInit {
   isLoadingHomeLayouts = signal(false);
   isLoadingReleases = signal(false);
   errorMessageApi = signal<string>('');
-  homeLayouts = signal<HomeLayoutCrud[]>([]);
+  homeLayouts = signal<HomeLayoutCard[]>([]);
   releases = signal<ReleasesApi[]>([]);
 
   viewState = computed<ViewState>(() => {
@@ -96,6 +96,6 @@ export class HomeLayoutCrudPage implements OnInit {
   }
 
   createNewHomeLayout(): void {
-    console.log('new layout');
+    this.router.navigate(['/admin/home-layout-crud/new']);
   }
 }
