@@ -14,7 +14,7 @@ import { ArticleHomeCard } from '../../components/article-home-card/article-home
 import { ArticleCard } from '../../interfaces/article-card.interface';
 import es from '@/i18n/es.json';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ArticlesApi, LayoutArticlesApi, ReleaseLocalStorage, ReleasesApi } from '../../interfaces';
+import { ArticlesApi, HomeLayoutApi, ReleaseLocalStorage, ReleasesApi } from '../../interfaces';
 import { Router } from '@angular/router';
 import { HomeService, ReleasesService } from '../../services';
 import { SkeletonCard } from '@/shared/components/skeleton-card/skeleton-card';
@@ -82,14 +82,16 @@ export class HomePage implements OnInit, AfterViewInit {
     );
   });
   articlesApi = signal<ArticlesApi>({} as ArticlesApi);
-  layoutArticlesApi = signal<LayoutArticlesApi[]>([]);
+  homeLayoutApi = signal<HomeLayoutApi[]>([]);
   articlesRelease = computed<ArticleCard[]>(() => {
     const articles = this.articlesApi()?.articles ?? [];
-    const layout = this.layoutArticlesApi() ?? [];
+    const layoutFeatures =
+      this.homeLayoutApi().find((item) => item.releaseCode === this.releaseCodeLocalStorage())
+        ?.features ?? [];
 
     return articles
       .map((item) => ({
-        section: item.category,
+        category: item.category,
         name: item.titleCategory,
         title: item.titleArticle,
         author: item.authorArticle,
@@ -97,13 +99,15 @@ export class HomePage implements OnInit, AfterViewInit {
         slug: item.slug,
         releaseCode: item.releaseCode,
         imageUrl: item.image,
-        position: layout.find((elem) => elem.category === item.category)?.position ?? 1,
-        color: layout.find((elem) => elem.category === item.category)?.color?.solid ?? 'lightblue',
+        position: layoutFeatures.find((elem) => elem.category === item.category)?.position ?? 0,
+        color:
+          layoutFeatures.find((elem) => elem.category === item.category)?.color?.solid ?? '#aaaaaa',
         hoverColor:
-          layout.find((elem) => elem.category === item.category)?.color?.hover ?? '#FFDBD6',
+          layoutFeatures.find((elem) => elem.category === item.category)?.color?.hover ?? '#eeeeee',
       }))
       .sort((a, b) => a.position - b.position);
   });
+
   viewState = computed<ViewState>(() => {
     if (this.isLoadingReleases() || this.isLoadingArticles() || this.isLoadingLayout())
       return 'loading';
@@ -114,7 +118,7 @@ export class HomePage implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.getArticlesHomePage();
-    this.getLayoutArticles();
+    this.getHomeLayoutApi();
     this.getReleasesApi();
   }
 
@@ -170,14 +174,14 @@ export class HomePage implements OnInit, AfterViewInit {
       });
   }
 
-  getLayoutArticles(): void {
+  getHomeLayoutApi(): void {
     this.isLoadingLayout.set(true);
     this.homeService
-      .getLayoutArticles()
+      .getHomeLayout()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (layoutData) => {
-          this.layoutArticlesApi.set(layoutData);
+          this.homeLayoutApi.set(layoutData);
         },
         error: (error) => {
           this.errorMessageApi.set(error ?? this.i18n.common.serverError);
@@ -209,13 +213,13 @@ export class HomePage implements OnInit, AfterViewInit {
   }
 
   navigateToDetail(article: ArticleCard) {
-    const { releaseCode, slug, section } = article;
+    const { releaseCode, slug, category } = article;
     const release: ReleaseLocalStorage = {
       code: releaseCode,
       isCurrent:
         this.releases().find((item) => item.releaseCode === releaseCode)?.isCurrentRelease ?? false,
     };
     this.localStorageService.setItem('release', JSON.stringify(release));
-    this.router.navigate([`/articles/${releaseCode.toLowerCase()}/${section}/${slug}`]);
+    this.router.navigate([`/articles/${releaseCode.toLowerCase()}/${category}/${slug}`]);
   }
 }

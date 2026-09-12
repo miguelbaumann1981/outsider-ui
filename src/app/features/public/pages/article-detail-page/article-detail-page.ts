@@ -15,7 +15,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TitlePage } from '@/shared/components/title-page/title-page';
 import { publicLayoutPage, textTeal600 } from '../../utils';
 import { AnyCategory, ReleaseCode, ViewState } from '../../types';
-import { ArticleDetail, LayoutArticlesApi, ReleaseLocalStorage } from '../../interfaces';
+import { ArticleDetail, HomeLayoutApi, ReleaseLocalStorage } from '../../interfaces';
 import { ImgFallbackDirective } from '../../directives';
 import { Spinner } from '@/shared/components/spinner/spinner';
 import es from '@/i18n/es.json';
@@ -53,12 +53,15 @@ export class ArticleDetailPage implements OnInit {
   isLoadingArticle = signal(false);
   isLoadingLayout = signal(false);
   errorMessageApi = signal<string>('');
-  layoutArticlesApi = signal<LayoutArticlesApi[]>([]);
+  homeLayoutApi = signal<HomeLayoutApi[]>([]);
 
   color = computed<string>(() => {
+    const layoutFeatures =
+      this.homeLayoutApi().find((item) => item.releaseCode === this.articleSelected().releaseCode)
+        ?.features ?? [];
     return (
-      this.layoutArticlesApi().find((elem) => elem.category === this.articleDetail().category)
-        ?.color?.solid ?? textTeal600
+      layoutFeatures.find((elem) => elem.category === this.articleDetail().category)?.color
+        ?.solid ?? textTeal600
     );
   });
   viewState = computed<ViewState>(() => {
@@ -107,11 +110,11 @@ export class ArticleDetailPage implements OnInit {
   getLayoutArticles(): void {
     this.isLoadingLayout.set(true);
     this.homeService
-      .getLayoutArticles()
+      .getHomeLayout()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (layoutData) => {
-          this.layoutArticlesApi.set(layoutData);
+          this.homeLayoutApi.set(layoutData);
         },
         error: (error) => {
           this.errorMessageApi.set(error ?? this.i18n.common.serverError);

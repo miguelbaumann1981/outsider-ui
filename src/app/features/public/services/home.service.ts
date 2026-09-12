@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Service } from '@angular/core';
 import { map, Observable } from 'rxjs';
 import { environment } from '@envs/environment.development';
-import { Article, ArticlesApi, LayoutArticlesApi } from '../interfaces';
+import { Article, ArticlesApi, HomeLayoutApi } from '../interfaces';
 import { AnyCategory, ArticleCategory, ReleaseCode } from '../types';
 import { ArticleCategoryMapper } from '../mappers';
 
@@ -30,11 +30,11 @@ export class HomeService {
       );
   }
 
-  getLayoutArticles(): Observable<LayoutArticlesApi[]> {
-    return this.http.get<LayoutArticlesApi[]>(`${this.baseUrl}/api/layout-articles`);
-  }
-
   getAllArticles(): Observable<ArticlesApi> {
     return this.http.get<ArticlesApi>(`${this.baseUrl}/api/articles`);
+  }
+
+  getHomeLayout(): Observable<HomeLayoutApi[]> {
+    return this.http.get<HomeLayoutApi[]>(`${this.baseUrl}/api/home-layout`);
   }
 }

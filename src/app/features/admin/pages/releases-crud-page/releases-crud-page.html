@@ -2,7 +2,7 @@
   <out-subtitle-page
     [icon]="'format_list_numbered'"
     [text]="i18n.menu.releasesCrud"
-    [actionText]="'Crear número'"
+    [actionText]="i18n.releases.createRelease"
     [actionIcon]="'add_circle'"
     (actionEvent)="createNewRelease()"
   />
@@ -23,7 +23,7 @@
     }
 
     @case ('available') {
-      <div class="grid grid-cols-1 gap-3 lg:gap-10 xl:grid-cols-4">
+      <div class="grid grid-cols-1 gap-3 lg:grid-cols-2 lg:gap-10 xl:grid-cols-3">
         @for (release of releases(); track release.id) {
           <div
             class="card w-full border border-gray-200 shadow-sm"

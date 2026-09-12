@@ -96,7 +96,8 @@
     "publishReleaseConfirmation": "¿Estás seguro que quieres publicar este número?",
     "unpublishReleaseConfirmation": "¿Estás seguro que quieres retirar este número?",
     "changeCurrentRelease": "Establecer como actual",
-    "changeCurrentReleaseConfirmation": "¿Estás seguro que quieres poner este número como actual?"
+    "changeCurrentReleaseConfirmation": "¿Estás seguro que quieres poner este número como actual?",
+    "createRelease": "Crear número"
   },
   "months": {
     "january": "Enero",
@@ -174,5 +175,8 @@
       "hi": "Hola",
       "welcome": "Estás en tu zona de administración."
     }
+  },
+  "homeLayout": {
+    "createLayout": "Crear nueva configuración"
   }
 }

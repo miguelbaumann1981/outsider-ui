@@ -1,1 +1,93 @@
-<p>home-layout-crud works!</p>,
+<div class="flex flex-col gap-5">
+  <out-subtitle-page
+    [icon]="'settings'"
+    [text]="i18n.menu.homeLayoutCrud"
+    [actionText]="i18n.homeLayout.createLayout"
+    [actionIcon]="'add_circle'"
+    (actionEvent)="createNewHomeLayout()"
+  />
+
+  @switch (viewState()) {
+    @case ('loading') {
+      <div class="spinner-container h-[600px]">
+        <out-spinner />
+      </div>
+    }
+
+    @case ('error') {
+      <div class="w-full">
+        <div role="alert" class="alert alert-error alert-soft w-full">
+          <span class="text-xl font-semibold">{{ errorMessageApi() }}</span>
+        </div>
+      </div>
+    }
+
+    @case ('available') {
+      <div class="grid grid-cols-1 gap-3 lg:grid-cols-2 lg:gap-10 xl:grid-cols-3">
+        @for (layout of homeLayouts(); track layout.id) {
+          <div
+            class="card w-full border border-gray-200 shadow-sm"
+            [ngClass]="
+              layout.releaseCode === currentRelease().releaseCode ? 'bg-orange-50' : 'bg-blue-50'
+            "
+          >
+            <div class="card-body">
+              <div class="flex flex-col items-baseline justify-between gap-3 xl:flex-row">
+                <div class="flex flex-col gap-1">
+                  <h2 class="card-title">{{ layout.title }}</h2>
+
+                  <div class="flex flex-col items-center gap-2 xl:flex-row">
+                    <div
+                      class="badge"
+                      [ngClass]="
+                        layout.releaseCode === currentRelease().releaseCode
+                          ? 'badge-warning'
+                          : 'badge-secondary'
+                      "
+                    >
+                      {{ layout.releaseCode }}
+                    </div>
+                  </div>
+                </div>
+
+                <div
+                  class="badge"
+                  [ngClass]="layout.isPublished ? 'badge-success' : 'badge-error text-white'"
+                >
+                  {{ layout.isPublished ? i18n.common.published : i18n.common.notPublished }}
+                </div>
+              </div>
+
+              <div class="card-actions items-center justify-end" [class.mt-3]="!layout.isPublished">
+                <button class="btn btn-outline btn-primary">
+                  <span class="material-icons"> edit </span>
+                  {{ i18n.common.edit }}
+                </button>
+
+                <button
+                  class="btn btn-outline"
+                  [ngClass]="layout.isPublished ? 'btn-error' : 'btn-success'"
+                >
+                  <span class="material-icons">
+                    {{ layout.isPublished ? 'block' : 'publish' }}
+                  </span>
+                  {{ layout.isPublished ? i18n.common.unpublish : i18n.common.publish }}
+                </button>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    }
+
+    @case ('empty') {
+      <div class="w-full">
+        <div role="alert" class="alert alert-info alert-soft w-full">
+          <span class="text-xl font-semibold">{{ i18n.common.contentNoAvailable }}</span>
+        </div>
+      </div>
+    }
+  }
+</div>
+
+<ngx-sonner-toaster position="top-center" richColors />

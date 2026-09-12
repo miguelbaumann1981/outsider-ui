@@ -1,7 +1,7 @@
 import { SubtitlePage } from '@/shared/components/subtitle-page/subtitle-page';
 import { Component, DestroyRef, inject, signal, OnInit, computed } from '@angular/core';
 import es from '@/i18n/es.json';
-import { disabled, form, FormField, FormRoot, schema } from '@angular/forms/signals';
+import { apply, disabled, form, FormField, FormRoot, schema } from '@angular/forms/signals';
 import { ReleasesCrud } from '../../interfaces';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ReleasesApi } from '@/features/public/interfaces';
@@ -48,7 +48,7 @@ export class ReleaseCrudDetailPage implements OnInit {
   newIndexRelease = computed<number>(() => this.allReleases().length + 1);
 
   releaseSchema = schema<ReleasesCrud>((path) => {
-    releaseSchemaBase(path);
+    apply(path, releaseSchemaBase);
     disabled(path.releaseCode, { when: () => this.activeParam() !== 'new' });
     disabled(path.index);
   });
