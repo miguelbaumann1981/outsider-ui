@@ -3,103 +3,106 @@
     [text]="subtitlePage()"
     [actionText]="i18n.common.back"
     [actionIcon]="'arrow_back'"
-    /* (actionEvent)="navigateToPreviousPage()" */
+    (actionEvent)="navigateToPreviousPage()"
   />
 
-  <form class="flex flex-col gap-3 lg:gap-6">
+  <form
+    class="flex flex-col gap-3 lg:gap-6"
+    [formRoot]="homeLayoutForm"
+    (submit)="onSubmit($event)"
+  >
     <div class="grid grid-cols-1 gap-3 lg:grid-cols-5 lg:gap-6">
       <fieldset class="fieldset w-full">
         <legend class="fieldset-legend text-sm lg:text-base">
-          {{ i18n.aboutUs.releaseLabel }}
+          {{ 'Release code' }}
           <span class="text-error">*</span>
         </legend>
 
-        <select class="select">
-          <option selected>current</option>
-          <option>jan26</option>
-          <option>apr26</option>
+        <select class="select" [formField]="homeLayoutForm.releaseCode">
+          @for (option of releasesCodeOptions(); track option.code) {
+            <option [value]="option.code">{{ option.displayName }}</option>
+          }
         </select>
+        @if (homeLayoutForm.releaseCode().touched() && homeLayoutForm.releaseCode().invalid()) {
+          <ul>
+            @for (error of homeLayoutForm.releaseCode().errors(); track error) {
+              <li class="text-error">{{ error.message }}</li>
+            }
+          </ul>
+        }
       </fieldset>
     </div>
 
-    <div class="grid grid-cols-1 gap-3 lg:grid-cols-5 lg:gap-6">
-      <div>
-        <p>CATEGORIA: EDITORIAL - {{ colorPicker() }}</p>
-        <out-color-picker [(color)]="colorPicker" />
+    @for (feature of homeLayoutForm.features; track $index; let i = $index) {
+      <div class="grid grid-cols-1 items-end gap-3 lg:grid-cols-5 lg:gap-6">
+        <div class="flex w-full justify-center border border-gray-300 bg-teal-50 py-5">
+          <p class="text-secondary m-0 text-xl font-semibold">
+            {{ homeLayoutModel().features[i].category }}
+          </p>
+        </div>
+
+        <fieldset class="fieldset w-full">
+          <legend class="fieldset-legend text-sm lg:text-base">
+            {{ 'Category' }}
+            <span class="text-error">*</span>
+          </legend>
+
+          <input
+            type="text"
+            class="input w-full"
+            [formField]="$any(feature.category)"
+            [placeholder]="i18n.releases.namePlaceholder"
+          />
+        </fieldset>
+
+        <fieldset class="fieldset w-full">
+          <legend class="fieldset-legend text-sm lg:text-base">
+            {{ 'Position' }}
+            <span class="text-error">*</span>
+          </legend>
+
+          <input
+            type="number"
+            class="input w-full"
+            [formField]="$any(feature.position)"
+            [placeholder]="i18n.releases.namePlaceholder"
+          />
+        </fieldset>
+
+        <fieldset class="fieldset w-full">
+          <legend class="fieldset-legend text-sm lg:text-base">
+            {{ 'Color solid' }}
+            <span class="text-error">*</span>
+          </legend>
+
+          <input
+            type="text"
+            class="input w-full"
+            [formField]="$any(feature.color.solid)"
+            [placeholder]="i18n.releases.namePlaceholder"
+          />
+        </fieldset>
+
+        <fieldset class="fieldset w-full">
+          <legend class="fieldset-legend text-sm lg:text-base">
+            {{ 'Color hover' }}
+            <span class="text-error">*</span>
+          </legend>
+
+          <input
+            type="text"
+            class="input w-full"
+            [formField]="$any(feature.color.hover)"
+            [placeholder]="i18n.releases.namePlaceholder"
+          />
+        </fieldset>
       </div>
+    }
 
-      <fieldset class="fieldset w-full">
-        <legend class="fieldset-legend text-sm lg:text-base">
-          {{ 'Category' }}
-          <span class="text-error">*</span>
-        </legend>
-
-        <input type="text" class="input w-full" [placeholder]="i18n.releases.namePlaceholder" />
-
-        <!-- @if (releaseForm.name().touched() && releaseForm.name().invalid()) {
-          <ul>
-            @for (error of releaseForm.name().errors(); track error) {
-              <li class="text-error">{{ error.message }}</li>
-            }
-          </ul>
-        } -->
-      </fieldset>
-
-      <fieldset class="fieldset w-full">
-        <legend class="fieldset-legend text-sm lg:text-base">
-          {{ 'Position' }}
-          <span class="text-error">*</span>
-        </legend>
-
-        <input
-          type="number"
-          min="1"
-          class="input w-full"
-          [placeholder]="i18n.releases.namePlaceholder"
-        />
-
-        <!-- @if (releaseForm.name().touched() && releaseForm.name().invalid()) {
-          <ul>
-            @for (error of releaseForm.name().errors(); track error) {
-              <li class="text-error">{{ error.message }}</li>
-            }
-          </ul>
-        } -->
-      </fieldset>
-
-      <fieldset class="fieldset w-full">
-        <legend class="fieldset-legend text-sm lg:text-base">
-          {{ 'Color solid' }}
-          <span class="text-error">*</span>
-        </legend>
-
-        <input type="text" class="input w-full" [placeholder]="i18n.releases.namePlaceholder" />
-
-        <!-- @if (releaseForm.name().touched() && releaseForm.name().invalid()) {
-          <ul>
-            @for (error of releaseForm.name().errors(); track error) {
-              <li class="text-error">{{ error.message }}</li>
-            }
-          </ul>
-        } -->
-      </fieldset>
-
-      <fieldset class="fieldset w-full">
-        <legend class="fieldset-legend text-sm lg:text-base">
-          {{ 'Color hover' }}
-          <span class="text-error">*</span>
-        </legend>
-
-        <input type="text" class="input w-full" [placeholder]="i18n.releases.namePlaceholder" />
-
-        <!-- @if (releaseForm.name().touched() && releaseForm.name().invalid()) {
-          <ul>
-            @for (error of releaseForm.name().errors(); track error) {
-              <li class="text-error">{{ error.message }}</li>
-            }
-          </ul>
-        } -->
-      </fieldset>
+    <div class="flex justify-end">
+      <button type="submit" class="btn btn-primary">
+        {{ i18n.common.save }}
+      </button>
     </div>
   </form>
 </div>

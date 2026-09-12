@@ -37,4 +37,10 @@ export class HomeService {
   getHomeLayout(): Observable<HomeLayoutApi[]> {
     return this.http.get<HomeLayoutApi[]>(`${this.baseUrl}/api/home-layout`);
   }
+
+  getHomeLayoutById(id: string): Observable<HomeLayoutApi> {
+    return this.http
+      .get<HomeLayoutApi[]>(`${this.baseUrl}/api/home-layout`)
+      .pipe(map((data) => data.find((item) => item.id === id) as HomeLayoutApi));
+  }
 }

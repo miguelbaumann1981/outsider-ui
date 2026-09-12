@@ -4,7 +4,7 @@
     [text]="i18n.menu.homeLayoutCrud"
     [actionText]="i18n.homeLayout.createLayout"
     [actionIcon]="'add_circle'"
-    (actionEvent)="createNewHomeLayout()"
+    (actionEvent)="onCreateNewLayout()"
   />
 
   @switch (viewState()) {
@@ -59,7 +59,7 @@
               </div>
 
               <div class="card-actions items-center justify-end" [class.mt-3]="!layout.isPublished">
-                <button class="btn btn-outline btn-primary">
+                <button class="btn btn-outline btn-primary" (click)="onEditLayout(layout.id)">
                   <span class="material-icons"> edit </span>
                   {{ i18n.common.edit }}
                 </button>

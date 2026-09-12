@@ -95,7 +95,11 @@ export class HomeLayoutCrudPage implements OnInit {
       });
   }
 
-  createNewHomeLayout(): void {
+  onCreateNewLayout(): void {
     this.router.navigate(['/admin/home-layout-crud/new']);
+  }
+
+  onEditLayout(id: string): void {
+    this.router.navigate([`/admin/home-layout-crud/${id}`]);
   }
 }

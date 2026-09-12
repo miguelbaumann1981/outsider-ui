@@ -6,15 +6,47 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { HomeService, ReleasesService } from '@/features/public/services';
 import { HomeLayoutApi, ReleasesApi } from '@/features/public/interfaces';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ColorPicker } from '../../components/color-picker/color-picker';
+import { HomeLayoutCrud } from '../../interfaces';
+import { apply, disabled, form, FormField, FormRoot, schema } from '@angular/forms/signals';
+import { ArticleCategory } from '@/features/public/enums';
+import { homeLayoutSchemaBase } from './home-layout-crud-form-schema';
+import { ReleaseCode } from '@/features/public/types';
 
 interface HomeLayoutCard extends HomeLayoutApi {
   title: string;
 }
 
+interface ReleaseCodeSelect {
+  code: ReleaseCode;
+  displayName: string;
+}
+
+const HOME_LAYOUT_MODEL: HomeLayoutCrud = {
+  releaseCode: '',
+  isDraft: false,
+  isPublished: false,
+  features: Array.from({ length: 6 }).map(() => ({
+    category: ArticleCategory.EDITORIAL,
+    position: 0,
+    color: {
+      solid: '',
+      hover: '',
+    },
+  })),
+};
+
+const ALL_CATEGORIES: ArticleCategory[] = [
+  ArticleCategory.EDITORIAL,
+  ArticleCategory.MICROSTORY,
+  ArticleCategory.OPINION,
+  ArticleCategory.OUTSIDERS,
+  ArticleCategory.POETRY,
+  ArticleCategory.TALES,
+];
+
 @Component({
   selector: 'out-home-layout-crud-detail',
-  imports: [SubtitlePage, NgxSonnerToaster, ColorPicker],
+  imports: [SubtitlePage, FormField, FormRoot, NgxSonnerToaster],
   templateUrl: './home-layout-crud-detail-page.html',
 })
 export class HomeLayoutCrudDetailPage implements OnInit {
@@ -25,8 +57,10 @@ export class HomeLayoutCrudDetailPage implements OnInit {
   private homeService = inject(HomeService);
   private releasesService = inject(ReleasesService);
 
+  isLoading = signal(false);
   activeParam = signal<string | 'new'>('');
   homeLayouts = signal<HomeLayoutCard[]>([]);
+  selectedHomeLayout = signal<HomeLayoutApi>({} as HomeLayoutApi);
   releases = signal<ReleasesApi[]>([]);
 
   subtitlePage = computed<string>(() =>
@@ -34,12 +68,24 @@ export class HomeLayoutCrudDetailPage implements OnInit {
       ? this.i18n.releases.createNewRelease
       : this.i18n.releases.editRelease,
   );
+  releasesCodeOptions = computed<ReleaseCodeSelect[]>(() => {
+    return this.releases().map((item) => ({
+      code: item.releaseCode,
+      displayName: item.name,
+    }));
+  });
 
-  colorPicker = signal('');
+  homeLayoutModel = signal<HomeLayoutCrud>(HOME_LAYOUT_MODEL);
+  homeLayoutSchema = schema<HomeLayoutCrud>((path) => {
+    apply(path, homeLayoutSchemaBase);
+    disabled(path.releaseCode, { when: () => this.activeParam() !== 'new' });
+  });
+  readonly homeLayoutForm = form(this.homeLayoutModel, this.homeLayoutSchema);
 
   ngOnInit(): void {
     this.getHomeLayoutsApi();
-    this.handleCrudRelease();
+    this.handleCrudHomeLayouts();
+    this.getReleasesApi();
   }
 
   getHomeLayoutsApi(): void {
@@ -63,13 +109,63 @@ export class HomeLayoutCrudDetailPage implements OnInit {
       });
   }
 
-  handleCrudRelease(): void {
+  handleCrudHomeLayouts(): void {
     this.activatedRoute.params.subscribe((params) => {
       this.activeParam.set(params['id']);
 
       if (this.activeParam() !== 'new') {
-        // this.getSelectedRelease(this.activeParam());
+        this.getSelectedHomeLayout(this.activeParam());
+      } else {
+        this.homeLayoutModel.set({
+          ...HOME_LAYOUT_MODEL,
+          features: this.homeLayoutModel().features.map((item, index) => ({
+            ...item,
+            category: ALL_CATEGORIES[index % ALL_CATEGORIES.length],
+          })),
+        });
       }
     });
+  }
+
+  getSelectedHomeLayout(id: string): void {
+    this.homeService
+      .getHomeLayoutById(id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (data) => {
+          this.selectedHomeLayout.set(data);
+          this.homeLayoutModel.set(this.selectedHomeLayout());
+        },
+        error: () => {
+          toast.error(this.i18n.common.serverError);
+          this.isLoading.set(false);
+        },
+        complete: () => {
+          this.isLoading.set(false);
+        },
+      });
+  }
+
+  getReleasesApi(): void {
+    this.releasesService
+      .getReleases()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (data) => {
+          this.releases.set(data);
+        },
+        error: (error) => {
+          toast.error(error ?? this.i18n.common.serverError);
+        },
+        complete: () => {},
+      });
+  }
+
+  onSubmit(event: Event): void {
+    event.preventDefault();
+  }
+
+  navigateToPreviousPage(): void {
+    this.router.navigate(['/admin/home-layout-crud']);
   }
 }
