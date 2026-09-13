@@ -90,7 +90,10 @@
 
             <div
               class="h-[40px] w-[40px] cursor-pointer rounded-md border border-gray-300"
-              [style]="{ 'background-color': displayColorInput(i, 'solid') }"
+              /* [style.backgroundColor]="feature.color.solid()" */
+              /* [style]="{ 'background-color': displayColor2(feature.color.solid()) }" */
+              [style]="{ 'background-color': displayColorInput(i, 'solid', feature.color.solid()) }"
+              (click)="openColorPickerDialog(i, 'solid')"
             ></div>
           </div>
         </fieldset>
@@ -98,7 +101,6 @@
         <fieldset class="fieldset w-full">
           <legend class="fieldset-legend text-sm lg:text-base">
             {{ i18n.homeLayout.colorHoverLabel }}
-            <span class="text-error">*</span>
           </legend>
 
           <div class="flex items-center gap-2">
@@ -110,7 +112,8 @@
             />
             <div
               class="h-[40px] w-[40px] cursor-pointer rounded-md border border-gray-300"
-              [style]="{ 'background-color': displayColorInput(i, 'hover') }"
+              [style]="{ 'background-color': displayColorInput(i, 'hover', feature.color.hover()) }"
+              (click)="openColorPickerDialog(i, 'hover')"
             ></div>
           </div>
         </fieldset>

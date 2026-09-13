@@ -27,7 +27,6 @@ const featureSchemaBase = (feature: SchemaPathTree<FeaturesLayout>) => {
     message: i18n.homeLayout.validations.colorPattern,
   });
 
-  required(feature.color.hover, { message: i18n.homeLayout.validations.colorHoverRequired });
   pattern(feature.color.hover, hexadecimalColorPattern, {
     message: i18n.homeLayout.validations.colorPattern,
   });

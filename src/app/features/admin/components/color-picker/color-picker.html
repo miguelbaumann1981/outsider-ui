@@ -1,8 +1,14 @@
-<div class="picker">
+<div class="picker p-4">
   <chrome-picker [control]="colorControl">
-    <div class="buttons">
-      <button type="button" class="btn btn-primary" (click)="applyClick($event)">Apply</button>
-      <button type="button" class="btn btn-error" (click)="discardClick($event)">Discard</button>
+    <div class="buttons p-2">
+      <button
+        type="button"
+        class="btn btn-outline btn-secondary mt-3 w-full"
+        (click)="applyClick($event)"
+      >
+        Seleccionar
+      </button>
+      <!-- <button type="button" class="btn btn-error" (click)="discardClick($event)">Discard</button> -->
     </div>
   </chrome-picker>
 </div>

@@ -7,11 +7,22 @@ import { HomeService, ReleasesService } from '@/features/public/services';
 import { ColorFeature, HomeLayoutApi, ReleasesApi } from '@/features/public/interfaces';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { HomeLayoutCrud } from '../../interfaces';
-import { apply, disabled, form, FormField, FormRoot, schema } from '@angular/forms/signals';
+import {
+  apply,
+  disabled,
+  Field,
+  FieldTree,
+  form,
+  FormField,
+  FormRoot,
+  schema,
+} from '@angular/forms/signals';
 import { ArticleCategory } from '@/features/public/enums';
 import { homeLayoutSchemaBase } from './home-layout-crud-form-schema';
 import { ReleaseCode } from '@/features/public/types';
 import { CategoryTranslatePipe } from '../../pipes';
+import { MatDialog } from '@angular/material/dialog';
+import { ColorPickerDialog } from '../../components/color-picker-dialog/color-picker-dialog';
 
 interface HomeLayoutCard extends HomeLayoutApi {
   title: string;
@@ -57,6 +68,7 @@ export class HomeLayoutCrudDetailPage implements OnInit {
   private activatedRoute = inject(ActivatedRoute);
   private homeService = inject(HomeService);
   private releasesService = inject(ReleasesService);
+  readonly dialog = inject(MatDialog);
 
   isLoading = signal(false);
   activeParam = signal<string | 'new'>('');
@@ -162,10 +174,51 @@ export class HomeLayoutCrudDetailPage implements OnInit {
       });
   }
 
-  displayColorInput(index: number, type: 'solid' | 'hover'): ColorFeature | string {
+  displayColorInput(index: number, type: 'solid' | 'hover', event: any): ColorFeature | string {
+    const colorForm = event.value();
     const { features } = this.homeLayoutModel();
+
     const _color = features.find((item) => item.position === index + 1)?.color[type];
-    return _color ?? 'white';
+    return colorForm;
+  }
+
+  displayColor2(event: any): string {
+    console.log(event.value());
+    return event.value();
+  }
+
+  openColorPickerDialog(index: number, type: 'solid' | 'hover'): void {
+    const dialogRef = this.dialog.open(ColorPickerDialog, {
+      data: {},
+      width: '300px',
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result !== undefined) {
+        const updatedFeatures = this.homeLayoutModel().features.map((item, featureIndex) =>
+          item.position === index + 1 || featureIndex === index
+            ? {
+                ...item,
+                color:
+                  type === 'solid'
+                    ? {
+                        ...item.color,
+                        solid: result,
+                      }
+                    : {
+                        ...item.color,
+                        hover: result,
+                      },
+              }
+            : item,
+        );
+
+        this.homeLayoutModel.set({
+          ...this.homeLayoutModel(),
+          features: updatedFeatures,
+        });
+      }
+    });
   }
 
   onSubmit(event: Event): void {

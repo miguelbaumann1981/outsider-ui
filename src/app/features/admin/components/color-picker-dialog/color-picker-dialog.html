@@ -1,0 +1,12 @@
+<div class="flex flex-col gap-5 p-5">
+  <out-color-picker [(color)]="color" />
+
+  <p class="text-sm">
+    Color seleccionado: <strong>{{ color() }}</strong>
+  </p>
+
+  <div class="flex items-center justify-end gap-2">
+    <a class="btn btn-soft btn-error" (click)="onClose()">Cerrar</a>
+    <a class="btn btn-soft btn-success" (click)="onClose(color())">Aplicar</a>
+  </div>
+</div>
