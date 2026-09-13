@@ -1,3 +1,5 @@
+@let submitDisable = homeLayoutForm().invalid() || isLoading();
+
 <div class="flex flex-col gap-4">
   <out-subtitle-page
     [text]="subtitlePage()"
@@ -14,7 +16,7 @@
     <div class="grid grid-cols-1 gap-3 lg:grid-cols-5 lg:gap-6">
       <fieldset class="fieldset w-full">
         <legend class="fieldset-legend text-sm lg:text-base">
-          {{ 'Release code' }}
+          {{ i18n.homeLayout.releaseCodeLabel }}
           <span class="text-error">*</span>
         </legend>
 
@@ -37,27 +39,22 @@
       <div class="grid grid-cols-1 items-end gap-3 lg:grid-cols-5 lg:gap-6">
         <div class="flex w-full justify-center border border-gray-300 bg-teal-50 py-5">
           <p class="text-secondary m-0 text-xl font-semibold">
-            {{ homeLayoutModel().features[i].category }}
+            {{ homeLayoutModel().features[i].category | category }}
           </p>
         </div>
 
         <fieldset class="fieldset w-full">
           <legend class="fieldset-legend text-sm lg:text-base">
-            {{ 'Category' }}
+            {{ i18n.homeLayout.categoryLabel }}
             <span class="text-error">*</span>
           </legend>
 
-          <input
-            type="text"
-            class="input w-full"
-            [formField]="$any(feature.category)"
-            [placeholder]="i18n.releases.namePlaceholder"
-          />
+          <input type="text" class="input w-full" [formField]="$any(feature.category)" />
         </fieldset>
 
         <fieldset class="fieldset w-full">
           <legend class="fieldset-legend text-sm lg:text-base">
-            {{ 'Position' }}
+            {{ i18n.homeLayout.positionLabel }}
             <span class="text-error">*</span>
           </legend>
 
@@ -65,42 +62,64 @@
             type="number"
             class="input w-full"
             [formField]="$any(feature.position)"
-            [placeholder]="i18n.releases.namePlaceholder"
+            [placeholder]="i18n.homeLayout.positionPlaceholder"
           />
+
+          @if (homeLayoutForm.releaseCode().touched() && homeLayoutForm.releaseCode().invalid()) {
+            <ul>
+              @for (error of homeLayoutForm.releaseCode().errors(); track error) {
+                <li class="text-error">{{ error.message }}</li>
+              }
+            </ul>
+          }
         </fieldset>
 
         <fieldset class="fieldset w-full">
           <legend class="fieldset-legend text-sm lg:text-base">
-            {{ 'Color solid' }}
+            {{ i18n.homeLayout.colorSolidLabel }}
             <span class="text-error">*</span>
           </legend>
 
-          <input
-            type="text"
-            class="input w-full"
-            [formField]="$any(feature.color.solid)"
-            [placeholder]="i18n.releases.namePlaceholder"
-          />
+          <div class="flex items-center gap-2">
+            <input
+              type="text"
+              class="input w-full"
+              [formField]="$any(feature.color.solid)"
+              [placeholder]="i18n.homeLayout.colorSolidPlaceholder"
+            />
+
+            <div
+              class="h-[40px] w-[40px] cursor-pointer rounded-md border border-gray-300"
+              [style]="{ 'background-color': displayColorInput(i, 'solid') }"
+            ></div>
+          </div>
         </fieldset>
 
         <fieldset class="fieldset w-full">
           <legend class="fieldset-legend text-sm lg:text-base">
-            {{ 'Color hover' }}
+            {{ i18n.homeLayout.colorHoverLabel }}
             <span class="text-error">*</span>
           </legend>
 
-          <input
-            type="text"
-            class="input w-full"
-            [formField]="$any(feature.color.hover)"
-            [placeholder]="i18n.releases.namePlaceholder"
-          />
+          <div class="flex items-center gap-2">
+            <input
+              type="text"
+              class="input w-full"
+              [formField]="$any(feature.color.hover)"
+              [placeholder]="i18n.homeLayout.colorHoverPlaceholder"
+            />
+            <div
+              class="h-[40px] w-[40px] cursor-pointer rounded-md border border-gray-300"
+              [style]="{ 'background-color': displayColorInput(i, 'hover') }"
+            ></div>
+          </div>
         </fieldset>
       </div>
     }
 
     <div class="flex justify-end">
-      <button type="submit" class="btn btn-primary">
+      <button type="submit" class="btn btn-accent" [disabled]="submitDisable">
+        <span class="material-icons"> save </span>
         {{ i18n.common.save }}
       </button>
     </div>

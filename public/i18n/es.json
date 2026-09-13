@@ -29,12 +29,12 @@
     "homeLayoutCrud": "Configuración general"
   },
   "category": {
-    "editorialArticle": "Artículo de opinión",
-    "nightTales": "Cuentos para no dormir",
-    "ourLifeBooks": "Los libros de nuestra vida",
-    "strongholds": "Reductos de lo imposible",
-    "booksYear": "La lista del año",
-    "microStories": "Microrrelatos"
+    "editorial": "Editorial",
+    "opinion": "Artículo de opinión",
+    "outsiders": "Miscelánea",
+    "poetry": "Poesía",
+    "tales": "Cuentos",
+    "microstory": "Microrrelatos"
   },
   "releases": {
     "current": "Número actual",
@@ -177,6 +177,25 @@
     }
   },
   "homeLayout": {
-    "createLayout": "Crear nueva configuración"
+    "createLayout": "Crear nueva configuración",
+    "editHomeLayout": "Editar configuración",
+    "releaseCodeLabel": "Código del número",
+    "categoryLabel": "Categoría",
+    "positionLabel": "Posición",
+    "positionPlaceholder": "Añada una posición...",
+    "colorSolidLabel": "Color",
+    "colorSolidPlaceholder": "Añada un color...",
+    "colorHoverLabel": "Color de efecto",
+    "colorHoverPlaceholder": "Añada un color de efecto...",
+    "validations": {
+      "positionRequired": "La Posición es obligatoria",
+      "positionMin": "La Posición debe ser mayor que 1",
+      "positionMax": "La Posición debe ser como máximo 6",
+      "colorSolidRequired": "EL Color es obligatorio",
+      "colorHoverRequired": "EL Color es obligatorio",
+      "colorPattern": "El formato del color es inválido",
+      "releaseCodeRequired": "El Código del número es obligatorio",
+      "hasValidFeaturePositions": "Las posiciones deben estar asignadas del 1 al 6 sin repetir"
+    }
   }
 }

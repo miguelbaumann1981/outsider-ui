@@ -4,13 +4,14 @@ import { NgxSonnerToaster, toast } from 'ngx-sonner';
 import es from '@/i18n/es.json';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HomeService, ReleasesService } from '@/features/public/services';
-import { HomeLayoutApi, ReleasesApi } from '@/features/public/interfaces';
+import { ColorFeature, HomeLayoutApi, ReleasesApi } from '@/features/public/interfaces';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { HomeLayoutCrud } from '../../interfaces';
 import { apply, disabled, form, FormField, FormRoot, schema } from '@angular/forms/signals';
 import { ArticleCategory } from '@/features/public/enums';
 import { homeLayoutSchemaBase } from './home-layout-crud-form-schema';
 import { ReleaseCode } from '@/features/public/types';
+import { CategoryTranslatePipe } from '../../pipes';
 
 interface HomeLayoutCard extends HomeLayoutApi {
   title: string;
@@ -46,7 +47,7 @@ const ALL_CATEGORIES: ArticleCategory[] = [
 
 @Component({
   selector: 'out-home-layout-crud-detail',
-  imports: [SubtitlePage, FormField, FormRoot, NgxSonnerToaster],
+  imports: [SubtitlePage, FormField, FormRoot, NgxSonnerToaster, CategoryTranslatePipe],
   templateUrl: './home-layout-crud-detail-page.html',
 })
 export class HomeLayoutCrudDetailPage implements OnInit {
@@ -65,8 +66,8 @@ export class HomeLayoutCrudDetailPage implements OnInit {
 
   subtitlePage = computed<string>(() =>
     this.activeParam() === 'new'
-      ? this.i18n.releases.createNewRelease
-      : this.i18n.releases.editRelease,
+      ? this.i18n.homeLayout.createLayout
+      : this.i18n.homeLayout.editHomeLayout,
   );
   releasesCodeOptions = computed<ReleaseCodeSelect[]>(() => {
     return this.releases().map((item) => ({
@@ -161,8 +162,28 @@ export class HomeLayoutCrudDetailPage implements OnInit {
       });
   }
 
+  displayColorInput(index: number, type: 'solid' | 'hover'): ColorFeature | string {
+    const { features } = this.homeLayoutModel();
+    const _color = features.find((item) => item.position === index + 1)?.color[type];
+    return _color ?? 'white';
+  }
+
   onSubmit(event: Event): void {
     event.preventDefault();
+
+    const { features } = this.homeLayoutModel();
+    const positions = features.map((feature) => feature.position);
+    const hasValidFeaturePositions =
+      positions.length === 6 &&
+      new Set(positions).size === 6 &&
+      positions.every((position) => position >= 1 && position <= 6);
+
+    if (!hasValidFeaturePositions) {
+      toast.error(this.i18n.homeLayout.validations.hasValidFeaturePositions);
+      return;
+    }
+
+    console.log(this.homeLayoutModel());
   }
 
   navigateToPreviousPage(): void {
