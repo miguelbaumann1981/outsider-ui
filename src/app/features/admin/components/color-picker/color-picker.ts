@@ -13,6 +13,7 @@ import {
   ColorPickerControl,
   ColorType,
 } from '@iplab/ngx-color-picker';
+import es from '@/i18n/es.json';
 
 @Component({
   selector: 'out-color-picker',
@@ -24,6 +25,7 @@ import {
   },
 })
 export class ColorPicker {
+  protected readonly i18n = es;
   private _color: Color | null = null;
 
   public colorControl = new ColorPickerControl();

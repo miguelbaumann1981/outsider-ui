@@ -50,12 +50,12 @@
                   </div>
                 </div>
 
-                <div
+                <!-- <div
                   class="badge"
                   [ngClass]="layout.isPublished ? 'badge-success' : 'badge-error text-white'"
                 >
                   {{ layout.isPublished ? i18n.common.published : i18n.common.notPublished }}
-                </div>
+                </div> -->
               </div>
 
               <div class="card-actions items-center justify-end" [class.mt-3]="!layout.isPublished">
@@ -64,15 +64,16 @@
                   {{ i18n.common.edit }}
                 </button>
 
-                <button
+                <!-- <button
                   class="btn btn-outline"
                   [ngClass]="layout.isPublished ? 'btn-error' : 'btn-success'"
+                  [disabled]="layout.releaseCode === currentRelease().releaseCode"
                 >
                   <span class="material-icons">
                     {{ layout.isPublished ? 'block' : 'publish' }}
                   </span>
                   {{ layout.isPublished ? i18n.common.unpublish : i18n.common.publish }}
-                </button>
+                </button> -->
               </div>
             </div>
           </div>

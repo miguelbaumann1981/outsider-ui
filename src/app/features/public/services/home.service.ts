@@ -1,10 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Service } from '@angular/core';
-import { map, Observable } from 'rxjs';
+import { delay, map, Observable } from 'rxjs';
 import { environment } from '@envs/environment.development';
 import { Article, ArticlesApi, HomeLayoutApi } from '../interfaces';
 import { AnyCategory, ArticleCategory, ReleaseCode } from '../types';
 import { ArticleCategoryMapper } from '../mappers';
+import { HomeLayoutCrud } from '@/features/admin/interfaces';
 
 @Service()
 export class HomeService {
@@ -42,5 +43,15 @@ export class HomeService {
     return this.http
       .get<HomeLayoutApi[]>(`${this.baseUrl}/api/home-layout`)
       .pipe(map((data) => data.find((item) => item.id === id) as HomeLayoutApi));
+  }
+
+  createHomeLayout(body: HomeLayoutCrud): Observable<HomeLayoutApi> {
+    return this.http.post<HomeLayoutApi>(`${this.baseUrl}/api/home-layout`, body).pipe(delay(1500));
+  }
+
+  updateHomeLayout(id: string, update: HomeLayoutCrud): Observable<HomeLayoutApi> {
+    return this.http
+      .put<HomeLayoutApi>(`${this.baseUrl}/api/home-layout/${id}`, update)
+      .pipe(delay(1500));
   }
 }

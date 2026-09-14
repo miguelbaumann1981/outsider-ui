@@ -7,16 +7,7 @@ import { HomeService, ReleasesService } from '@/features/public/services';
 import { ColorFeature, HomeLayoutApi, ReleasesApi } from '@/features/public/interfaces';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { HomeLayoutCrud } from '../../interfaces';
-import {
-  apply,
-  disabled,
-  Field,
-  FieldTree,
-  form,
-  FormField,
-  FormRoot,
-  schema,
-} from '@angular/forms/signals';
+import { apply, disabled, form, FormField, FormRoot, schema } from '@angular/forms/signals';
 import { ArticleCategory } from '@/features/public/enums';
 import { homeLayoutSchemaBase } from './home-layout-crud-form-schema';
 import { ReleaseCode } from '@/features/public/types';
@@ -31,6 +22,7 @@ interface HomeLayoutCard extends HomeLayoutApi {
 interface ReleaseCodeSelect {
   code: ReleaseCode;
   displayName: string;
+  disabled: boolean;
 }
 
 const HOME_LAYOUT_MODEL: HomeLayoutCrud = {
@@ -76,6 +68,9 @@ export class HomeLayoutCrudDetailPage implements OnInit {
   selectedHomeLayout = signal<HomeLayoutApi>({} as HomeLayoutApi);
   releases = signal<ReleasesApi[]>([]);
 
+  currentReleaseCode = computed<ReleaseCode>(() => {
+    return this.releases().find((item) => item.isCurrentRelease)?.releaseCode ?? '';
+  });
   subtitlePage = computed<string>(() =>
     this.activeParam() === 'new'
       ? this.i18n.homeLayout.createLayout
@@ -85,12 +80,14 @@ export class HomeLayoutCrudDetailPage implements OnInit {
     return this.releases().map((item) => ({
       code: item.releaseCode,
       displayName: item.name,
+      disabled: item.releaseCode === this.currentReleaseCode(),
     }));
   });
 
   homeLayoutModel = signal<HomeLayoutCrud>(HOME_LAYOUT_MODEL);
   homeLayoutSchema = schema<HomeLayoutCrud>((path) => {
     apply(path, homeLayoutSchemaBase);
+
     disabled(path.releaseCode, { when: () => this.activeParam() !== 'new' });
   });
   readonly homeLayoutForm = form(this.homeLayoutModel, this.homeLayoutSchema);
@@ -174,29 +171,21 @@ export class HomeLayoutCrudDetailPage implements OnInit {
       });
   }
 
-  displayColorInput(index: number, type: 'solid' | 'hover', event: any): ColorFeature | string {
-    const colorForm = event.value();
+  displayColorInput(index: number, type: 'solid' | 'hover'): ColorFeature | string {
     const { features } = this.homeLayoutModel();
-
-    const _color = features.find((item) => item.position === index + 1)?.color[type];
-    return colorForm;
-  }
-
-  displayColor2(event: any): string {
-    console.log(event.value());
-    return event.value();
+    const applyColor = features.find((item) => item.position === index + 1)?.color[type];
+    return applyColor ?? 'white';
   }
 
   openColorPickerDialog(index: number, type: 'solid' | 'hover'): void {
     const dialogRef = this.dialog.open(ColorPickerDialog, {
-      data: {},
       width: '300px',
     });
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result !== undefined) {
         const updatedFeatures = this.homeLayoutModel().features.map((item, featureIndex) =>
-          item.position === index + 1 || featureIndex === index
+          featureIndex === index
             ? {
                 ...item,
                 color:
@@ -223,7 +212,7 @@ export class HomeLayoutCrudDetailPage implements OnInit {
 
   onSubmit(event: Event): void {
     event.preventDefault();
-
+    this.isLoading.set(true);
     const { features } = this.homeLayoutModel();
     const positions = features.map((feature) => feature.position);
     const hasValidFeaturePositions =
@@ -233,10 +222,61 @@ export class HomeLayoutCrudDetailPage implements OnInit {
 
     if (!hasValidFeaturePositions) {
       toast.error(this.i18n.homeLayout.validations.hasValidFeaturePositions);
+      this.isLoading.set(false);
       return;
     }
 
-    console.log(this.homeLayoutModel());
+    this.homeLayoutModel().isDraft = true;
+    this.homeLayoutModel().isPublished = false;
+    const formData = this.homeLayoutModel();
+
+    if (this.activeParam() === 'new') {
+      this.createLayout(formData);
+    } else {
+      this.updateLayout(this.selectedHomeLayout().id, formData);
+    }
+  }
+
+  createLayout(formData: HomeLayoutCrud): void {
+    this.homeService
+      .createHomeLayout(formData)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          toast.success(this.i18n.homeLayout.successEditMessageForm);
+        },
+        error: () => {
+          toast.error(this.i18n.homeLayout.errorEditMessageForm);
+          this.isLoading.set(false);
+        },
+        complete: () => {
+          this.isLoading.set(false);
+          setTimeout(() => {
+            this.navigateToPreviousPage();
+          }, 1500);
+        },
+      });
+  }
+
+  updateLayout(id: string, formData: HomeLayoutCrud): void {
+    this.homeService
+      .updateHomeLayout(id, formData)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          toast.success(this.i18n.homeLayout.successEditMessageForm);
+        },
+        error: () => {
+          toast.error(this.i18n.homeLayout.errorEditMessageForm);
+          this.isLoading.set(false);
+        },
+        complete: () => {
+          this.isLoading.set(false);
+          setTimeout(() => {
+            this.navigateToPreviousPage();
+          }, 1500);
+        },
+      });
   }
 
   navigateToPreviousPage(): void {

@@ -9,7 +9,6 @@ import { ReleasesService } from '@/features/public/services';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { releaseSchemaBase } from './release-crud-form-schema';
 import { toast, NgxSonnerToaster } from 'ngx-sonner';
-import { delay } from 'rxjs';
 import { ReleaseCode } from '@/features/public/types';
 
 const RELEASE_MODEL: ReleasesCrud = {
@@ -118,7 +117,7 @@ export class ReleaseCrudDetailPage implements OnInit {
   createNewRelease(formData: ReleasesCrud): void {
     this.releasesService
       .createRelease(formData)
-      .pipe(takeUntilDestroyed(this.destroyRef), delay(1500))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
           toast.success(this.i18n.releases.successCreateMessageForm);
@@ -140,7 +139,7 @@ export class ReleaseCrudDetailPage implements OnInit {
   editRelease(formData: ReleasesCrud): void {
     this.releasesService
       .updateRelease(this.activeParam(), formData)
-      .pipe(takeUntilDestroyed(this.destroyRef), delay(1500))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
           toast.success(this.i18n.releases.successEditMessageForm);

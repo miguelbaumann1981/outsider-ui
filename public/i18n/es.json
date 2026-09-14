@@ -13,7 +13,9 @@
     "published": "Publicado",
     "notPublished": "No publicado",
     "unpublish": "Retirar",
-    "confirm": "Confirmar"
+    "confirm": "Confirmar",
+    "select": "Seleccionar",
+    "apply": "Aplicar"
   },
   "slogan": "Revista Literaria Subterránea",
   "menu": {
@@ -26,7 +28,7 @@
     "aboutUsCrud": "Sobre nosotros",
     "releasesCrud": "Números",
     "articlesCrud": "Artículos",
-    "homeLayoutCrud": "Configuración general"
+    "homeLayoutCrud": "Configuración"
   },
   "category": {
     "editorial": "Editorial",
@@ -179,7 +181,7 @@
   "homeLayout": {
     "createLayout": "Crear nueva configuración",
     "editHomeLayout": "Editar configuración",
-    "releaseCodeLabel": "Código del número",
+    "releaseCodeLabel": "Número",
     "categoryLabel": "Categoría",
     "positionLabel": "Posición",
     "positionPlaceholder": "Añada una posición...",
@@ -196,6 +198,11 @@
       "colorPattern": "El formato del color es inválido",
       "releaseCodeRequired": "El Código del número es obligatorio",
       "hasValidFeaturePositions": "Las posiciones deben estar asignadas del 1 al 6 sin repetir"
-    }
+    },
+    "selectedColor": "Color seleccionado",
+    "successEditMessageForm": "La configuración ha sido editada con éxito",
+    "errorEditMessageForm": "La configuración no ha sido editada. Intenete más tarde",
+    "successCreateMessageForm": "La nueva configuración ha sido creada con éxito",
+    "errorCreateMessageForm": "La nueva configuración no ha sido creada. Intente más tarde"
   }
 }

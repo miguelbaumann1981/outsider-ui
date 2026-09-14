@@ -22,7 +22,11 @@
 
         <select class="select" [formField]="homeLayoutForm.releaseCode">
           @for (option of releasesCodeOptions(); track option.code) {
-            <option [value]="option.code">{{ option.displayName }}</option>
+            @if (!option.disabled) {
+              <option [value]="option.code">
+                {{ option.displayName }}
+              </option>
+            }
           }
         </select>
         @if (homeLayoutForm.releaseCode().touched() && homeLayoutForm.releaseCode().invalid()) {
@@ -89,10 +93,11 @@
             />
 
             <div
-              class="h-[40px] w-[40px] cursor-pointer rounded-md border border-gray-300"
-              /* [style.backgroundColor]="feature.color.solid()" */
-              /* [style]="{ 'background-color': displayColor2(feature.color.solid()) }" */
-              [style]="{ 'background-color': displayColorInput(i, 'solid', feature.color.solid()) }"
+              class="h-[40px] w-[40px] cursor-pointer rounded-md border border-gray-300 hover:shadow-lg"
+              [style]="{
+                'background-color':
+                  activeParam() !== 'new' ? displayColorInput(i, 'solid') : 'white',
+              }"
               (click)="openColorPickerDialog(i, 'solid')"
             ></div>
           </div>
@@ -110,9 +115,13 @@
               [formField]="$any(feature.color.hover)"
               [placeholder]="i18n.homeLayout.colorHoverPlaceholder"
             />
+
             <div
-              class="h-[40px] w-[40px] cursor-pointer rounded-md border border-gray-300"
-              [style]="{ 'background-color': displayColorInput(i, 'hover', feature.color.hover()) }"
+              class="h-[40px] w-[40px] cursor-pointer rounded-md border border-gray-300 hover:shadow-lg"
+              [style]="{
+                'background-color':
+                  activeParam() !== 'new' ? displayColorInput(i, 'hover') : 'white',
+              }"
               (click)="openColorPickerDialog(i, 'hover')"
             ></div>
           </div>
@@ -122,8 +131,12 @@
 
     <div class="flex justify-end">
       <button type="submit" class="btn btn-accent" [disabled]="submitDisable">
-        <span class="material-icons"> save </span>
-        {{ i18n.common.save }}
+        @if (isLoading()) {
+          <span class="loading loading-spinner text-accent"></span>
+        } @else {
+          <span class="material-icons"> save </span>
+          <span class="text-white">{{ i18n.common.save }}</span>
+        }
       </button>
     </div>
   </form>
