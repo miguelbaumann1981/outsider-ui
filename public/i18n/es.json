@@ -140,7 +140,7 @@
   "aboutUs": {
     "subtitle": "¿Quiénes somos?",
     "mainTextLabel": "Texto principal",
-    "releaseLabel": "Lanzamiento",
+    "releaseLabel": "Número",
     "collaborators": "Colaboradores",
     "collaboratorNameLabel": "Nombre",
     "collaboratorTextLabel": "Contenido",
@@ -149,7 +149,19 @@
     "collaboratorTextPlaceholder": "Añada un texto",
     "collaboratorPicturePlaceholder": "Añada una imagen",
     "noCurrentVersion": "No hay una versión actual disponible.",
-    "createNewAboutUsInfo": "Crear nueva información"
+    "createNewAboutUsInfo": "Crear nueva información",
+    "editAboutUsInfo": "Editar información",
+    "validations": {
+      "nameRequired": "El Nombre es obligatorio",
+      "releaseRequired": "El Código es obligatorio",
+      "mainTextRequired": "El Texto principal es obligatorio",
+      "pictureRequired": "La imagen es obligatoria",
+      "textRequired": "El Contenido es obligatorio"
+    },
+    "successEditMessageForm": "La información ha sido editada con éxito",
+    "errorEditMessageForm": "La información no ha sido editada. Intente más tarde",
+    "successCreateMessageForm": "La nueva información ha sido creada con éxito",
+    "errorCreateMessageForm": "La nuevo información no ha sido creada. Intente más tarde"
   },
   "auth": {
     "login": "Iniciar sesión",

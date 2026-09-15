@@ -94,7 +94,7 @@ export class AboutUsCrudPage implements OnInit {
   }
 
   onCreateAboutUs(): void {
-    this.router.navigate([`/admin/about-us-crud/new}`]);
+    this.router.navigate([`/admin/about-us-crud/new`]);
   }
 
   onEditLayout(id: string): void {

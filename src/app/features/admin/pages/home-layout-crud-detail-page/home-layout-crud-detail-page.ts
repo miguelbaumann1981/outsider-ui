@@ -6,7 +6,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { HomeService, ReleasesService } from '@/features/public/services';
 import { ColorFeature, HomeLayoutApi, ReleasesApi } from '@/features/public/interfaces';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { HomeLayoutCrud } from '../../interfaces';
+import { HomeLayoutCrud, ReleaseCodeSelect } from '../../interfaces';
 import { apply, disabled, form, FormField, FormRoot, schema } from '@angular/forms/signals';
 import { ArticleCategory } from '@/features/public/enums';
 import { homeLayoutSchemaBase } from './home-layout-crud-form-schema';
@@ -17,12 +17,6 @@ import { ColorPickerDialog } from '../../components/color-picker-dialog/color-pi
 
 interface HomeLayoutCard extends HomeLayoutApi {
   title: string;
-}
-
-interface ReleaseCodeSelect {
-  code: ReleaseCode;
-  displayName: string;
-  disabled: boolean;
 }
 
 const HOME_LAYOUT_MODEL: HomeLayoutCrud = {
@@ -177,7 +171,6 @@ export class HomeLayoutCrudDetailPage implements OnInit {
             ...data,
             releaseCode: this.optionReleaseCodeSelected(),
           });
-          console.log(this.homeLayoutModel());
         },
         error: () => {
           toast.error(this.i18n.common.serverError);
@@ -244,12 +237,10 @@ export class HomeLayoutCrudDetailPage implements OnInit {
   }
 
   onOptionCode(code: ReleaseCode): void {
-    console.log(code);
     this.optionReleaseCodeSelected.set(code);
   }
 
   onCloneSelect(code: ReleaseCode): void {
-    console.log(code);
     const layoutId = this.homeLayouts().find((item) => item.releaseCode === code)?.id ?? 'new';
 
     this.getClonedHomeLayout(layoutId);
