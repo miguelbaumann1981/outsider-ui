@@ -25,6 +25,10 @@ export const adminRoutes: Routes = [
         component: AboutUsCrudPage,
       },
       {
+        path: 'about-us-crud/:id',
+        component: AboutUsCrudPage,
+      },
+      {
         path: 'home-layout-crud',
         component: HomeLayoutCrudPage,
       },

@@ -203,6 +203,7 @@
     "successEditMessageForm": "La configuración ha sido editada con éxito",
     "errorEditMessageForm": "La configuración no ha sido editada. Intenete más tarde",
     "successCreateMessageForm": "La nueva configuración ha sido creada con éxito",
-    "errorCreateMessageForm": "La nueva configuración no ha sido creada. Intente más tarde"
+    "errorCreateMessageForm": "La nueva configuración no ha sido creada. Intente más tarde",
+    "applyConfigFrom": "Aplicar configuración de..."
   }
 }

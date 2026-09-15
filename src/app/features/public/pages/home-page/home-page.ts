@@ -101,9 +101,9 @@ export class HomePage implements OnInit, AfterViewInit {
         imageUrl: item.image,
         position: layoutFeatures.find((elem) => elem.category === item.category)?.position ?? 0,
         color:
-          layoutFeatures.find((elem) => elem.category === item.category)?.color?.solid ?? '#aaaaaa',
+          layoutFeatures.find((elem) => elem.category === item.category)?.color?.solid ?? '#eeeeee',
         hoverColor:
-          layoutFeatures.find((elem) => elem.category === item.category)?.color?.hover ?? '#eeeeee',
+          layoutFeatures.find((elem) => elem.category === item.category)?.color?.hover ?? '#f4f4f4',
       }))
       .sort((a, b) => a.position - b.position);
   });

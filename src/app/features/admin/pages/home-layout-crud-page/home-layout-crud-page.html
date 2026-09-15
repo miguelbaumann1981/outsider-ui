@@ -23,7 +23,7 @@
     }
 
     @case ('available') {
-      <div class="grid grid-cols-1 gap-3 lg:grid-cols-2 lg:gap-10 xl:grid-cols-3">
+      <div class="grid grid-cols-1 gap-3 lg:grid-cols-2 lg:gap-10 xl:grid-cols-4">
         @for (layout of homeLayouts(); track layout.id) {
           <div
             class="card w-full border border-gray-200 shadow-sm"
@@ -49,13 +49,6 @@
                     </div>
                   </div>
                 </div>
-
-                <!-- <div
-                  class="badge"
-                  [ngClass]="layout.isPublished ? 'badge-success' : 'badge-error text-white'"
-                >
-                  {{ layout.isPublished ? i18n.common.published : i18n.common.notPublished }}
-                </div> -->
               </div>
 
               <div class="card-actions items-center justify-end" [class.mt-3]="!layout.isPublished">
@@ -63,17 +56,6 @@
                   <span class="material-icons"> edit </span>
                   {{ i18n.common.edit }}
                 </button>
-
-                <!-- <button
-                  class="btn btn-outline"
-                  [ngClass]="layout.isPublished ? 'btn-error' : 'btn-success'"
-                  [disabled]="layout.releaseCode === currentRelease().releaseCode"
-                >
-                  <span class="material-icons">
-                    {{ layout.isPublished ? 'block' : 'publish' }}
-                  </span>
-                  {{ layout.isPublished ? i18n.common.unpublish : i18n.common.publish }}
-                </button> -->
               </div>
             </div>
           </div>

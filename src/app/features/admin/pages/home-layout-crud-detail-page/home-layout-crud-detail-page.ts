@@ -27,8 +27,8 @@ interface ReleaseCodeSelect {
 
 const HOME_LAYOUT_MODEL: HomeLayoutCrud = {
   releaseCode: '',
-  isDraft: false,
-  isPublished: false,
+  isDraft: true,
+  isPublished: true,
   features: Array.from({ length: 6 }).map(() => ({
     category: ArticleCategory.EDITORIAL,
     position: 0,
@@ -67,10 +67,13 @@ export class HomeLayoutCrudDetailPage implements OnInit {
   homeLayouts = signal<HomeLayoutCard[]>([]);
   selectedHomeLayout = signal<HomeLayoutApi>({} as HomeLayoutApi);
   releases = signal<ReleasesApi[]>([]);
+  optionReleaseCodeSelected = signal<ReleaseCode>('');
 
   currentReleaseCode = computed<ReleaseCode>(() => {
     return this.releases().find((item) => item.isCurrentRelease)?.releaseCode ?? '';
   });
+  activeLayouts = computed<ReleaseCode[]>(() => this.homeLayouts().map((elem) => elem.releaseCode));
+
   subtitlePage = computed<string>(() =>
     this.activeParam() === 'new'
       ? this.i18n.homeLayout.createLayout
@@ -80,7 +83,14 @@ export class HomeLayoutCrudDetailPage implements OnInit {
     return this.releases().map((item) => ({
       code: item.releaseCode,
       displayName: item.name,
-      disabled: item.releaseCode === this.currentReleaseCode(),
+      disabled: this.activeLayouts()?.includes(item.releaseCode),
+    }));
+  });
+  releasesCodeCloneOptions = computed<ReleaseCodeSelect[]>(() => {
+    return this.releases().map((item) => ({
+      code: item.releaseCode,
+      displayName: item.name,
+      disabled: !this.activeLayouts()?.includes(item.releaseCode),
     }));
   });
 
@@ -123,9 +133,7 @@ export class HomeLayoutCrudDetailPage implements OnInit {
     this.activatedRoute.params.subscribe((params) => {
       this.activeParam.set(params['id']);
 
-      if (this.activeParam() !== 'new') {
-        this.getSelectedHomeLayout(this.activeParam());
-      } else {
+      if (this.activeParam() === 'new') {
         this.homeLayoutModel.set({
           ...HOME_LAYOUT_MODEL,
           features: this.homeLayoutModel().features.map((item, index) => ({
@@ -133,6 +141,8 @@ export class HomeLayoutCrudDetailPage implements OnInit {
             category: ALL_CATEGORIES[index % ALL_CATEGORIES.length],
           })),
         });
+      } else {
+        this.getSelectedHomeLayout(this.activeParam());
       }
     });
   }
@@ -143,8 +153,31 @@ export class HomeLayoutCrudDetailPage implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (data) => {
+          data.features.sort((a, b) => a.position - b.position);
           this.selectedHomeLayout.set(data);
           this.homeLayoutModel.set(this.selectedHomeLayout());
+        },
+        error: () => {
+          toast.error(this.i18n.common.serverError);
+          this.isLoading.set(false);
+        },
+        complete: () => {
+          this.isLoading.set(false);
+        },
+      });
+  }
+
+  getClonedHomeLayout(id: string): void {
+    this.homeService
+      .getHomeLayoutById(id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (data) => {
+          this.homeLayoutModel.set({
+            ...data,
+            releaseCode: this.optionReleaseCodeSelected(),
+          });
+          console.log(this.homeLayoutModel());
         },
         error: () => {
           toast.error(this.i18n.common.serverError);
@@ -210,6 +243,18 @@ export class HomeLayoutCrudDetailPage implements OnInit {
     });
   }
 
+  onOptionCode(code: ReleaseCode): void {
+    console.log(code);
+    this.optionReleaseCodeSelected.set(code);
+  }
+
+  onCloneSelect(code: ReleaseCode): void {
+    console.log(code);
+    const layoutId = this.homeLayouts().find((item) => item.releaseCode === code)?.id ?? 'new';
+
+    this.getClonedHomeLayout(layoutId);
+  }
+
   onSubmit(event: Event): void {
     event.preventDefault();
     this.isLoading.set(true);
@@ -226,8 +271,6 @@ export class HomeLayoutCrudDetailPage implements OnInit {
       return;
     }
 
-    this.homeLayoutModel().isDraft = true;
-    this.homeLayoutModel().isPublished = false;
     const formData = this.homeLayoutModel();
 
     if (this.activeParam() === 'new') {

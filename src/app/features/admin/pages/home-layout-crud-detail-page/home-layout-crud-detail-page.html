@@ -20,15 +20,20 @@
           <span class="text-error">*</span>
         </legend>
 
-        <select class="select" [formField]="homeLayoutForm.releaseCode">
-          @for (option of releasesCodeOptions(); track option.code) {
-            @if (!option.disabled) {
-              <option [value]="option.code">
-                {{ option.displayName }}
-              </option>
+        @if (activeParam() === 'new') {
+          <select class="select" [formField]="homeLayoutForm.releaseCode">
+            @for (option of releasesCodeOptions(); track option.code) {
+              @if (!option.disabled) {
+                <option [value]="option.code" (click)="onOptionCode(option.code)">
+                  {{ option.displayName }}
+                </option>
+              }
             }
-          }
-        </select>
+          </select>
+        } @else {
+          <input type="text" class="input w-full" [formField]="$any(homeLayoutForm.releaseCode)" />
+        }
+
         @if (homeLayoutForm.releaseCode().touched() && homeLayoutForm.releaseCode().invalid()) {
           <ul>
             @for (error of homeLayoutForm.releaseCode().errors(); track error) {
@@ -37,6 +42,25 @@
           </ul>
         }
       </fieldset>
+
+      @if (activeParam() === 'new') {
+        <fieldset class="fieldset w-full">
+          <legend class="fieldset-legend text-sm lg:text-base">
+            {{ i18n.homeLayout.applyConfigFrom }}
+          </legend>
+
+          <select class="select">
+            <option>{{ i18n.common.select }}...</option>
+            @for (option of releasesCodeCloneOptions(); track option.code) {
+              @if (!option.disabled) {
+                <option [value]="option.code" (click)="onCloneSelect(option.code)">
+                  {{ option.displayName }}
+                </option>
+              }
+            }
+          </select>
+        </fieldset>
+      }
     </div>
 
     @for (feature of homeLayoutForm.features; track $index; let i = $index) {
