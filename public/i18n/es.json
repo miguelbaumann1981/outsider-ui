@@ -148,9 +148,8 @@
     "collaboratorNamePlaceholder": "Añada un nombre",
     "collaboratorTextPlaceholder": "Añada un texto",
     "collaboratorPicturePlaceholder": "Añada una imagen",
-    "saveAsDraft": "Guardar",
-    "publish": "Publicar",
-    "noCurrentVersion": "No hay una versión actual disponible. "
+    "noCurrentVersion": "No hay una versión actual disponible.",
+    "createNewAboutUsInfo": "Crear nueva información"
   },
   "auth": {
     "login": "Iniciar sesión",

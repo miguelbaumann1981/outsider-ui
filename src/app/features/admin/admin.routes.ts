@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { AdminLayout } from './layout/admin-layout/admin-layout';
 import { IsPrivateZoneGuard } from '@/auth/guards';
 import {
+  AboutUsCrudDetailPage,
   AboutUsCrudPage,
   ArticlesCrudPage,
   HomeLayoutCrudDetailPage,
@@ -26,7 +27,7 @@ export const adminRoutes: Routes = [
       },
       {
         path: 'about-us-crud/:id',
-        component: AboutUsCrudPage,
+        component: AboutUsCrudDetailPage,
       },
       {
         path: 'home-layout-crud',
