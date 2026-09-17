@@ -10,6 +10,7 @@ import {
   ReleaseCrudDetailPage,
   ReleasesCrudPage,
 } from './pages';
+import { ArticlesCrudDetailPage } from './pages/articles-crud-detail-page/articles-crud-detail-page';
 
 export const adminRoutes: Routes = [
   {
@@ -20,6 +21,10 @@ export const adminRoutes: Routes = [
       {
         path: 'articles-crud',
         component: ArticlesCrudPage,
+      },
+      {
+        path: 'articles-crud/:id',
+        component: ArticlesCrudDetailPage,
       },
       {
         path: 'about-us-crud',

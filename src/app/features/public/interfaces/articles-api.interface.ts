@@ -21,4 +21,6 @@ export interface Article {
   subtitle?: string;
   titleArticle: string;
   titleCategory: string;
+  isPublished: boolean;
+  isDraft: boolean;
 }
