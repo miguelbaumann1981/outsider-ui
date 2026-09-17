@@ -5,7 +5,12 @@ import { LocalStorageService } from '@/core/services';
 import { HomeService, ReleasesService } from '@/features/public/services';
 import { Router } from '@angular/router';
 import { ReleaseCode, ViewState } from '@/features/public/types';
-import { Article, ArticlesApi, ReleasesApi } from '@/features/public/interfaces';
+import {
+  Article,
+  ArticlesApi,
+  ReleaseLocalStorage,
+  ReleasesApi,
+} from '@/features/public/interfaces';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Spinner } from '@/shared/components/spinner/spinner';
 import { NgClass, UpperCasePipe } from '@angular/common';
@@ -108,5 +113,16 @@ export class ArticlesCrudPage implements OnInit {
 
   createNewArticle(): void {
     this.router.navigate([`/admin/articles-crud/new`]);
+  }
+
+  preview(article: Article): void {
+    const { releaseCode, slug, category } = article;
+    const release: ReleaseLocalStorage = {
+      code: releaseCode,
+      isCurrent:
+        this.releases().find((item) => item.releaseCode === releaseCode)?.isCurrentRelease ?? false,
+    };
+    this.localStorageService.setItem('release', JSON.stringify(release));
+    this.router.navigate([`/articles/${releaseCode.toLowerCase()}/${category}/${slug}`]);
   }
 }

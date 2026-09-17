@@ -1,7 +1,8 @@
-import { ReleaseCode } from '@/features/public/types';
+import { ArticleCategory, ReleaseCode } from '@/features/public/types';
 
 export interface ReleaseCodeSelect {
-  code: ReleaseCode;
+  code?: ReleaseCode;
+  category?: ArticleCategory;
   displayName: string;
   disabled: boolean;
 }

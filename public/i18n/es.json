@@ -216,5 +216,38 @@
     "successCreateMessageForm": "La nueva configuración ha sido creada con éxito",
     "errorCreateMessageForm": "La nueva configuración no ha sido creada. Intente más tarde",
     "applyConfigFrom": "Aplicar configuración de..."
+  },
+  "articles": {
+    "createNewArticle": "Crear nuevo artículo",
+    "editArticle": "Editar artículo",
+    "releaseCodeLabel": "Número",
+    "categoryLabel": "Categoría",
+    "noReleasesAvailable": "No hay numeros disponibles",
+    "titleCategoryLabel": "Título de la categoría",
+    "titleCategoryPlaceholder": "Añada un título de categoría...",
+    "titleArticleLabel": "Título del artículo",
+    "titleArticlePlaceholder": "Añada un título de artículo...",
+    "slugLabel": "Identificador",
+    "slugPlaceholder": "Añada un identificador",
+    "authorArticleLabel": "Autor del artículo",
+    "authorArticlePlaceholder": "Añada un autor del artículo...",
+    "imageLabel": "Imagen",
+    "imagePlaceholder": "Añada una imagen...",
+    "contentLabel": "Contenido",
+    "authorInfoLabel": "Información del autor",
+    "subtitleLabel": "Información extra",
+    "authorQuoteLabel": "Autor cita literaria",
+    "quoteLabel": "Cita literaria",
+    "referencesLabel": "Información extra",
+    "validations": {
+      "releaseCodeRequired": "El número es obligatorio",
+      "categoryRequired": "La categoría es obligatoria",
+      "authorArticleRequired": "El autor es obligatorio",
+      "contentRequired": "El contenido es obligatorio",
+      "imageRequired": "La imagen es obligatoria",
+      "slugRequired": "El identificador es obligatoria",
+      "titleArticleRequired": "El título del artículo es obligatorio",
+      "titleCategoryRequired": "El título de la categoría es obligatoria"
+    }
   }
 }

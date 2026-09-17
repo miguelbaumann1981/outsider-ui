@@ -21,7 +21,7 @@
           <select class="select" [formField]="aboutUsForm.releaseCode">
             @for (option of releasesCodeOptions(); track option.code) {
               @if (!option.disabled) {
-                <option [value]="option.code" (click)="onOptionCode(option.code)">
+                <option [value]="option.code" (click)="onOptionCode(option.code ?? '')">
                   {{ option.displayName }}
                 </option>
               }
@@ -55,7 +55,7 @@
             <option>{{ i18n.common.select }}...</option>
             @for (option of releasesCodeCloneOptions(); track option.code) {
               @if (!option.disabled) {
-                <option [value]="option.code" (click)="onCloneSelect(option.code)">
+                <option [value]="option.code" (click)="onCloneSelect(option.code ?? '')">
                   {{ option.displayName }}
                 </option>
               }

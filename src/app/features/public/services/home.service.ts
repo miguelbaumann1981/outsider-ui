@@ -31,6 +31,12 @@ export class HomeService {
       );
   }
 
+  getArticleById(id: string): Observable<Article> {
+    return this.http
+      .get<ArticlesApi>(`${this.baseUrl}/api/articles`)
+      .pipe(map((data) => data.articles.find((item) => item.id === id) as Article));
+  }
+
   getAllArticles(): Observable<ArticlesApi> {
     return this.http.get<ArticlesApi>(`${this.baseUrl}/api/articles`);
   }

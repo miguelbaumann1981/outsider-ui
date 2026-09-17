@@ -14,18 +14,18 @@
       <!-- #region RELEASE CODE FIELD -->
       <fieldset class="fieldset col-span-1 w-full">
         <legend class="fieldset-legend text-sm lg:text-base">
-          {{ i18n.aboutUs.releaseLabel }}
+          {{ i18n.articles.releaseCodeLabel }}
           <span class="text-error">*</span>
         </legend>
 
         @if (activeParam() === 'new') {
-          <select class="select" [formField]="articleForm.releaseCode">
+          <select class="select w-full" [formField]="articleForm.releaseCode">
             @for (option of releasesCodeOptions(); track option.code) {
-              @if (!option.disabled) {
-                <option [value]="option.code" (click)="onOptionCode(option.code)">
-                  {{ option.displayName }}
-                </option>
-              }
+              <option [value]="option.code" (click)="onOptionCode(option.code ?? '')">
+                {{ option.displayName }}
+              </option>
+            } @empty {
+              <option>{{ i18n.articles.noReleasesAvailable }}</option>
             }
           </select>
         } @else {
@@ -50,16 +50,19 @@
       <!-- #region CATEGORY FIELD -->
       <fieldset class="fieldset col-span-1 w-full">
         <legend class="fieldset-legend text-sm lg:text-base">
-          {{ 'Category' }}
+          {{ i18n.articles.categoryLabel }}
           <span class="text-error">*</span>
         </legend>
 
         @if (activeParam() === 'new') {
-          <select class="select" [formField]="articleForm.category">
-            @for (option of releasesCodeOptions(); track option.code) {
-              @if (!option.disabled) {
-                <option [value]="option.code" (click)="onOptionCode(option.code)">
-                  {{ option.displayName }}
+          <select class="select w-full" [formField]="articleForm.category">
+            @for (category of categoriesOptions(); track category.category) {
+              @if (!category.disabled) {
+                <option
+                  [value]="category.category"
+                  (click)="onOptionCategory($any(category.category))"
+                >
+                  {{ category.displayName | uppercase }}
                 </option>
               }
             }
@@ -69,7 +72,7 @@
             type="text"
             class="input w-full"
             [disabled]="true"
-            [value]="articleForm.category().value()"
+            [value]="articleForm.category().value() | uppercase"
           />
         }
 
@@ -86,16 +89,24 @@
       <!-- #region TITLE CATEGORY FIELD -->
       <fieldset class="fieldset col-span-2 w-full">
         <legend class="fieldset-legend text-sm lg:text-base">
-          {{ 'Title category' }}
+          {{ i18n.articles.titleCategoryLabel }}
           <span class="text-error">*</span>
         </legend>
 
         <input
           type="text"
           class="input w-full"
-          [placeholder]="'añade...'"
+          [placeholder]="i18n.articles.titleCategoryPlaceholder"
           [formField]="articleForm.titleCategory"
         />
+
+        @if (articleForm.titleCategory().touched() && articleForm.titleCategory().invalid()) {
+          <ul>
+            @for (error of articleForm.titleCategory().errors(); track error) {
+              <li class="text-error">{{ error.message }}</li>
+            }
+          </ul>
+        }
       </fieldset>
       <!-- #endregion TITLE CATEGORY FIELD -->
     </div>
@@ -104,50 +115,207 @@
       <!-- #region TITLE ARTICLE FIELD -->
       <fieldset class="fieldset col-span-2 w-full">
         <legend class="fieldset-legend text-sm lg:text-base">
-          {{ 'Title article' }}
+          {{ i18n.articles.titleArticleLabel }}
           <span class="text-error">*</span>
         </legend>
 
         <input
           type="text"
           class="input w-full"
-          [placeholder]="'añade...'"
+          [placeholder]="i18n.articles.titleArticlePlaceholder"
           [formField]="articleForm.titleArticle"
         />
+
+        @if (articleForm.titleArticle().touched() && articleForm.titleArticle().invalid()) {
+          <ul>
+            @for (error of articleForm.titleArticle().errors(); track error) {
+              <li class="text-error">{{ error.message }}</li>
+            }
+          </ul>
+        }
       </fieldset>
       <!-- #endregion TITLE ARTICLE FIELD -->
 
       <!-- #region SLUG FIELD -->
-      <fieldset class="fieldset col-span-1 w-full">
+      <fieldset class="fieldset col-span-2 w-full">
         <legend class="fieldset-legend text-sm lg:text-base">
-          {{ 'Slug' }}
+          {{ i18n.articles.slugLabel }}
           <span class="text-error">*</span>
         </legend>
 
         <input
           type="text"
           class="input w-full"
-          [placeholder]="'añade...'"
+          [placeholder]="i18n.articles.slugPlaceholder"
           [formField]="articleForm.slug"
         />
+
+        @if (articleForm.slug().touched() && articleForm.slug().invalid()) {
+          <ul>
+            @for (error of articleForm.slug().errors(); track error) {
+              <li class="text-error">{{ error.message }}</li>
+            }
+          </ul>
+        }
       </fieldset>
       <!-- #endregion SLUG FIELD -->
+    </div>
 
+    <div class="grid grid-cols-1 gap-3 lg:grid-cols-2 lg:gap-6 xl:grid-cols-4">
       <!-- #region AUTHOR ARTICLE FIELD -->
       <fieldset class="fieldset col-span-1 w-full">
         <legend class="fieldset-legend text-sm lg:text-base">
-          {{ 'Autor' }}
+          {{ i18n.articles.authorArticleLabel }}
           <span class="text-error">*</span>
         </legend>
 
         <input
           type="text"
           class="input w-full"
-          [placeholder]="'añade...'"
+          [placeholder]="i18n.articles.authorArticlePlaceholder"
           [formField]="articleForm.authorArticle"
         />
+
+        @if (articleForm.authorArticle().touched() && articleForm.authorArticle().invalid()) {
+          <ul>
+            @for (error of articleForm.authorArticle().errors(); track error) {
+              <li class="text-error">{{ error.message }}</li>
+            }
+          </ul>
+        }
       </fieldset>
       <!-- #endregion AUTHOR ARTICLE FIELD -->
+
+      <!-- #region IMAGE FIELD -->
+      <fieldset class="fieldset col-span-3 w-full">
+        <legend class="fieldset-legend text-sm lg:text-base">
+          {{ i18n.articles.imageLabel }}
+          <span class="text-error">*</span>
+        </legend>
+
+        <input
+          type="text"
+          class="input w-full"
+          [placeholder]="i18n.articles.imagePlaceholder"
+          [formField]="articleForm.image"
+        />
+
+        @if (articleForm.image().touched() && articleForm.image().invalid()) {
+          <ul>
+            @for (error of articleForm.image().errors(); track error) {
+              <li class="text-error">{{ error.message }}</li>
+            }
+          </ul>
+        }
+      </fieldset>
+      <!-- #endregion IMAGE FIELD -->
+    </div>
+    <div class="grid grid-cols-1 gap-3">
+      <!-- #region CONTENT FIELD -->
+      <fieldset class="fieldset w-full">
+        <legend class="fieldset-legend text-sm lg:text-base">
+          {{ i18n.articles.contentLabel }}
+          <span class="text-error">*</span>
+        </legend>
+
+        <out-input-text-rich-form [formField]="articleForm.content" />
+
+        @if (articleForm.content().touched() && articleForm.content().invalid()) {
+          <ul>
+            @for (error of articleForm.content().errors(); track error) {
+              <li class="text-error">{{ error.message }}</li>
+            }
+          </ul>
+        }
+      </fieldset>
+      <!-- #endregion CONTENT FIELD -->
+
+      <!-- #region AUTHOR INFO FIELD -->
+      @if (articleForm.authorInfo !== undefined) {
+        <fieldset class="fieldset w-full">
+          <legend class="fieldset-legend text-sm lg:text-base">
+            {{ i18n.articles.authorInfoLabel }}
+          </legend>
+
+          <out-input-text-rich-form [formField]="$any(articleForm.authorInfo)" />
+        </fieldset>
+      }
+      <!-- #endregion AUTHOR INFO FIELD -->
+    </div>
+
+    <div class="grid grid-cols-1 gap-3 lg:grid-cols-2 lg:gap-6 xl:grid-cols-4">
+      <!-- #region SUBTITLE FIELD -->
+      @if (articleForm.subtitle !== undefined) {
+        <fieldset class="fieldset col-span-2 w-full">
+          <legend class="fieldset-legend text-sm lg:text-base">
+            {{ i18n.articles.subtitleLabel }}
+          </legend>
+
+          <input
+            type="text"
+            class="input w-full"
+            [placeholder]="'añade...'"
+            [formField]="$any(articleForm.subtitle)"
+          />
+        </fieldset>
+      }
+      <!-- #endregion SUBTITLE FIELD -->
+
+      <!-- #region AUTHOR QUOTE FIELD -->
+      @if (articleForm.authorQuote !== undefined) {
+        <fieldset class="fieldset col-span-2 w-full">
+          <legend class="fieldset-legend text-sm lg:text-base">
+            {{ i18n.articles.authorQuoteLabel }}
+          </legend>
+
+          <input
+            type="text"
+            class="input w-full"
+            [placeholder]="'añade...'"
+            [formField]="$any(articleForm.authorQuote)"
+          />
+        </fieldset>
+      }
+      <!-- #endregion AUTHOR QUOTE FIELD -->
+    </div>
+
+    <div class="grid grid-cols-1 gap-3 lg:gap-6 xl:grid-cols-2">
+      <!-- #region CITA FIELD -->
+      @if (articleForm.quote !== undefined) {
+        <fieldset class="fieldset w-full">
+          <legend class="fieldset-legend text-sm lg:text-base">
+            {{ i18n.articles.quoteLabel }}
+          </legend>
+
+          <out-input-text-rich-form [formField]="$any(articleForm.quote)" />
+        </fieldset>
+      }
+      <!-- #endregion CITA FIELD -->
+
+      <!-- #region REFERENCES FIELD -->
+      @if (articleForm.references !== undefined) {
+        <fieldset class="fieldset w-full">
+          <legend class="fieldset-legend text-sm lg:text-base">
+            {{ i18n.articles.referencesLabel }}
+          </legend>
+
+          <out-input-text-rich-form [formField]="$any(articleForm.references)" />
+        </fieldset>
+      }
+      <!-- #endregion REFERENCES FIELD -->
+    </div>
+
+    <div class="flex justify-end">
+      <button type="submit" class="btn btn-accent" [disabled]="submitDisable">
+        @if (isLoading()) {
+          <span class="loading loading-spinner text-accent"></span>
+        } @else {
+          <span class="material-icons"> save </span>
+          <span class="text-white">{{ i18n.common.save }}</span>
+        }
+      </button>
     </div>
   </form>
 </div>
+
+<ngx-sonner-toaster position="top-center" richColors />
