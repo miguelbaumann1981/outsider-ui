@@ -1,1 +1,153 @@
-<p>articles-crud-detail-page works!</p>,
+@let submitDisable = articleForm().invalid() || isLoading();
+
+<div class="flex flex-col gap-4">
+  <out-subtitle-page
+    [text]="subtitlePage()"
+    [icon]="'edit'"
+    [actionText]="i18n.common.back"
+    [actionIcon]="'arrow_back'"
+    (actionEvent)="navigateToPreviousPage()"
+  />
+
+  <form class="flex flex-col gap-3 lg:gap-6" [formRoot]="articleForm" (submit)="onSubmit($event)">
+    <div class="grid grid-cols-1 gap-3 lg:grid-cols-2 lg:gap-6 xl:grid-cols-4">
+      <!-- #region RELEASE CODE FIELD -->
+      <fieldset class="fieldset col-span-1 w-full">
+        <legend class="fieldset-legend text-sm lg:text-base">
+          {{ i18n.aboutUs.releaseLabel }}
+          <span class="text-error">*</span>
+        </legend>
+
+        @if (activeParam() === 'new') {
+          <select class="select" [formField]="articleForm.releaseCode">
+            @for (option of releasesCodeOptions(); track option.code) {
+              @if (!option.disabled) {
+                <option [value]="option.code" (click)="onOptionCode(option.code)">
+                  {{ option.displayName }}
+                </option>
+              }
+            }
+          </select>
+        } @else {
+          <input
+            type="text"
+            class="input w-full"
+            [disabled]="true"
+            [value]="articleForm.releaseCode().value()"
+          />
+        }
+
+        @if (articleForm.releaseCode().touched() && articleForm.releaseCode().invalid()) {
+          <ul>
+            @for (error of articleForm.releaseCode().errors(); track error) {
+              <li class="text-error">{{ error.message }}</li>
+            }
+          </ul>
+        }
+      </fieldset>
+      <!-- #endregion RELEASE CODE FIELD -->
+
+      <!-- #region CATEGORY FIELD -->
+      <fieldset class="fieldset col-span-1 w-full">
+        <legend class="fieldset-legend text-sm lg:text-base">
+          {{ 'Category' }}
+          <span class="text-error">*</span>
+        </legend>
+
+        @if (activeParam() === 'new') {
+          <select class="select" [formField]="articleForm.category">
+            @for (option of releasesCodeOptions(); track option.code) {
+              @if (!option.disabled) {
+                <option [value]="option.code" (click)="onOptionCode(option.code)">
+                  {{ option.displayName }}
+                </option>
+              }
+            }
+          </select>
+        } @else {
+          <input
+            type="text"
+            class="input w-full"
+            [disabled]="true"
+            [value]="articleForm.category().value()"
+          />
+        }
+
+        @if (articleForm.releaseCode().touched() && articleForm.releaseCode().invalid()) {
+          <ul>
+            @for (error of articleForm.releaseCode().errors(); track error) {
+              <li class="text-error">{{ error.message }}</li>
+            }
+          </ul>
+        }
+      </fieldset>
+      <!-- #endregion CATEGORY FIELD -->
+
+      <!-- #region TITLE CATEGORY FIELD -->
+      <fieldset class="fieldset col-span-2 w-full">
+        <legend class="fieldset-legend text-sm lg:text-base">
+          {{ 'Title category' }}
+          <span class="text-error">*</span>
+        </legend>
+
+        <input
+          type="text"
+          class="input w-full"
+          [placeholder]="'añade...'"
+          [formField]="articleForm.titleCategory"
+        />
+      </fieldset>
+      <!-- #endregion TITLE CATEGORY FIELD -->
+    </div>
+
+    <div class="grid grid-cols-1 gap-3 lg:grid-cols-2 lg:gap-6 xl:grid-cols-4">
+      <!-- #region TITLE ARTICLE FIELD -->
+      <fieldset class="fieldset col-span-2 w-full">
+        <legend class="fieldset-legend text-sm lg:text-base">
+          {{ 'Title article' }}
+          <span class="text-error">*</span>
+        </legend>
+
+        <input
+          type="text"
+          class="input w-full"
+          [placeholder]="'añade...'"
+          [formField]="articleForm.titleArticle"
+        />
+      </fieldset>
+      <!-- #endregion TITLE ARTICLE FIELD -->
+
+      <!-- #region SLUG FIELD -->
+      <fieldset class="fieldset col-span-1 w-full">
+        <legend class="fieldset-legend text-sm lg:text-base">
+          {{ 'Slug' }}
+          <span class="text-error">*</span>
+        </legend>
+
+        <input
+          type="text"
+          class="input w-full"
+          [placeholder]="'añade...'"
+          [formField]="articleForm.slug"
+        />
+      </fieldset>
+      <!-- #endregion SLUG FIELD -->
+
+      <!-- #region AUTHOR ARTICLE FIELD -->
+      <fieldset class="fieldset col-span-1 w-full">
+        <legend class="fieldset-legend text-sm lg:text-base">
+          {{ 'Autor' }}
+          <span class="text-error">*</span>
+        </legend>
+
+        <input
+          type="text"
+          class="input w-full"
+          [placeholder]="'añade...'"
+          [formField]="articleForm.authorArticle"
+        />
+      </fieldset>
+      <!-- #endregion AUTHOR ARTICLE FIELD -->
+    </div>
+  </form>
+</div>
