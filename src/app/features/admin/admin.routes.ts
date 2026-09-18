@@ -16,7 +16,7 @@ export const adminRoutes: Routes = [
   {
     path: '',
     component: AdminLayout,
-    // canMatch: [IsPrivateZoneGuard],
+    canMatch: [IsPrivateZoneGuard],
     children: [
       {
         path: 'articles-crud',
