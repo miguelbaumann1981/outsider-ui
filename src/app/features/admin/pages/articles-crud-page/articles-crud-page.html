@@ -1,5 +1,108 @@
 <div class="flex flex-col gap-4">
-  <out-subtitle-page [text]="'Artículos'" [icon]="'description'" />
-  <div class="bg-info h-[200px] text-white">Bloque lista de articulos</div>
-  <div class="bg-warning h-[200px] text-white">Bloque formulario</div>
+  <out-subtitle-page
+    [text]="'Artículos (' + articlesQuantity() + ')'"
+    [icon]="'description'"
+    [actionText]="i18n.releases.createRelease"
+    [actionIcon]="'add_circle'"
+    (actionEvent)="createNewArticle()"
+  />
+
+  @switch (viewState()) {
+    @case ('loading') {
+      <div class="spinner-container h-[600px]">
+        <out-spinner />
+      </div>
+    }
+
+    @case ('error') {
+      <div class="w-full">
+        <div role="alert" class="alert alert-error alert-soft w-full">
+          <span class="text-xl font-semibold">{{ errorMessageApi() }}</span>
+        </div>
+      </div>
+    }
+
+    @case ('available') {
+      <div class="grid grid-cols-1 gap-3 lg:grid-cols-2 lg:gap-10 xl:grid-cols-3">
+        <fieldset class="fieldset w-full">
+          <legend class="fieldset-legend text-sm lg:text-base">
+            {{ i18n.homeLayout.releaseCodeLabel }}
+          </legend>
+
+          <select class="select w-full">
+            @for (option of releasesCodeOptions(); track option.code) {
+              @if (!option.disabled) {
+                <option [value]="option.code" (click)="onOptionCode(option.code ?? '')">
+                  {{ option.displayName }}
+                </option>
+              }
+            }
+            <option (click)="onOptionCode('')">Todos</option>
+          </select>
+        </fieldset>
+      </div>
+
+      <div class="grid grid-cols-1 gap-3 lg:grid-cols-2 lg:gap-6 xl:grid-cols-3">
+        @for (article of articlesFiltered(); track article.id) {
+          <div
+            class="card w-full border border-gray-200 shadow-sm"
+            [ngClass]="
+              article.releaseCode === currentRelease().releaseCode ? 'bg-orange-50' : 'bg-blue-50'
+            "
+          >
+            <div class="card-body justify-between">
+              <div class="flex flex-col items-baseline justify-between gap-3 xl:flex-row">
+                <div class="flex w-full flex-col gap-1">
+                  <div class="flex w-full items-center justify-between gap-3">
+                    <h2 class="card-title">{{ article.titleCategory }}</h2>
+
+                    <div class="badge badge-accent">
+                      {{ article.category | uppercase }}
+                    </div>
+                  </div>
+                  <h3 class="text-secondary text-base font-semibold">{{ article.titleArticle }}</h3>
+                  <h4 class="font-semibold">{{ article.authorArticle }}</h4>
+
+                  <div class="mt-2 flex flex-col items-center gap-2 xl:flex-row">
+                    <div
+                      class="badge"
+                      [ngClass]="
+                        article.releaseCode === currentRelease().releaseCode
+                          ? 'badge-warning'
+                          : 'badge-secondary'
+                      "
+                    >
+                      {{ article.releaseCode }}
+                    </div>
+
+                    <div
+                      class="badge"
+                      [ngClass]="article.isPublished ? 'badge-success' : 'badge-error text-white'"
+                    >
+                      {{ article.isPublished ? i18n.common.published : i18n.common.notPublished }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card-actions mt-3 items-center justify-end">
+                <button class="btn btn-outline btn-secondary" (click)="preview(article)">
+                  <span class="material-icons"> remove_red_eye </span>
+                  {{ i18n.common.preview }}
+                </button>
+
+                <button
+                  class="btn btn-outline btn-primary"
+                  (click)="navigateToDetailForm(article.id)"
+                >
+                  <span class="material-icons"> edit </span>
+                  {{ i18n.common.edit }}
+                </button>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  }
 </div>

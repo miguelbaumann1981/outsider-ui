@@ -14,12 +14,12 @@ import { ArticleHomeCard } from '../../components/article-home-card/article-home
 import { ArticleCard } from '../../interfaces/article-card.interface';
 import es from '@/i18n/es.json';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ArticlesApi, LayoutArticlesApi, ReleasesApi } from '../../interfaces';
-import { LocalStorageService } from '@/core/services/local-storage.service';
+import { ArticlesApi, HomeLayoutApi, ReleaseLocalStorage, ReleasesApi } from '../../interfaces';
 import { Router } from '@angular/router';
 import { HomeService, ReleasesService } from '../../services';
 import { SkeletonCard } from '@/shared/components/skeleton-card/skeleton-card';
-import { Release } from '../../types';
+import { ReleaseCode, ViewState } from '../../types';
+import { LocalStorageService } from '@/core/services';
 
 @Component({
   selector: 'out-home-page',
@@ -36,6 +36,7 @@ import { Release } from '../../types';
       font-weight: 500;
       text-shadow: 1px 1px 2px rgba($color: #000, $alpha: 0.5);
     }
+
     .slogan {
       color: gray;
       line-height: 1.2;
@@ -63,41 +64,61 @@ export class HomePage implements OnInit, AfterViewInit {
   isLoadingLayout = signal(false);
   isLoadingReleases = signal(false);
   errorMessageApi = signal<string>('');
-  releaseDefault = signal<Release>('CURRENT');
-  releaseLocalStorage = computed<Release>(
-    () => (this.localStorageService.getItem('release') as Release) ?? this.releaseDefault(),
-  );
+  releaseCodeLocalStorage = computed<ReleaseCode>(() => {
+    if (this.localStorageService.getItem('release')) {
+      const releaseLS: ReleaseLocalStorage = JSON.parse(
+        this.localStorageService.getItem('release') ?? '',
+      );
+      return releaseLS.code;
+    }
+    return '';
+  });
+
   releases = signal<ReleasesApi[]>([]);
   releaseName = computed<string>(() => {
-    return this.releases().find((item) => item.release === this.releaseLocalStorage())?.name ?? '';
+    return (
+      this.releases().find((item) => item.releaseCode === this.releaseCodeLocalStorage())?.name ??
+      ''
+    );
   });
   articlesApi = signal<ArticlesApi>({} as ArticlesApi);
-  layoutArticlesApi = signal<LayoutArticlesApi[]>([]);
+  homeLayoutApi = signal<HomeLayoutApi[]>([]);
   articlesRelease = computed<ArticleCard[]>(() => {
     const articles = this.articlesApi()?.articles ?? [];
-    const layout = this.layoutArticlesApi() ?? [];
+    const layoutFeatures =
+      this.homeLayoutApi().find((item) => item.releaseCode === this.releaseCodeLocalStorage())
+        ?.features ?? [];
 
     return articles
       .map((item) => ({
-        section: item.category,
+        category: item.category,
         name: item.titleCategory,
         title: item.titleArticle,
         author: item.authorArticle,
         id: item.id,
         slug: item.slug,
-        release: item.release as Release,
+        releaseCode: item.releaseCode,
         imageUrl: item.image,
-        position: layout.find((elem) => elem.category === item.category)?.position ?? 1,
-        color: layout.find((elem) => elem.category === item.category)?.color?.solid ?? 'lightblue',
+        position: layoutFeatures.find((elem) => elem.category === item.category)?.position ?? 0,
+        color:
+          layoutFeatures.find((elem) => elem.category === item.category)?.color?.solid ?? '#eeeeee',
         hoverColor:
-          layout.find((elem) => elem.category === item.category)?.color?.hover ?? '#FFDBD6',
+          layoutFeatures.find((elem) => elem.category === item.category)?.color?.hover ?? '#f4f4f4',
       }))
       .sort((a, b) => a.position - b.position);
   });
 
+  viewState = computed<ViewState>(() => {
+    if (this.isLoadingReleases() || this.isLoadingArticles() || this.isLoadingLayout())
+      return 'loading';
+    if (this.errorMessageApi()) return 'error';
+    if (this.articlesRelease().length > 0) return 'available';
+    return 'empty';
+  });
+
   ngOnInit(): void {
     this.getArticlesHomePage();
-    this.getLayoutArticles();
+    this.getHomeLayoutApi();
     this.getReleasesApi();
   }
 
@@ -137,7 +158,7 @@ export class HomePage implements OnInit, AfterViewInit {
   getArticlesHomePage(): void {
     this.isLoadingArticles.set(true);
     this.homeService
-      .getArticles(this.releaseLocalStorage())
+      .getArticles(this.releaseCodeLocalStorage())
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (articlesData) => {
@@ -153,14 +174,14 @@ export class HomePage implements OnInit, AfterViewInit {
       });
   }
 
-  getLayoutArticles(): void {
+  getHomeLayoutApi(): void {
     this.isLoadingLayout.set(true);
     this.homeService
-      .getLayoutArticles()
+      .getHomeLayout()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (layoutData) => {
-          this.layoutArticlesApi.set(layoutData);
+          this.homeLayoutApi.set(layoutData);
         },
         error: (error) => {
           this.errorMessageApi.set(error ?? this.i18n.common.serverError);
@@ -192,8 +213,13 @@ export class HomePage implements OnInit, AfterViewInit {
   }
 
   navigateToDetail(article: ArticleCard) {
-    const { release, slug, section } = article;
-    this.localStorageService.setItem('release', release);
-    this.router.navigate([`/articles/${release}/${section}/${slug}`]);
+    const { releaseCode, slug, category } = article;
+    const release: ReleaseLocalStorage = {
+      code: releaseCode,
+      isCurrent:
+        this.releases().find((item) => item.releaseCode === releaseCode)?.isCurrentRelease ?? false,
+    };
+    this.localStorageService.setItem('release', JSON.stringify(release));
+    this.router.navigate([`/articles/${releaseCode.toLowerCase()}/${category}/${slug}`]);
   }
 }

@@ -10,16 +10,16 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import { SafeHtmlPipe } from '../../pipes';
 import { ArticleCategory } from '../../enums';
-import { LocalStorageService } from '@/core/services/local-storage.service';
 import { HomeService } from '../../services/home.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TitlePage } from '@/shared/components/title-page/title-page';
 import { publicLayoutPage, textTeal600 } from '../../utils';
-import { AnyCategory } from '../../types';
-import { ArticleDetail, LayoutArticlesApi } from '../../interfaces';
+import { AnyCategory, ReleaseCode, ViewState } from '../../types';
+import { ArticleDetail, HomeLayoutApi, ReleaseLocalStorage } from '../../interfaces';
 import { ImgFallbackDirective } from '../../directives';
 import { Spinner } from '@/shared/components/spinner/spinner';
 import es from '@/i18n/es.json';
+import { LocalStorageService } from '@/core/services';
 
 @Component({
   selector: 'out-article-detail-page',
@@ -45,7 +45,7 @@ export class ArticleDetailPage implements OnInit {
 
   articleDetail = signal<ArticleDetail>({
     category: ArticleCategory.EDITORIAL,
-    release: 'CURRENT',
+    releaseCode: '',
     slug: '',
   });
   articleSelected = signal<AnyCategory>({} as AnyCategory);
@@ -53,13 +53,22 @@ export class ArticleDetailPage implements OnInit {
   isLoadingArticle = signal(false);
   isLoadingLayout = signal(false);
   errorMessageApi = signal<string>('');
-  layoutArticlesApi = signal<LayoutArticlesApi[]>([]);
+  homeLayoutApi = signal<HomeLayoutApi[]>([]);
 
   color = computed<string>(() => {
+    const layoutFeatures =
+      this.homeLayoutApi().find((item) => item.releaseCode === this.articleSelected().releaseCode)
+        ?.features ?? [];
     return (
-      this.layoutArticlesApi().find((elem) => elem.category === this.articleDetail().category)
-        ?.color?.solid ?? textTeal600
+      layoutFeatures.find((elem) => elem.category === this.articleDetail().category)?.color
+        ?.solid ?? textTeal600
     );
+  });
+  viewState = computed<ViewState>(() => {
+    if (this.isLoadingLayout() || this.isLoadingArticle()) return 'loading';
+    if (this.errorMessageApi()) return 'error';
+    if (this.articleSelected() !== null) return 'available';
+    return 'empty';
   });
 
   ngOnInit(): void {
@@ -72,7 +81,7 @@ export class ArticleDetailPage implements OnInit {
     this.activatedRoute.params.subscribe((params) => {
       this.articleDetail.set({
         category: params['category'],
-        release: params['release'],
+        releaseCode: params['releaseCode'],
         slug: params['slug'],
       });
     });
@@ -80,9 +89,9 @@ export class ArticleDetailPage implements OnInit {
 
   getArticleData(): void {
     this.isLoadingArticle.set(true);
-    const { category, release, slug } = this.articleDetail();
+    const { category, releaseCode, slug } = this.articleDetail();
     this.homeService
-      .getArticleBySlug(release, slug, category)
+      .getArticleBySlug(releaseCode, slug, category)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (article) => {
@@ -101,11 +110,11 @@ export class ArticleDetailPage implements OnInit {
   getLayoutArticles(): void {
     this.isLoadingLayout.set(true);
     this.homeService
-      .getLayoutArticles()
+      .getHomeLayout()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (layoutData) => {
-          this.layoutArticlesApi.set(layoutData);
+          this.homeLayoutApi.set(layoutData);
         },
         error: (error) => {
           this.errorMessageApi.set(error ?? this.i18n.common.serverError);
@@ -117,9 +126,11 @@ export class ArticleDetailPage implements OnInit {
       });
   }
 
-  navigateToReleasePage(release: string): void {
-    const currentRelease = this.localStorageService.getItem('release');
+  navigateToReleasePage(releaseCode: ReleaseCode): void {
+    const releaseLS: ReleaseLocalStorage = JSON.parse(
+      this.localStorageService.getItem('release') ?? '',
+    );
 
-    this.router.navigate([currentRelease === 'CURRENT' ? '/' : `/release/${release}`]);
+    this.router.navigate([releaseLS.isCurrent ? '/' : `/release/${releaseCode.toLowerCase()}`]);
   }
 }

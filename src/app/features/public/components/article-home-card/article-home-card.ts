@@ -20,7 +20,7 @@ export class ArticleHomeCard {
   });
 
   hoverColor2 = computed<string>(() => {
-    return getColorHoverCategory(this.article()?.section);
+    return getColorHoverCategory(this.article()?.category);
   });
 
   onImgError(event: Event) {

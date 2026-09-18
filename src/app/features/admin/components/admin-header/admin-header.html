@@ -27,15 +27,15 @@
     <ul class="menu menu-horizontal hidden px-1 lg:flex">
       @for (item of menu(); track item.text) {
         <li class="px-5 text-sm font-semibold hover:text-gray-300 xl:text-lg">
-          <a [routerLink]="item.url" routerLinkActive="text-teal-600">{{ item.text }}</a>
+          <a [routerLink]="item.url" routerLinkActive="text-teal-400">{{ item.text }}</a>
         </li>
       }
     </ul>
   </div>
 
   <div class="navbar-end">
-    <a class="btn btn-outline btn-secondary text-white" [routerLink]="'/auth'">{{
-      i18n.menu.logout
-    }}</a>
+    <button class="btn btn-outline btn-secondary text-white" (click)="logout()">
+      {{ i18n.menu.logout }}
+    </button>
   </div>
 </div>

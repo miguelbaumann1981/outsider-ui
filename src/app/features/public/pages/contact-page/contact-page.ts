@@ -16,14 +16,16 @@ import {
 import { ContactFormModel } from '../../interfaces';
 import { UpperCasePipe, NgClass } from '@angular/common';
 import { ContactService } from '../../services';
+import { toast, NgxSonnerToaster } from 'ngx-sonner';
 
 @Component({
   selector: 'out-contact-page',
-  imports: [TitlePage, FormField, FormRoot, UpperCasePipe, NgClass],
+  imports: [TitlePage, FormField, FormRoot, UpperCasePipe, NgClass, NgxSonnerToaster],
   templateUrl: './contact-page.html',
 })
 export class ContactPage {
   protected readonly i18n = es;
+  protected readonly toast = toast;
   router = inject(Router);
   contactService = inject(ContactService);
 
@@ -67,17 +69,11 @@ export class ContactPage {
 
     this.contactService.sendEmail(formData).subscribe({
       next: () => {
-        console.log(
-          this.i18n.contact.successSendingSubtitle,
-          this.i18n.contact.successSendingTitle,
-        );
+        toast.success(this.i18n.contact.successSendingTitle);
         this.isLoading.set(false);
       },
       error: () => {
-        console.error(this.i18n.contact.errorSendingSubtitle, this.i18n.contact.errorSendingTitle, {
-          timeOut: 3000,
-          closeButton: true,
-        });
+        toast.error(this.i18n.contact.errorSendingTitle);
         this.isLoading.set(false);
         console.log('Error!!!');
       },

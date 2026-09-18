@@ -7,7 +7,7 @@
   </div>
 
   @if (actionText()) {
-    <button class="btn btn-accent" (click)="actionEvent.emit()">
+    <button class="btn btn-info btn-outline" (click)="actionEvent.emit()">
       @if (actionIcon()) {
         <span class="material-icons"> {{ actionIcon() }} </span>
       }

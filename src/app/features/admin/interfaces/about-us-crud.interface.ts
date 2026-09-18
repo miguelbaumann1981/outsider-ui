@@ -1,7 +1,9 @@
+import { ReleaseCode } from '@/features/public/types';
+
 export interface AboutUsCrud {
   mainText: string;
   collaborators: Collaborator[];
-  release: string;
+  releaseCode: ReleaseCode;
   isDraft: boolean;
   isPublished: boolean;
 }

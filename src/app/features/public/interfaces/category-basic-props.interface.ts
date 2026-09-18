@@ -1,3 +1,5 @@
+import { ReleaseCode } from '../types';
+
 export interface CategoryBasicProps {
   authorArticle: string;
   authorInfo?: string;
@@ -6,8 +8,8 @@ export interface CategoryBasicProps {
   id: string;
   image: string;
   quote?: string;
-  references: string;
-  release: string;
+  references?: string;
+  releaseCode: ReleaseCode;
   slug: string;
   subtitle?: string;
   titleArticle: string;

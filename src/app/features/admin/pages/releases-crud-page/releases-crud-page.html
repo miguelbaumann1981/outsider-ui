@@ -1,49 +1,135 @@
-<div class="flex flex-col gap-4">
+<div class="flex flex-col gap-5">
   <out-subtitle-page
     [icon]="'format_list_numbered'"
     [text]="i18n.menu.releasesCrud"
-    [actionText]="'Crear número'"
-    [actionIcon]="'add'"
+    [actionText]="i18n.releases.createRelease"
+    [actionIcon]="'add_circle'"
     (actionEvent)="createNewRelease()"
   />
 
-  <div class="flex flex-row flex-wrap gap-10">
-    @for (release of releases(); track release.id) {
-      <div class="card w-96 border border-gray-200 bg-blue-50 shadow-sm">
-        <div class="card-body">
-          <div class="flex items-center justify-between">
-            <h2 class="card-title">{{ release.name }}</h2>
-            <div class="badge badge-error">
-              {{ release.isPublished ? 'Publicado' : 'No publicado' }}
-            </div>
-          </div>
+  @switch (viewState()) {
+    @case ('loading') {
+      <div class="spinner-container h-[600px]">
+        <out-spinner />
+      </div>
+    }
 
-          <div class="badge badge-secondary">{{ release.release }}</div>
-          <ul>
-            <li class="">
-              <span>{{ i18n.releases.table.index }}: </span>
-              <span class="font-semibold">{{ release.index }}</span>
-            </li>
-            <li>
-              <span>{{ i18n.releases.table.month }}: </span>
-              <span class="font-semibold">{{ release.month }}</span>
-            </li>
-            <li>
-              <span>{{ i18n.releases.table.year }}: </span>
-              <span class="font-semibold">{{ release.year }}</span>
-            </li>
-          </ul>
-          <div class="card-actions justify-end">
-            <button class="btn btn-accent" (click)="navigateToDetail(release.id)">
-              {{ i18n.releases.seeDetail }}
-            </button>
-
-            <button class="btn btn-primary">
-              {{ 'Publicar' }}
-            </button>
-          </div>
+    @case ('error') {
+      <div class="w-full">
+        <div role="alert" class="alert alert-error alert-soft w-full">
+          <span class="text-xl font-semibold">{{ errorMessageApi() }}</span>
         </div>
       </div>
     }
-  </div>
+
+    @case ('available') {
+      <div class="grid grid-cols-1 gap-3 lg:grid-cols-2 lg:gap-10 xl:grid-cols-3">
+        @for (release of releases(); track release.id) {
+          <div
+            class="card w-full border border-gray-200 shadow-sm"
+            [ngClass]="
+              release.releaseCode === currentRelease().releaseCode ? 'bg-orange-50' : 'bg-blue-50'
+            "
+          >
+            <div class="card-body">
+              <div class="flex flex-col items-baseline justify-between gap-3 xl:flex-row">
+                <div class="flex flex-col gap-1">
+                  <h2 class="card-title">{{ release.name }}</h2>
+
+                  <div class="flex flex-col items-center gap-2 xl:flex-row">
+                    <div
+                      class="badge"
+                      [ngClass]="
+                        release.releaseCode === currentRelease().releaseCode
+                          ? 'badge-warning'
+                          : 'badge-secondary'
+                      "
+                    >
+                      {{ release.releaseCode }}
+                    </div>
+
+                    @if (release.isPublished) {
+                      <button
+                        class="btn btn-link"
+                        (click)="openConfirmChangeCurrentDialog(release)"
+                        [disabled]="release.isCurrentRelease || isLoading()"
+                      >
+                        {{ i18n.releases.changeCurrentRelease }}
+                      </button>
+                    }
+                  </div>
+                </div>
+
+                <div
+                  class="badge"
+                  [ngClass]="release.isPublished ? 'badge-success' : 'badge-error text-white'"
+                >
+                  {{ release.isPublished ? i18n.common.published : i18n.common.notPublished }}
+                </div>
+              </div>
+
+              <div class="flex gap-3">
+                <ul>
+                  <li class="flex gap-3">
+                    <span class="min-w-[50px]">{{ i18n.releases.table.index }}</span>
+                    <span class="font-semibold">{{ release.index }}</span>
+                  </li>
+                  <li class="flex gap-3">
+                    <span class="min-w-[50px]">{{ i18n.releases.table.month }}</span>
+                    <span class="font-semibold">{{ release.month }}</span>
+                  </li>
+                  <li class="flex gap-3">
+                    <span class="min-w-[50px]">{{ i18n.releases.table.year }}</span>
+                    <span class="font-semibold">{{ release.year }}</span>
+                  </li>
+                </ul>
+              </div>
+
+              <div
+                class="card-actions items-center justify-end"
+                [class.mt-3]="!release.isPublished"
+              >
+                <button
+                  class="btn btn-outline btn-primary"
+                  (click)="navigateToDetailForm(release.id)"
+                  [disabled]="release.isCurrentRelease || isLoading()"
+                >
+                  <span class="material-icons"> edit </span>
+                  {{ i18n.common.edit }}
+                </button>
+
+                <button
+                  class="btn btn-outline"
+                  [ngClass]="release.isPublished ? 'btn-error' : 'btn-success'"
+                  (click)="openConfirmPublishDialog(release, release.isPublished)"
+                  [disabled]="release.isCurrentRelease || isLoading()"
+                >
+                  <span class="material-icons">
+                    {{ release.isPublished ? 'block' : 'publish' }}
+                  </span>
+                  {{ release.isPublished ? i18n.common.unpublish : i18n.common.publish }}
+                </button>
+
+                @if (releaseId() === release.id) {
+                  @if (isLoading()) {
+                    <span class="loading loading-spinner text-accent"></span>
+                  }
+                }
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    }
+
+    @case ('empty') {
+      <div class="w-full">
+        <div role="alert" class="alert alert-info alert-soft w-full">
+          <span class="text-xl font-semibold">{{ i18n.common.contentNoAvailable }}</span>
+        </div>
+      </div>
+    }
+  }
 </div>
+
+<ngx-sonner-toaster position="top-center" richColors />

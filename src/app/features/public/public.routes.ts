@@ -22,7 +22,7 @@ export const publicRoutes: Routes = [
         component: HomePage,
       },
       {
-        path: 'articles/:release/:category/:slug',
+        path: 'articles/:releaseCode/:category/:slug',
         component: ArticleDetailPage,
       },
       {

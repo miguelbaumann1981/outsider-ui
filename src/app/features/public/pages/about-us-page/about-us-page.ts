@@ -12,13 +12,13 @@ import es from '@/i18n/es.json';
 import { Router } from '@angular/router';
 import { publicLayoutPage } from '../../utils';
 import { AboutUsService } from '../../services';
-import { AboutUsApi } from '../../interfaces';
+import { AboutUsApi, ReleaseLocalStorage } from '../../interfaces';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { SafeHtmlPipe } from '../../pipes';
 import { NgClass } from '@angular/common';
 import { Spinner } from '@/shared/components/spinner/spinner';
-
-type AboutUsViewState = 'loading' | 'error' | 'available' | 'empty';
+import { ReleaseCode, ViewState } from '../../types';
+import { LocalStorageService } from '@/core/services';
 
 @Component({
   selector: 'out-about-us-page',
@@ -38,16 +38,26 @@ export class AboutUsPage implements OnInit {
   router = inject(Router);
   private destroyRef = inject(DestroyRef);
   private aboutUsService = inject(AboutUsService);
+  private localStorageService = inject(LocalStorageService);
 
   layoutPage = signal<string>(publicLayoutPage);
   isLoading = signal(false);
   errorMessageApi = signal<string>('');
   info = signal<AboutUsApi>({} as AboutUsApi);
-  viewState = computed<AboutUsViewState>(() => {
+  viewState = computed<ViewState>(() => {
     if (this.isLoading()) return 'loading';
     if (this.errorMessageApi()) return 'error';
     if (this.info()?.isPublished && !this.info()?.isDraft) return 'available';
     return 'empty';
+  });
+  releaseCodeLocalStorage = computed<ReleaseCode>(() => {
+    if (this.localStorageService.getItem('release')) {
+      const releaseLS: ReleaseLocalStorage = JSON.parse(
+        this.localStorageService.getItem('release') ?? '',
+      );
+      return releaseLS.code;
+    }
+    return '';
   });
 
   ngOnInit(): void {
@@ -61,7 +71,9 @@ export class AboutUsPage implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (data) => {
-          const currentVersion = data.find((item) => item.release === 'CURRENT');
+          const currentVersion = data.find(
+            (item) => item.releaseCode === this.releaseCodeLocalStorage(),
+          );
           if (!currentVersion) {
             this.errorMessageApi.set(this.i18n.aboutUs.noCurrentVersion);
             this.isLoading.set(false);

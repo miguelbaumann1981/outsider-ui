@@ -1,0 +1,150 @@
+@let submitDisable = aboutUsForm().invalid() || isLoading();
+
+<div class="flex flex-col gap-4">
+  <out-subtitle-page
+    [text]="subtitlePage()"
+    [icon]="'edit'"
+    [actionText]="i18n.common.back"
+    [actionIcon]="'arrow_back'"
+    (actionEvent)="navigateToPreviousPage()"
+  />
+
+  <form class="flex flex-col gap-3 lg:gap-6" [formRoot]="aboutUsForm" (submit)="onSubmit($event)">
+    <div class="grid grid-cols-1 gap-3 lg:grid-cols-5 lg:gap-6">
+      <fieldset class="fieldset w-full">
+        <legend class="fieldset-legend text-sm lg:text-base">
+          {{ i18n.aboutUs.releaseLabel }}
+          <span class="text-error">*</span>
+        </legend>
+
+        @if (activeParam() === 'new') {
+          <select class="select" [formField]="aboutUsForm.releaseCode">
+            @for (option of releasesCodeOptions(); track option.code) {
+              @if (!option.disabled) {
+                <option [value]="option.code" (click)="onOptionCode(option.code ?? '')">
+                  {{ option.displayName }}
+                </option>
+              }
+            }
+          </select>
+        } @else {
+          <input
+            type="text"
+            class="input w-full"
+            [disabled]="true"
+            [value]="aboutUsForm.releaseCode().value()"
+          />
+        }
+
+        @if (aboutUsForm.releaseCode().touched() && aboutUsForm.releaseCode().invalid()) {
+          <ul>
+            @for (error of aboutUsForm.releaseCode().errors(); track error) {
+              <li class="text-error">{{ error.message }}</li>
+            }
+          </ul>
+        }
+      </fieldset>
+
+      @if (activeParam() === 'new') {
+        <fieldset class="fieldset w-full">
+          <legend class="fieldset-legend text-sm lg:text-base">
+            {{ i18n.homeLayout.applyConfigFrom }}
+          </legend>
+
+          <select class="select">
+            <option>{{ i18n.common.select }}...</option>
+            @for (option of releasesCodeCloneOptions(); track option.code) {
+              @if (!option.disabled) {
+                <option [value]="option.code" (click)="onCloneSelect(option.code ?? '')">
+                  {{ option.displayName }}
+                </option>
+              }
+            }
+          </select>
+        </fieldset>
+      }
+    </div>
+
+    <div class="grid grid-cols-1">
+      <fieldset class="fieldset w-full">
+        <legend class="fieldset-legend text-sm lg:text-base">
+          {{ i18n.aboutUs.mainTextLabel }}
+          <span class="text-error">*</span>
+        </legend>
+
+        <out-input-text-rich-form [formField]="aboutUsForm.mainText" />
+      </fieldset>
+    </div>
+
+    @for (collaborator of aboutUsForm.collaborators; track $index; let i = $index) {
+      <div class="flex flex-col gap-5 border-t-5 border-dotted border-teal-200 py-3">
+        <div class="grid grid-cols-1 gap-5 xl:grid-cols-4">
+          <fieldset class="fieldset col-span-1 w-full">
+            <legend class="fieldset-legend text-sm lg:text-base">
+              {{ i18n.aboutUs.collaboratorNameLabel }}
+              <span class="text-error">*</span>
+            </legend>
+
+            <input
+              type="text"
+              class="input w-full"
+              [placeholder]="i18n.aboutUs.collaboratorNamePlaceholder"
+              [formField]="$any(collaborator.name)"
+            />
+          </fieldset>
+
+          <fieldset class="fieldset col-span-3 w-full">
+            <legend class="fieldset-legend text-sm lg:text-base">
+              {{ i18n.aboutUs.collaboratorPictureLabel }}
+              <span class="text-error">*</span>
+            </legend>
+
+            <input
+              type="text"
+              class="input w-full"
+              [placeholder]="i18n.aboutUs.collaboratorPicturePlaceholder"
+              [formField]="$any(collaborator.picture)"
+            />
+          </fieldset>
+        </div>
+
+        <div class="grid grid-cols-1 gap-5 xl:grid-cols-4">
+          <div class="col-span-1 w-full">
+            <img
+              [src]="
+                activeParam() === 'new'
+                  ? '/assets/empty-picture.png'
+                  : displayPicture(collaborator.picture().value())
+              "
+              class="w-full rounded-md border border-gray-300"
+              [alt]="activeParam() === 'new' ? 'Empty picture' : collaborator.name().value()"
+            />
+          </div>
+          <div class="col-span-3">
+            <fieldset class="fieldset w-full">
+              <legend class="fieldset-legend text-sm lg:text-base">
+                {{ i18n.aboutUs.collaboratorTextLabel }}
+                <span class="text-error">*</span>
+              </legend>
+
+              <out-input-text-rich-form [formField]="$any(collaborator.text)" />
+            </fieldset>
+          </div>
+        </div>
+      </div>
+    }
+
+    <div class="flex justify-end">
+      <button type="submit" class="btn btn-accent" [disabled]="submitDisable">
+        @if (isLoading()) {
+          <span class="loading loading-spinner text-accent"></span>
+        } @else {
+          <span class="material-icons"> save </span>
+          <span class="text-white">{{ i18n.common.save }}</span>
+        }
+      </button>
+    </div>
+  </form>
+</div>
+
+<ngx-sonner-toaster position="top-center" richColors />

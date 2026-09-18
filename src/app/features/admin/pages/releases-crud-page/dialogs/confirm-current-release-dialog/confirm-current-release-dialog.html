@@ -1,0 +1,20 @@
+<div class="flex flex-col gap-5 px-8 py-5">
+  <div class="flex items-center justify-between border-b-1 border-gray-300 pb-2">
+    <h3 class="text-secondary m-0 text-xl font-semibold">
+      {{ i18n.releases.changeCurrentRelease }}
+    </h3>
+    <a class="btn btn-ghost text-secondary" (click)="onClose()"
+      ><span class="material-icons"> close </span></a
+    >
+  </div>
+  <p>{{ i18n.releases.changeCurrentReleaseConfirmation }}</p>
+
+  <div class="flex items-center justify-end gap-2">
+    <button class="btn btn-soft btn-error" (click)="onClose()">
+      {{ i18n.common.cancel }}
+    </button>
+    <button class="btn btn-soft btn-success" (click)="onClose(true)">
+      {{ i18n.common.accept }}
+    </button>
+  </div>
+</div>

@@ -1,0 +1,13 @@
+<div class="picker p-4">
+  <chrome-picker [control]="colorControl">
+    <div class="buttons p-2">
+      <button
+        type="button"
+        class="btn btn-outline btn-secondary mt-3 w-full"
+        (click)="applyClick($event)"
+      >
+        {{ i18n.common.select }}
+      </button>
+    </div>
+  </chrome-picker>
+</div>
