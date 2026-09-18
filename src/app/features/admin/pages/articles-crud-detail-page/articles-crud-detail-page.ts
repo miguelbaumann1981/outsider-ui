@@ -301,11 +301,9 @@ export class ArticlesCrudDetailPage implements OnInit {
     const formData = this.articleModel();
     formData.category = this.optionCategorySelected() ?? formData.category;
     formData.slug = formData.slug.toLowerCase();
-    this.releases().map((item) => {
-      if (item.releaseCode === this.optionReleaseCodeSelected()) {
-        formData.isPublished = item.isPublished;
-      }
-    });
+    formData.isPublished =
+      this.releases().find((item) => item.releaseCode === formData.releaseCode)?.isPublished ??
+      false;
 
     if (this.activeParam() === 'new') {
       this.createArticleData(formData);
