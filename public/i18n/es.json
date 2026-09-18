@@ -15,7 +15,8 @@
     "unpublish": "Retirar",
     "confirm": "Confirmar",
     "select": "Seleccionar",
-    "apply": "Aplicar"
+    "apply": "Aplicar",
+    "preview": "Previsualizar"
   },
   "slogan": "Revista Literaria Subterránea",
   "menu": {
@@ -240,7 +241,7 @@
     "authorQuoteLabel": "Autor cita literaria",
     "authorQuotePlaceholder": "Añada al autor...",
     "quoteLabel": "Cita literaria",
-    "referencesLabel": "Información extra",
+    "referencesLabel": "Pie de foto",
     "validations": {
       "releaseCodeRequired": "El número es obligatorio",
       "categoryRequired": "La categoría es obligatoria",

@@ -6,7 +6,7 @@ import { SubtitlePage } from '@/shared/components/subtitle-page/subtitle-page';
 import { apply, disabled, form, FormField, FormRoot, schema } from '@angular/forms/signals';
 import { NgxSonnerToaster, toast } from 'ngx-sonner';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AboutUsService, HomeService, ReleasesService } from '@/features/public/services';
+import { HomeService, ReleasesService } from '@/features/public/services';
 import es from '@/i18n/es.json';
 import { Article, ArticlesApi, ReleasesApi } from '@/features/public/interfaces';
 import { ReleaseCode } from '@/features/public/types';
@@ -23,7 +23,7 @@ const ARTICLE_MODEL: ArticleCrud = {
   slug: '',
   titleArticle: '',
   titleCategory: '',
-  isDraft: false,
+  isDraft: true,
   isPublished: false,
   subtitle: 'Sobre el autor/a',
   references: '',
@@ -55,6 +55,7 @@ export class ArticlesCrudDetailPage implements OnInit {
   private homeService = inject(HomeService);
 
   isLoading = signal(false);
+  isLoadingArticles = signal(false);
   activeParam = signal<string | 'new'>('');
   articlesData = signal<Article[]>([]);
   articlesApi = signal<ArticlesApi>({} as ArticlesApi);
@@ -63,6 +64,7 @@ export class ArticlesCrudDetailPage implements OnInit {
   errorMessageApi = signal<string>('');
   optionReleaseCodeSelected = signal<ReleaseCode>('');
   optionCategorySelected = signal<ArticleCategory | undefined>(undefined);
+  categoriesOptions = signal<ReleaseCodeSelect[]>([]);
 
   subtitlePage = computed<string>(() =>
     this.activeParam() === 'new'
@@ -85,24 +87,18 @@ export class ArticlesCrudDetailPage implements OnInit {
     }));
   });
 
-  categoriesOptions = computed<ReleaseCodeSelect[]>(() => {
-    return ALL_CATEGORIES.map((item) => ({
-      category: item,
-      displayName: item,
-      disabled: false,
-    }));
-  });
-
   articleModel = signal<ArticleCrud>(ARTICLE_MODEL);
   articleSchema = schema<ArticleCrud>((path) => {
     apply(path, articleSchemaBase);
     disabled(path.releaseCode, { when: () => this.activeParam() !== 'new' });
+    disabled(path.category, { when: () => this.optionReleaseCodeSelected() === '' });
   });
   readonly articleForm = form(this.articleModel, this.articleSchema);
 
   ngOnInit(): void {
     this.handleCrudArticles();
     this.getReleasesApi();
+    this.getArticlesApi();
   }
 
   handleCrudArticles(): void {
@@ -115,6 +111,25 @@ export class ArticlesCrudDetailPage implements OnInit {
         this.getSelectedArticleData(this.activeParam());
       }
     });
+  }
+
+  getArticlesApi(): void {
+    this.isLoadingArticles.set(true);
+    this.homeService
+      .getAllArticles()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (articlesData) => {
+          this.articlesApi.set(articlesData);
+        },
+        error: (error) => {
+          this.errorMessageApi.set(error ?? this.i18n.common.serverError);
+          this.isLoadingArticles.set(false);
+        },
+        complete: () => {
+          this.isLoadingArticles.set(false);
+        },
+      });
   }
 
   getSelectedArticleData(id: string): void {
@@ -160,6 +175,22 @@ export class ArticlesCrudDetailPage implements OnInit {
 
   onOptionCode(code: ReleaseCode): void {
     this.optionReleaseCodeSelected.set(code);
+
+    const usedCategories = this.articlesApi()
+      .articles.filter((item) => item.releaseCode === code)
+      .map((item) => item.category);
+
+    const availableCategories = ALL_CATEGORIES.filter(
+      (category) => !usedCategories.includes(category),
+    );
+
+    this.categoriesOptions.set(
+      availableCategories.map((category) => ({
+        category,
+        displayName: category,
+        disabled: false,
+      })),
+    );
   }
 
   onOptionCategory(category: ArticleCategory | undefined): void {
@@ -169,6 +200,7 @@ export class ArticlesCrudDetailPage implements OnInit {
       case ArticleCategory.EDITORIAL:
         return this.articleModel.set({
           ...ARTICLE_MODEL,
+          releaseCode: this.optionReleaseCodeSelected(),
           quote: undefined,
           authorQuote: undefined,
           authorInfo: undefined,
@@ -177,28 +209,35 @@ export class ArticlesCrudDetailPage implements OnInit {
       case ArticleCategory.MICROSTORY:
         return this.articleModel.set({
           ...ARTICLE_MODEL,
+          releaseCode: this.optionReleaseCodeSelected(),
           quote: undefined,
           authorQuote: undefined,
         });
       case ArticleCategory.OPINION:
         return this.articleModel.set({
           ...ARTICLE_MODEL,
+          releaseCode: this.optionReleaseCodeSelected(),
           quote: undefined,
           authorQuote: undefined,
         });
       case ArticleCategory.OUTSIDERS:
         return this.articleModel.set({
           ...ARTICLE_MODEL,
+          releaseCode: this.optionReleaseCodeSelected(),
           quote: undefined,
           authorQuote: undefined,
           authorInfo: undefined,
           subtitle: undefined,
         });
       case ArticleCategory.POETRY:
-        return this.articleModel.set(ARTICLE_MODEL);
+        return this.articleModel.set({
+          ...ARTICLE_MODEL,
+          releaseCode: this.optionReleaseCodeSelected(),
+        });
       case ArticleCategory.TALES:
         return this.articleModel.set({
           ...ARTICLE_MODEL,
+          releaseCode: this.optionReleaseCodeSelected(),
           quote: undefined,
           authorQuote: undefined,
           authorInfo: undefined,
@@ -206,20 +245,23 @@ export class ArticlesCrudDetailPage implements OnInit {
         });
 
       default:
-        return this.articleModel.set(ARTICLE_MODEL);
+        return this.articleModel.set({
+          ...ARTICLE_MODEL,
+          releaseCode: this.optionReleaseCodeSelected(),
+        });
     }
   }
 
-  createAboutUsInfoData(formData: ArticleCrud): void {
+  createArticleData(formData: ArticleCrud): void {
     this.homeService
       .createArticle(formData)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
-          toast.success(this.i18n.articles.successEditMessageForm);
+          toast.success(this.i18n.articles.successCreateMessageForm);
         },
         error: () => {
-          toast.error(this.i18n.articles.errorEditMessageForm);
+          toast.error(this.i18n.articles.errorCreateMessageForm);
           this.isLoading.set(false);
         },
         complete: () => {
@@ -231,7 +273,7 @@ export class ArticlesCrudDetailPage implements OnInit {
       });
   }
 
-  updateAboutUsInfoData(id: string, formData: ArticleCrud): void {
+  updateArticleData(id: string, formData: ArticleCrud): void {
     this.homeService
       .updateArticle(id, formData)
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -257,11 +299,18 @@ export class ArticlesCrudDetailPage implements OnInit {
     this.isLoading.set(true);
 
     const formData = this.articleModel();
+    formData.category = this.optionCategorySelected() ?? formData.category;
+    formData.slug = formData.slug.toLowerCase();
+    this.releases().map((item) => {
+      if (item.releaseCode === this.optionReleaseCodeSelected()) {
+        formData.isPublished = item.isPublished;
+      }
+    });
 
     if (this.activeParam() === 'new') {
-      this.createAboutUsInfoData(formData);
+      this.createArticleData(formData);
     } else {
-      this.updateAboutUsInfoData(this.selectedArticle().id, formData);
+      this.updateArticleData(this.selectedArticle().id, formData);
     }
   }
 

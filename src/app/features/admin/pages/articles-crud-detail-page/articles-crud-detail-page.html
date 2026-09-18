@@ -74,9 +74,9 @@
           />
         }
 
-        @if (articleForm.releaseCode().touched() && articleForm.releaseCode().invalid()) {
+        @if (articleForm.category().touched() && articleForm.category().invalid()) {
           <ul>
-            @for (error of articleForm.releaseCode().errors(); track error) {
+            @for (error of articleForm.category().errors(); track error) {
               <li class="text-error">{{ error.message }}</li>
             }
           </ul>

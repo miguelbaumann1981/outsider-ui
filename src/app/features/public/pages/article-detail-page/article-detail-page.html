@@ -79,7 +79,7 @@
               />
               <span
                 class="text-sm text-gray-500"
-                [innerHTML]="articleSelected()?.references | safeHtml"
+                [innerHTML]="articleSelected()?.references ?? '' | safeHtml"
               ></span>
 
               <!-- ABOUT AUTHOR -->
