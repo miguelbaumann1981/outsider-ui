@@ -8,7 +8,7 @@ export interface CategoryBasicProps {
   id: string;
   image: string;
   quote?: string;
-  references: string;
+  references?: string;
   releaseCode: ReleaseCode;
   slug: string;
   subtitle?: string;

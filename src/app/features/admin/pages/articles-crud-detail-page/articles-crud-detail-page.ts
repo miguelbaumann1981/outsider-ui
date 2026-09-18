@@ -25,7 +25,7 @@ const ARTICLE_MODEL: ArticleCrud = {
   titleCategory: '',
   isDraft: false,
   isPublished: false,
-  subtitle: '',
+  subtitle: 'Sobre el autor/a',
   references: '',
   authorQuote: '',
   authorInfo: '',
@@ -62,7 +62,7 @@ export class ArticlesCrudDetailPage implements OnInit {
   releases = signal<ReleasesApi[]>([]);
   errorMessageApi = signal<string>('');
   optionReleaseCodeSelected = signal<ReleaseCode>('');
-  optionCategorySelected = signal<ArticleCategory | undefined>(ArticleCategory.POETRY);
+  optionCategorySelected = signal<ArticleCategory | undefined>(undefined);
 
   subtitlePage = computed<string>(() =>
     this.activeParam() === 'new'
@@ -164,10 +164,105 @@ export class ArticlesCrudDetailPage implements OnInit {
 
   onOptionCategory(category: ArticleCategory | undefined): void {
     this.optionCategorySelected.set(category);
+
+    switch (this.optionCategorySelected()) {
+      case ArticleCategory.EDITORIAL:
+        return this.articleModel.set({
+          ...ARTICLE_MODEL,
+          quote: undefined,
+          authorQuote: undefined,
+          authorInfo: undefined,
+          subtitle: undefined,
+        });
+      case ArticleCategory.MICROSTORY:
+        return this.articleModel.set({
+          ...ARTICLE_MODEL,
+          quote: undefined,
+          authorQuote: undefined,
+        });
+      case ArticleCategory.OPINION:
+        return this.articleModel.set({
+          ...ARTICLE_MODEL,
+          quote: undefined,
+          authorQuote: undefined,
+        });
+      case ArticleCategory.OUTSIDERS:
+        return this.articleModel.set({
+          ...ARTICLE_MODEL,
+          quote: undefined,
+          authorQuote: undefined,
+          authorInfo: undefined,
+          subtitle: undefined,
+        });
+      case ArticleCategory.POETRY:
+        return this.articleModel.set(ARTICLE_MODEL);
+      case ArticleCategory.TALES:
+        return this.articleModel.set({
+          ...ARTICLE_MODEL,
+          quote: undefined,
+          authorQuote: undefined,
+          authorInfo: undefined,
+          subtitle: undefined,
+        });
+
+      default:
+        return this.articleModel.set(ARTICLE_MODEL);
+    }
+  }
+
+  createAboutUsInfoData(formData: ArticleCrud): void {
+    this.homeService
+      .createArticle(formData)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          toast.success(this.i18n.articles.successEditMessageForm);
+        },
+        error: () => {
+          toast.error(this.i18n.articles.errorEditMessageForm);
+          this.isLoading.set(false);
+        },
+        complete: () => {
+          this.isLoading.set(false);
+          setTimeout(() => {
+            this.navigateToPreviousPage();
+          }, 1500);
+        },
+      });
+  }
+
+  updateAboutUsInfoData(id: string, formData: ArticleCrud): void {
+    this.homeService
+      .updateArticle(id, formData)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          toast.success(this.i18n.articles.successEditMessageForm);
+        },
+        error: () => {
+          toast.error(this.i18n.articles.errorEditMessageForm);
+          this.isLoading.set(false);
+        },
+        complete: () => {
+          this.isLoading.set(false);
+          setTimeout(() => {
+            this.navigateToPreviousPage();
+          }, 1500);
+        },
+      });
   }
 
   onSubmit(event: Event): void {
     event.preventDefault();
+    this.isLoading.set(true);
+
+    const formData = this.articleModel();
+
+    if (this.activeParam() === 'new') {
+      this.createAboutUsInfoData(formData);
+    } else {
+      this.updateAboutUsInfoData(this.selectedArticle().id, formData);
+    }
   }
 
   navigateToPreviousPage(): void {

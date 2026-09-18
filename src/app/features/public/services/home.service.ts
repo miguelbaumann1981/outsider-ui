@@ -5,7 +5,7 @@ import { environment } from '@envs/environment.development';
 import { Article, ArticlesApi, HomeLayoutApi } from '../interfaces';
 import { AnyCategory, ArticleCategory, ReleaseCode } from '../types';
 import { ArticleCategoryMapper } from '../mappers';
-import { HomeLayoutCrud } from '@/features/admin/interfaces';
+import { ArticleCrud, HomeLayoutCrud } from '@/features/admin/interfaces';
 
 @Service()
 export class HomeService {
@@ -39,6 +39,14 @@ export class HomeService {
 
   getAllArticles(): Observable<ArticlesApi> {
     return this.http.get<ArticlesApi>(`${this.baseUrl}/api/articles`);
+  }
+
+  createArticle(body: ArticleCrud): Observable<Article> {
+    return this.http.post<Article>(`${this.baseUrl}/api/articles`, body).pipe(delay(1500));
+  }
+
+  updateArticle(id: string, update: ArticleCrud): Observable<Article> {
+    return this.http.put<Article>(`${this.baseUrl}/api/articles/${id}`, update).pipe(delay(1500));
   }
 
   getHomeLayout(): Observable<HomeLayoutApi[]> {

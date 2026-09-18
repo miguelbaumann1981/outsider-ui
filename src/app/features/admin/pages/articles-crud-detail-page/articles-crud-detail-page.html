@@ -57,14 +57,12 @@
         @if (activeParam() === 'new') {
           <select class="select w-full" [formField]="articleForm.category">
             @for (category of categoriesOptions(); track category.category) {
-              @if (!category.disabled) {
-                <option
-                  [value]="category.category"
-                  (click)="onOptionCategory($any(category.category))"
-                >
-                  {{ category.displayName | uppercase }}
-                </option>
-              }
+              <option
+                [value]="category.category"
+                (click)="onOptionCategory($any(category.category))"
+              >
+                {{ category.displayName | uppercase }}
+              </option>
             }
           </select>
         } @else {
@@ -254,7 +252,7 @@
           <input
             type="text"
             class="input w-full"
-            [placeholder]="'añade...'"
+            [placeholder]="i18n.articles.subtitlePlaceholder"
             [formField]="$any(articleForm.subtitle)"
           />
         </fieldset>
@@ -271,7 +269,7 @@
           <input
             type="text"
             class="input w-full"
-            [placeholder]="'añade...'"
+            [placeholder]="i18n.articles.authorQuotePlaceholder"
             [formField]="$any(articleForm.authorQuote)"
           />
         </fieldset>

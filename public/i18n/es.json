@@ -161,7 +161,7 @@
     "successEditMessageForm": "La información ha sido editada con éxito",
     "errorEditMessageForm": "La información no ha sido editada. Intente más tarde",
     "successCreateMessageForm": "La nueva información ha sido creada con éxito",
-    "errorCreateMessageForm": "La nuevo información no ha sido creada. Intente más tarde"
+    "errorCreateMessageForm": "La nueva información no ha sido creada. Intente más tarde"
   },
   "auth": {
     "login": "Iniciar sesión",
@@ -228,15 +228,17 @@
     "titleArticleLabel": "Título del artículo",
     "titleArticlePlaceholder": "Añada un título de artículo...",
     "slugLabel": "Identificador",
-    "slugPlaceholder": "Añada un identificador",
+    "slugPlaceholder": "Añada un identificador (el-cuento-de-ana)...",
     "authorArticleLabel": "Autor del artículo",
     "authorArticlePlaceholder": "Añada un autor del artículo...",
     "imageLabel": "Imagen",
     "imagePlaceholder": "Añada una imagen...",
     "contentLabel": "Contenido",
     "authorInfoLabel": "Información del autor",
-    "subtitleLabel": "Información extra",
+    "subtitleLabel": "Título secundario",
+    "subtitlePlaceholder": "Añada un título secundario...",
     "authorQuoteLabel": "Autor cita literaria",
+    "authorQuotePlaceholder": "Añada al autor...",
     "quoteLabel": "Cita literaria",
     "referencesLabel": "Información extra",
     "validations": {
@@ -246,8 +248,13 @@
       "contentRequired": "El contenido es obligatorio",
       "imageRequired": "La imagen es obligatoria",
       "slugRequired": "El identificador es obligatoria",
+      "slugPattern": "El identificador no puede tener espacios en blanco",
       "titleArticleRequired": "El título del artículo es obligatorio",
       "titleCategoryRequired": "El título de la categoría es obligatoria"
-    }
+    },
+    "successEditMessageForm": "El artículo ha sido editado con éxito",
+    "errorEditMessageForm": "El artículo no ha sido editado. Intente más tarde",
+    "successCreateMessageForm": "El nuevo artículo ha sido creado con éxito",
+    "errorCreateMessageForm": "El nuevo artículo no ha sido creado. Intente más tarde"
   }
 }
