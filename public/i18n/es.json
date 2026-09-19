@@ -143,6 +143,7 @@
     "mainTextLabel": "Texto principal",
     "releaseLabel": "Número",
     "collaborators": "Colaboradores",
+    "collaborator": "Colaborador",
     "collaboratorNameLabel": "Nombre",
     "collaboratorTextLabel": "Contenido",
     "collaboratorPictureLabel": "Imagen",
@@ -180,14 +181,13 @@
       "errorAccessSubtitle": "El correo o la contraseña no son válidos. Revise de nuevo"
     },
     "success": {
-      "accessTitle": "¡Bienvenido/a!",
-      "accessSubtitle": "Estás en tu panel de administrador/a"
+      "accessTitle": "¡Bienvenid@! Estás en tu panel de administrador@"
     }
   },
   "admin": {
     "layout": {
       "hi": "Hola",
-      "welcome": "Estás en tu zona de administración."
+      "welcome": "Estás en tu zona privada."
     }
   },
   "homeLayout": {
@@ -229,7 +229,7 @@
     "titleArticleLabel": "Título del artículo",
     "titleArticlePlaceholder": "Añada un título de artículo...",
     "slugLabel": "Identificador",
-    "slugPlaceholder": "Añada un identificador (el-cuento-de-ana)...",
+    "slugPlaceholder": "Añada un identificador...",
     "authorArticleLabel": "Autor del artículo",
     "authorArticlePlaceholder": "Añada un autor del artículo...",
     "imageLabel": "Imagen",

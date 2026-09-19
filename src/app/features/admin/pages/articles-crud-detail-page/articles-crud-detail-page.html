@@ -10,204 +10,227 @@
   />
 
   <form class="flex flex-col gap-3 lg:gap-6" [formRoot]="articleForm" (submit)="onSubmit($event)">
-    <div class="grid grid-cols-1 gap-3 lg:grid-cols-2 lg:gap-6 xl:grid-cols-4">
-      <!-- #region RELEASE CODE FIELD -->
-      <fieldset class="fieldset col-span-1 w-full">
-        <legend class="fieldset-legend text-sm lg:text-base">
-          {{ i18n.articles.releaseCodeLabel }}
-          <span class="text-error">*</span>
-        </legend>
+    <div class="grid grid-cols-1 gap-3 lg:gap-6 xl:grid-cols-4">
+      <div class="col-span-3 grid w-full gap-3 lg:gap-6">
+        <div class="grid grid-cols-1 gap-3 lg:grid-cols-2 lg:gap-6 xl:grid-cols-3">
+          <!-- #region RELEASE CODE FIELD -->
+          <fieldset class="fieldset col-span-1 w-full">
+            <legend class="fieldset-legend text-sm lg:text-base">
+              {{ i18n.articles.releaseCodeLabel }}
+              <span class="text-error">*</span>
+            </legend>
 
-        @if (activeParam() === 'new') {
-          <select class="select w-full" [formField]="articleForm.releaseCode">
-            @for (option of releasesCodeOptions(); track option.code) {
-              <option [value]="option.code" (click)="onOptionCode(option.code ?? '')">
-                {{ option.displayName }}
-              </option>
-            } @empty {
-              <option>{{ i18n.articles.noReleasesAvailable }}</option>
+            @if (activeParam() === 'new') {
+              <select class="select w-full" [formField]="articleForm.releaseCode">
+                @for (option of releasesCodeOptions(); track option.code) {
+                  <option [value]="option.code" (click)="onOptionCode(option.code ?? '')">
+                    {{ option.displayName }}
+                  </option>
+                } @empty {
+                  <option>{{ i18n.articles.noReleasesAvailable }}</option>
+                }
+              </select>
+            } @else {
+              <input
+                type="text"
+                class="input w-full"
+                [disabled]="true"
+                [value]="articleForm.releaseCode().value()"
+              />
             }
-          </select>
-        } @else {
-          <input
-            type="text"
-            class="input w-full"
-            [disabled]="true"
-            [value]="articleForm.releaseCode().value()"
-          />
-        }
 
-        @if (articleForm.releaseCode().touched() && articleForm.releaseCode().invalid()) {
-          <ul>
-            @for (error of articleForm.releaseCode().errors(); track error) {
-              <li class="text-error">{{ error.message }}</li>
+            @if (articleForm.releaseCode().touched() && articleForm.releaseCode().invalid()) {
+              <ul>
+                @for (error of articleForm.releaseCode().errors(); track error) {
+                  <li class="text-error">{{ error.message }}</li>
+                }
+              </ul>
             }
-          </ul>
-        }
-      </fieldset>
-      <!-- #endregion RELEASE CODE FIELD -->
+          </fieldset>
+          <!-- #endregion RELEASE CODE FIELD -->
 
-      <!-- #region CATEGORY FIELD -->
-      <fieldset class="fieldset col-span-1 w-full">
-        <legend class="fieldset-legend text-sm lg:text-base">
-          {{ i18n.articles.categoryLabel }}
-          <span class="text-error">*</span>
-        </legend>
+          <!-- #region CATEGORY FIELD -->
+          <fieldset class="fieldset col-span-1 w-full">
+            <legend class="fieldset-legend text-sm lg:text-base">
+              {{ i18n.articles.categoryLabel }}
+              <span class="text-error">*</span>
+            </legend>
 
-        @if (activeParam() === 'new') {
-          <select class="select w-full" [formField]="articleForm.category">
-            @for (category of categoriesOptions(); track category.category) {
-              <option
-                [value]="category.category"
-                (click)="onOptionCategory($any(category.category))"
-              >
-                {{ category.displayName | uppercase }}
-              </option>
+            @if (activeParam() === 'new') {
+              <select class="select w-full" [formField]="articleForm.category">
+                @for (category of categoriesOptions(); track category.category) {
+                  <option
+                    [value]="category.category"
+                    (click)="onOptionCategory($any(category.category))"
+                  >
+                    {{ category.displayName | uppercase }}
+                  </option>
+                }
+              </select>
+            } @else {
+              <input
+                type="text"
+                class="input w-full"
+                [disabled]="true"
+                [value]="articleForm.category().value() | uppercase"
+              />
             }
-          </select>
-        } @else {
-          <input
-            type="text"
-            class="input w-full"
-            [disabled]="true"
-            [value]="articleForm.category().value() | uppercase"
-          />
-        }
 
-        @if (articleForm.category().touched() && articleForm.category().invalid()) {
-          <ul>
-            @for (error of articleForm.category().errors(); track error) {
-              <li class="text-error">{{ error.message }}</li>
+            @if (articleForm.category().touched() && articleForm.category().invalid()) {
+              <ul>
+                @for (error of articleForm.category().errors(); track error) {
+                  <li class="text-error">{{ error.message }}</li>
+                }
+              </ul>
             }
-          </ul>
-        }
-      </fieldset>
-      <!-- #endregion CATEGORY FIELD -->
+          </fieldset>
+          <!-- #endregion CATEGORY FIELD -->
 
-      <!-- #region TITLE CATEGORY FIELD -->
-      <fieldset class="fieldset col-span-2 w-full">
-        <legend class="fieldset-legend text-sm lg:text-base">
-          {{ i18n.articles.titleCategoryLabel }}
-          <span class="text-error">*</span>
-        </legend>
+          <!-- #region TITLE CATEGORY FIELD -->
+          <fieldset class="fieldset col-span-1 w-full">
+            <legend class="fieldset-legend text-sm lg:text-base">
+              {{ i18n.articles.titleCategoryLabel }}
+              <span class="text-error">*</span>
+            </legend>
 
-        <input
-          type="text"
-          class="input w-full"
-          [placeholder]="i18n.articles.titleCategoryPlaceholder"
-          [formField]="articleForm.titleCategory"
+            <input
+              type="text"
+              class="input w-full"
+              [placeholder]="i18n.articles.titleCategoryPlaceholder"
+              [formField]="articleForm.titleCategory"
+            />
+
+            @if (articleForm.titleCategory().touched() && articleForm.titleCategory().invalid()) {
+              <ul>
+                @for (error of articleForm.titleCategory().errors(); track error) {
+                  <li class="text-error">{{ error.message }}</li>
+                }
+              </ul>
+            }
+          </fieldset>
+          <!-- #endregion TITLE CATEGORY FIELD -->
+        </div>
+
+        <div class="grid grid-cols-1 gap-3 lg:grid-cols-2 lg:gap-6 xl:grid-cols-3">
+          <!-- #region TITLE ARTICLE FIELD -->
+          <fieldset class="fieldset col-span-2 w-full">
+            <legend class="fieldset-legend text-sm lg:text-base">
+              {{ i18n.articles.titleArticleLabel }}
+              <span class="text-error">*</span>
+            </legend>
+
+            <input
+              type="text"
+              class="input w-full"
+              [placeholder]="i18n.articles.titleArticlePlaceholder"
+              [formField]="articleForm.titleArticle"
+            />
+
+            @if (articleForm.titleArticle().touched() && articleForm.titleArticle().invalid()) {
+              <ul>
+                @for (error of articleForm.titleArticle().errors(); track error) {
+                  <li class="text-error">{{ error.message }}</li>
+                }
+              </ul>
+            }
+          </fieldset>
+          <!-- #endregion TITLE ARTICLE FIELD -->
+
+          <!-- #region SLUG FIELD -->
+          <fieldset class="fieldset col-span-1 w-full">
+            <legend class="fieldset-legend text-sm lg:text-base">
+              {{ i18n.articles.slugLabel }}
+              <span class="text-error">*</span>
+            </legend>
+
+            <input
+              type="text"
+              class="input w-full"
+              [placeholder]="i18n.articles.slugPlaceholder"
+              [formField]="articleForm.slug"
+            />
+
+            @if (articleForm.slug().touched() && articleForm.slug().invalid()) {
+              <ul>
+                @for (error of articleForm.slug().errors(); track error) {
+                  <li class="text-error">{{ error.message }}</li>
+                }
+              </ul>
+            }
+          </fieldset>
+          <!-- #endregion SLUG FIELD -->
+        </div>
+
+        <div class="grid grid-cols-1 gap-3 lg:grid-cols-2 lg:gap-6 xl:grid-cols-3">
+          <!-- #region AUTHOR ARTICLE FIELD -->
+          <fieldset class="fieldset col-span-1 w-full">
+            <legend class="fieldset-legend text-sm lg:text-base">
+              {{ i18n.articles.authorArticleLabel }}
+              <span class="text-error">*</span>
+            </legend>
+
+            <input
+              type="text"
+              class="input w-full"
+              [placeholder]="i18n.articles.authorArticlePlaceholder"
+              [formField]="articleForm.authorArticle"
+            />
+
+            @if (articleForm.authorArticle().touched() && articleForm.authorArticle().invalid()) {
+              <ul>
+                @for (error of articleForm.authorArticle().errors(); track error) {
+                  <li class="text-error">{{ error.message }}</li>
+                }
+              </ul>
+            }
+          </fieldset>
+          <!-- #endregion AUTHOR ARTICLE FIELD -->
+
+          <!-- #region IMAGE FIELD -->
+          <fieldset class="fieldset col-span-2 w-full">
+            <legend class="fieldset-legend text-sm lg:text-base">
+              {{ i18n.articles.imageLabel }}
+              <span class="text-error">*</span>
+              <!-- <a (click)="displayPicture(articleForm.image().value())">Ver en grande</a> -->
+            </legend>
+
+            <input
+              type="text"
+              class="input w-full"
+              [placeholder]="i18n.articles.imagePlaceholder"
+              [formField]="articleForm.image"
+            />
+
+            @if (articleForm.image().touched() && articleForm.image().invalid()) {
+              <ul>
+                @for (error of articleForm.image().errors(); track error) {
+                  <li class="text-error">{{ error.message }}</li>
+                }
+              </ul>
+            }
+          </fieldset>
+          <!-- #endregion IMAGE FIELD -->
+        </div>
+      </div>
+
+      <!-- #region IMAGE -->
+      <div class="col-span-1 w-full">
+        <img
+          [src]="
+            activeParam() === 'new'
+              ? imageDisplayed() === ''
+                ? emptyImage()
+                : imageDisplayed()
+              : articleForm.image().value()
+          "
+          appImgFallback="{{ emptyImage() }}"
+          class="w-full rounded-md border border-gray-300"
+          [alt]="activeParam() === 'new' ? 'Empty picture' : articleForm.titleArticle().value()"
         />
-
-        @if (articleForm.titleCategory().touched() && articleForm.titleCategory().invalid()) {
-          <ul>
-            @for (error of articleForm.titleCategory().errors(); track error) {
-              <li class="text-error">{{ error.message }}</li>
-            }
-          </ul>
-        }
-      </fieldset>
-      <!-- #endregion TITLE CATEGORY FIELD -->
+      </div>
+      <!-- 3endregion IMAGE -->
     </div>
 
-    <div class="grid grid-cols-1 gap-3 lg:grid-cols-2 lg:gap-6 xl:grid-cols-4">
-      <!-- #region TITLE ARTICLE FIELD -->
-      <fieldset class="fieldset col-span-2 w-full">
-        <legend class="fieldset-legend text-sm lg:text-base">
-          {{ i18n.articles.titleArticleLabel }}
-          <span class="text-error">*</span>
-        </legend>
-
-        <input
-          type="text"
-          class="input w-full"
-          [placeholder]="i18n.articles.titleArticlePlaceholder"
-          [formField]="articleForm.titleArticle"
-        />
-
-        @if (articleForm.titleArticle().touched() && articleForm.titleArticle().invalid()) {
-          <ul>
-            @for (error of articleForm.titleArticle().errors(); track error) {
-              <li class="text-error">{{ error.message }}</li>
-            }
-          </ul>
-        }
-      </fieldset>
-      <!-- #endregion TITLE ARTICLE FIELD -->
-
-      <!-- #region SLUG FIELD -->
-      <fieldset class="fieldset col-span-2 w-full">
-        <legend class="fieldset-legend text-sm lg:text-base">
-          {{ i18n.articles.slugLabel }}
-          <span class="text-error">*</span>
-        </legend>
-
-        <input
-          type="text"
-          class="input w-full"
-          [placeholder]="i18n.articles.slugPlaceholder"
-          [formField]="articleForm.slug"
-        />
-
-        @if (articleForm.slug().touched() && articleForm.slug().invalid()) {
-          <ul>
-            @for (error of articleForm.slug().errors(); track error) {
-              <li class="text-error">{{ error.message }}</li>
-            }
-          </ul>
-        }
-      </fieldset>
-      <!-- #endregion SLUG FIELD -->
-    </div>
-
-    <div class="grid grid-cols-1 gap-3 lg:grid-cols-2 lg:gap-6 xl:grid-cols-4">
-      <!-- #region AUTHOR ARTICLE FIELD -->
-      <fieldset class="fieldset col-span-1 w-full">
-        <legend class="fieldset-legend text-sm lg:text-base">
-          {{ i18n.articles.authorArticleLabel }}
-          <span class="text-error">*</span>
-        </legend>
-
-        <input
-          type="text"
-          class="input w-full"
-          [placeholder]="i18n.articles.authorArticlePlaceholder"
-          [formField]="articleForm.authorArticle"
-        />
-
-        @if (articleForm.authorArticle().touched() && articleForm.authorArticle().invalid()) {
-          <ul>
-            @for (error of articleForm.authorArticle().errors(); track error) {
-              <li class="text-error">{{ error.message }}</li>
-            }
-          </ul>
-        }
-      </fieldset>
-      <!-- #endregion AUTHOR ARTICLE FIELD -->
-
-      <!-- #region IMAGE FIELD -->
-      <fieldset class="fieldset col-span-3 w-full">
-        <legend class="fieldset-legend text-sm lg:text-base">
-          {{ i18n.articles.imageLabel }}
-          <span class="text-error">*</span>
-        </legend>
-
-        <input
-          type="text"
-          class="input w-full"
-          [placeholder]="i18n.articles.imagePlaceholder"
-          [formField]="articleForm.image"
-        />
-
-        @if (articleForm.image().touched() && articleForm.image().invalid()) {
-          <ul>
-            @for (error of articleForm.image().errors(); track error) {
-              <li class="text-error">{{ error.message }}</li>
-            }
-          </ul>
-        }
-      </fieldset>
-      <!-- #endregion IMAGE FIELD -->
-    </div>
     <div class="grid grid-cols-1 gap-3">
       <!-- #region CONTENT FIELD -->
       <fieldset class="fieldset w-full">

@@ -123,6 +123,6 @@ export class ArticlesCrudPage implements OnInit {
         this.releases().find((item) => item.releaseCode === releaseCode)?.isCurrentRelease ?? false,
     };
     this.localStorageService.setItem('release', JSON.stringify(release));
-    this.router.navigate([`/articles/${releaseCode.toLowerCase()}/${category}/${slug}`]);
+    this.router.navigate([`admin/articles/${releaseCode.toLowerCase()}/${category}/${slug}`]);
   }
 }

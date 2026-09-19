@@ -13,6 +13,7 @@ import { ReleaseCode } from '@/features/public/types';
 import { articleSchemaBase } from './article-crud-form-schema';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { UpperCasePipe } from '@angular/common';
+import { ImgFallbackDirective } from '@/features/public/directives';
 
 const ARTICLE_MODEL: ArticleCrud = {
   authorArticle: '',
@@ -41,9 +42,19 @@ const ALL_CATEGORIES: ArticleCategory[] = [
   ArticleCategory.TALES,
 ];
 
+const EMPTY_IMAGE: string = '/assets/empty-picture.png';
+
 @Component({
   selector: 'out-articles-crud-detail-page',
-  imports: [SubtitlePage, FormField, FormRoot, NgxSonnerToaster, InputTextRichForm, UpperCasePipe],
+  imports: [
+    SubtitlePage,
+    FormField,
+    FormRoot,
+    NgxSonnerToaster,
+    InputTextRichForm,
+    UpperCasePipe,
+    ImgFallbackDirective,
+  ],
   templateUrl: './articles-crud-detail-page.html',
 })
 export class ArticlesCrudDetailPage implements OnInit {
@@ -65,6 +76,10 @@ export class ArticlesCrudDetailPage implements OnInit {
   optionReleaseCodeSelected = signal<ReleaseCode>('');
   optionCategorySelected = signal<ArticleCategory | undefined>(undefined);
   categoriesOptions = signal<ReleaseCodeSelect[]>([]);
+  emptyImage = signal<string>(EMPTY_IMAGE);
+  imageDisplayed = computed<string>(() => {
+    return this.articleForm.image().value() ?? this.emptyImage();
+  });
 
   subtitlePage = computed<string>(() =>
     this.activeParam() === 'new'
@@ -310,6 +325,10 @@ export class ArticlesCrudDetailPage implements OnInit {
     } else {
       this.updateArticleData(this.selectedArticle().id, formData);
     }
+  }
+
+  displayPicture(picture: string): void {
+    window.open(picture, '_blank', 'noopener,noreferrer');
   }
 
   navigateToPreviousPage(): void {

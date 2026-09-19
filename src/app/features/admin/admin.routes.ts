@@ -11,6 +11,7 @@ import {
   ReleasesCrudPage,
 } from './pages';
 import { ArticlesCrudDetailPage } from './pages/articles-crud-detail-page/articles-crud-detail-page';
+import { ArticleDetailPage } from '../public/pages/article-detail-page/article-detail-page';
 
 export const adminRoutes: Routes = [
   {
@@ -25,6 +26,10 @@ export const adminRoutes: Routes = [
       {
         path: 'articles-crud/:id',
         component: ArticlesCrudDetailPage,
+      },
+      {
+        path: 'articles/:releaseCode/:category/:slug',
+        component: ArticleDetailPage,
       },
       {
         path: 'about-us-crud',
