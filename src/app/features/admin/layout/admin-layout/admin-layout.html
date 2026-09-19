@@ -4,7 +4,7 @@
 
 <section [class]="layoutPage()">
   <h1 class="special-elite-regular mt-3 text-base font-semibold lg:text-3xl">
-    {{ i18n.admin.layout.hi }}, <span class="text-accent">{{ username }}</span
+    {{ i18n.admin.layout.hi }}, <span class="text-accent">{{ username ?? 'Administrador@' }}</span
     >.
     {{ i18n.admin.layout.welcome }}
   </h1>

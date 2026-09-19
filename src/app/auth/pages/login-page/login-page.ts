@@ -9,10 +9,19 @@ import { LoginFormModel } from '@/auth/interfaces';
 import { NgClass } from '@angular/common';
 import { AuthService } from '@/auth/services';
 import { catchError, delay } from 'rxjs';
+import { NgxSonnerToaster, toast } from 'ngx-sonner';
 
 @Component({
   selector: 'out-login-page',
-  imports: [ReactiveFormsModule, IconEmail, IconPassword, FormField, FormRoot, NgClass],
+  imports: [
+    ReactiveFormsModule,
+    IconEmail,
+    IconPassword,
+    FormField,
+    FormRoot,
+    NgClass,
+    NgxSonnerToaster,
+  ],
   templateUrl: './login-page.html',
 })
 export class LoginPage {
@@ -55,15 +64,7 @@ export class LoginPage {
         delay(1500),
         catchError((error) => {
           this.isLoading.set(false);
-          console.error(
-            this.i18n.auth.errors.errorAccessSubtitle,
-            this.i18n.auth.errors.errorAccessTitle,
-            {
-              timeOut: 5000,
-              closeButton: true,
-            },
-          );
-
+          toast.error(this.i18n.auth.errors.errorAccessTitle);
           throw error;
         }),
       )
@@ -71,16 +72,12 @@ export class LoginPage {
         next: (isLogged: boolean) => {
           if (isLogged) {
             this.router.navigate(['/admin']);
-
             return;
           }
         },
         complete: () => {
           this.isLoading.set(false);
-          console.log(this.i18n.auth.success.accessSubtitle, this.i18n.auth.success.accessTitle, {
-            timeOut: 3000,
-            closeButton: true,
-          });
+          toast.success(this.i18n.auth.success.accessTitle);
         },
       });
   }

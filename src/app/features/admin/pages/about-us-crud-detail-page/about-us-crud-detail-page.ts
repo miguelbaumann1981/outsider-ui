@@ -22,7 +22,7 @@ const ABOUT_US_MODEL: AboutUsCrud = {
   isDraft: true,
   isPublished: true,
   mainText: '',
-  collaborators: Array.from({ length: 2 }).map(() => ({
+  collaborators: Array.from({ length: 3 }).map(() => ({
     name: '',
     text: '',
     picture: '',
