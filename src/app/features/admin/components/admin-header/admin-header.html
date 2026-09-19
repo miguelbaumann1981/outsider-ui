@@ -1,7 +1,7 @@
 <div class="navbar bg-neutral text-neutral-content px-2 shadow-sm lg:px-12">
   <div class="navbar-start">
     <div class="dropdown">
-      <div tabindex="0" role="button" class="btn btn-ghost lg:hidden">
+      <div tabindex="0" role="button" class="btn btn-ghost text-white lg:hidden">
         <out-icon-menu />
       </div>
       <ul
@@ -9,8 +9,13 @@
         class="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow"
       >
         @for (item of menu(); track item.text) {
-          <li>
-            <a>{{ item.text }}</a>
+          <li class="my-2">
+            <a
+              class="text-sm text-black"
+              [routerLink]="item.url"
+              routerLinkActive="text-teal-600"
+              >{{ item.text }}</a
+            >
           </li>
         }
       </ul>
