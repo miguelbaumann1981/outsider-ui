@@ -26,11 +26,34 @@ import { LocalStorageService } from '@/core/services';
   imports: [SafeHtmlPipe, TitlePage, ImgFallbackDirective, Spinner],
   templateUrl: './article-detail-page.html',
   styles: `
-    .content-article,
-    .content-info {
+    .content-article {
       p {
         font-size: 1rem;
         margin-bottom: 1rem;
+      }
+      h5 {
+        font-size: 1.2rem;
+        margin-top: 1.5rem;
+      }
+      h6 {
+        font-size: 1.1rem;
+        color: lightslategrey;
+        text-align: center;
+      }
+      hr {
+        color: #ddd;
+        margin: 2rem auto;
+      }
+    }
+
+    .content-info {
+      p {
+        font-size: 0.85rem;
+        margin-bottom: 1rem;
+      }
+      h6 {
+        font-size: 1rem;
+        color: lightslategrey;
       }
     }
   `,

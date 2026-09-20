@@ -27,14 +27,32 @@
           <!-- HEADER -->
           <div class="flex flex-col gap-3">
             <h3 class="text-xl font-semibold lg:text-2xl">{{ articleSelected()?.titleArticle }}</h3>
-            <h4 class="text-base text-gray-500 italic lg:text-lg">
-              {{ articleSelected()?.authorArticle }}
-            </h4>
+
+            <div class="flex items-center justify-between">
+              <h4 class="text-base text-gray-500 italic lg:text-lg">
+                {{ articleSelected()?.authorArticle }}
+              </h4>
+
+              <div class="flex items-center gap-2">
+                <a
+                  ><img src="/assets/images/logo-instagram.png" width="40px" alt="Logo Instagram"
+                /></a>
+                <a
+                  ><img src="/assets/images/logo-facebook.png" width="28px" alt="Logo Facebook"
+                /></a>
+                <a
+                  ><img src="/assets/images/logo-whatsapp.png" width="36px" alt="Logo WhatsApp"
+                /></a>
+                <a><img src="/assets/images/logo-X.png" width="30px" alt="Logo WhatsApp" /></a>
+                <a
+                  ><img src="/assets/images/logo-linkedin.png" width="30px" alt="Logo WhatsApp"
+                /></a>
+              </div>
+            </div>
             <div class="h-px w-full" [style.backgroundColor]="color()"></div>
           </div>
 
           <!-- CONTENT -->
-
           @if (articleSelected()?.quote) {
             <div class="block flex flex-col items-end gap-2 lg:hidden">
               <blockquote
@@ -89,16 +107,23 @@
                   <p class="text-sm font-semibold lg:text-base">
                     {{ articleSelected()?.subtitle }}
                   </p>
-                  <div class="content-info">
-                    <div
-                      class="text-sm"
-                      [innerHTML]="articleSelected()?.authorInfo! | safeHtml"
-                    ></div>
-                  </div>
+
+                  <div
+                    class="content-info"
+                    [innerHTML]="articleSelected()?.authorInfo! | safeHtml"
+                  ></div>
                 </div>
               }
             </div>
           </article>
+
+          <!-- SOCIAL MEDIA -->
+          <div class="h-px w-full" [style.backgroundColor]="color()"></div>
+          <div class="flex gap-3">
+            <span>Compartir en</span>
+            <a>Inst</a>
+            <a>Face</a>
+          </div>
         </div>
       </div>
     }
