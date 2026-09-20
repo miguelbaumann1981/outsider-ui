@@ -327,10 +327,6 @@ export class ArticlesCrudDetailPage implements OnInit {
     }
   }
 
-  displayPicture(picture: string): void {
-    window.open(picture, '_blank', 'noopener,noreferrer');
-  }
-
   navigateToPreviousPage(): void {
     this.router.navigate(['/admin/articles-crud']);
   }
