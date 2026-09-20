@@ -211,60 +211,10 @@ export class ArticlesCrudDetailPage implements OnInit {
   onOptionCategory(category: ArticleCategory | undefined): void {
     this.optionCategorySelected.set(category);
 
-    switch (this.optionCategorySelected()) {
-      case ArticleCategory.EDITORIAL:
-        return this.articleModel.set({
-          ...ARTICLE_MODEL,
-          releaseCode: this.optionReleaseCodeSelected(),
-          quote: undefined,
-          authorQuote: undefined,
-          authorInfo: undefined,
-          subtitle: undefined,
-        });
-      case ArticleCategory.MICROSTORY:
-        return this.articleModel.set({
-          ...ARTICLE_MODEL,
-          releaseCode: this.optionReleaseCodeSelected(),
-          quote: undefined,
-          authorQuote: undefined,
-        });
-      case ArticleCategory.OPINION:
-        return this.articleModel.set({
-          ...ARTICLE_MODEL,
-          releaseCode: this.optionReleaseCodeSelected(),
-          quote: undefined,
-          authorQuote: undefined,
-        });
-      case ArticleCategory.OUTSIDERS:
-        return this.articleModel.set({
-          ...ARTICLE_MODEL,
-          releaseCode: this.optionReleaseCodeSelected(),
-          quote: undefined,
-          authorQuote: undefined,
-          authorInfo: undefined,
-          subtitle: undefined,
-        });
-      case ArticleCategory.POETRY:
-        return this.articleModel.set({
-          ...ARTICLE_MODEL,
-          releaseCode: this.optionReleaseCodeSelected(),
-        });
-      case ArticleCategory.TALES:
-        return this.articleModel.set({
-          ...ARTICLE_MODEL,
-          releaseCode: this.optionReleaseCodeSelected(),
-          quote: undefined,
-          authorQuote: undefined,
-          authorInfo: undefined,
-          subtitle: undefined,
-        });
-
-      default:
-        return this.articleModel.set({
-          ...ARTICLE_MODEL,
-          releaseCode: this.optionReleaseCodeSelected(),
-        });
-    }
+    this.articleModel.set({
+      ...ARTICLE_MODEL,
+      releaseCode: this.optionReleaseCodeSelected(),
+    });
   }
 
   createArticleData(formData: ArticleCrud): void {

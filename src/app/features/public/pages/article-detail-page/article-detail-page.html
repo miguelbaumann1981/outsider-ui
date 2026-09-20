@@ -107,12 +107,11 @@
                   <p class="text-sm font-semibold lg:text-base">
                     {{ articleSelected()?.subtitle }}
                   </p>
-                  <div class="content-info">
-                    <div
-                      class="text-sm"
-                      [innerHTML]="articleSelected()?.authorInfo! | safeHtml"
-                    ></div>
-                  </div>
+
+                  <div
+                    class="content-info"
+                    [innerHTML]="articleSelected()?.authorInfo! | safeHtml"
+                  ></div>
                 </div>
               }
             </div>

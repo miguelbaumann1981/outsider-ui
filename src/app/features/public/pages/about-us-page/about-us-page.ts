@@ -27,6 +27,7 @@ import { LocalStorageService } from '@/core/services';
   styles: `
     .content-info {
       p {
+        font-size: 1rem;
         margin-bottom: 1rem;
       }
     }
