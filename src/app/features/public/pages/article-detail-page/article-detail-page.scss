@@ -1,0 +1,49 @@
+.content-article {
+  p {
+    font-size: 1rem;
+  }
+  h1 {
+    font-size: 1.2rem;
+    font-weight: bold;
+  }
+  h2 {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: lightslategrey;
+    text-align: center;
+  }
+  h3,
+  h4,
+  h5 {
+    font-weight: bold;
+    font-size: 1.05rem;
+  }
+  h6 {
+    font-style: italic;
+    font-size: 1rem;
+  }
+  hr {
+    color: #ddd;
+    margin: 2rem auto;
+    width: 200px;
+  }
+}
+
+.content-info {
+  p {
+    font-size: 0.85rem;
+  }
+  h1 {
+    font-size: 1rem;
+    font-weight: bold;
+  }
+  h2 {
+    font-size: 0.85rem;
+    font-weight: bold;
+    color: lightslategrey;
+  }
+  h6 {
+    font-style: italic;
+    font-size: 0.85rem;
+  }
+}

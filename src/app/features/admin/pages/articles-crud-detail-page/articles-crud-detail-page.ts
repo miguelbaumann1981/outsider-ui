@@ -155,11 +155,11 @@ export class ArticlesCrudDetailPage implements OnInit {
         next: (data) => {
           this.selectedArticle.set({
             ...data,
-            subtitle: data.subtitle ?? undefined,
-            references: data.references ?? undefined,
-            authorQuote: data.authorQuote ?? undefined,
-            authorInfo: data.authorInfo ?? undefined,
-            quote: data.quote ?? undefined,
+            subtitle: data.subtitle ?? '',
+            references: data.references ?? '',
+            authorQuote: data.authorQuote ?? '',
+            authorInfo: data.authorInfo ?? '',
+            quote: data.quote ?? '',
           });
           this.articleModel.set(this.selectedArticle());
         },
