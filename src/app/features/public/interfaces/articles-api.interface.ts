@@ -8,17 +8,17 @@ export interface ArticlesApi {
 
 export interface Article {
   authorArticle: string;
-  authorInfo?: string;
-  authorQuote?: string;
+  authorInfo: string;
+  authorQuote: string;
   category: ArticleCategory;
   content: string;
   id: string;
   image: string;
-  quote?: string;
+  quote: string;
   references: string;
   releaseCode: ReleaseCode;
   slug: string;
-  subtitle?: string;
+  subtitle: string;
   titleArticle: string;
   titleCategory: string;
   isPublished: boolean;

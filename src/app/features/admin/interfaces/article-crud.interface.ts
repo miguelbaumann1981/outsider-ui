@@ -12,9 +12,9 @@ export interface ArticleCrud {
   titleCategory: string;
   isDraft: boolean;
   isPublished: boolean;
-  subtitle?: string;
-  references?: string;
-  authorQuote?: string;
-  authorInfo?: string;
-  quote?: string;
+  subtitle: string;
+  references: string;
+  authorQuote: string;
+  authorInfo: string;
+  quote: string;
 }

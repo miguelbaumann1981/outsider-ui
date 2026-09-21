@@ -3,8 +3,7 @@ import { inject, Service } from '@angular/core';
 import { delay, map, Observable } from 'rxjs';
 import { environment } from '@envs/environment.development';
 import { Article, ArticlesApi, HomeLayoutApi } from '../interfaces';
-import { AnyCategory, ArticleCategory, ReleaseCode } from '../types';
-import { ArticleCategoryMapper } from '../mappers';
+import { ArticleCategory, ReleaseCode } from '../types';
 import { ArticleCrud, HomeLayoutCrud } from '@/features/admin/interfaces';
 
 @Service()
@@ -16,19 +15,8 @@ export class HomeService {
     return this.http.get<ArticlesApi>(`${this.baseUrl}/api/articles/${code}`);
   }
 
-  getArticleBySlug(
-    code: ReleaseCode,
-    slug: string,
-    category: ArticleCategory,
-  ): Observable<AnyCategory> {
-    const mapper = ArticleCategoryMapper[category];
-    return this.http
-      .get<Article>(`${this.baseUrl}/api/articles/${code.toUpperCase()}/${slug}`)
-      .pipe(
-        map((article) => {
-          return mapper(article);
-        }),
-      );
+  getArticleBySlug(code: ReleaseCode, slug: string): Observable<Article> {
+    return this.http.get<Article>(`${this.baseUrl}/api/articles/${code.toUpperCase()}/${slug}`);
   }
 
   getArticleById(id: string): Observable<Article> {

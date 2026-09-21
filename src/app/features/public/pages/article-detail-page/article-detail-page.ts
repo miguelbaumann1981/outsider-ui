@@ -14,57 +14,31 @@ import { HomeService } from '../../services/home.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TitlePage } from '@/shared/components/title-page/title-page';
 import { publicLayoutPage, textTeal600 } from '../../utils';
-import { AnyCategory, ReleaseCode, ViewState } from '../../types';
-import { ArticleDetail, HomeLayoutApi, ReleaseLocalStorage } from '../../interfaces';
+import { ReleaseCode, ViewState } from '../../types';
+import { Article, ArticleDetail, HomeLayoutApi, ReleaseLocalStorage } from '../../interfaces';
 import { ImgFallbackDirective } from '../../directives';
 import { Spinner } from '@/shared/components/spinner/spinner';
 import es from '@/i18n/es.json';
 import { LocalStorageService } from '@/core/services';
+import { ShareSocialService } from '../../services';
+import { Meta, Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'out-article-detail-page',
   imports: [SafeHtmlPipe, TitlePage, ImgFallbackDirective, Spinner],
   templateUrl: './article-detail-page.html',
-  styles: `
-    .content-article {
-      p {
-        font-size: 1rem;
-        margin-bottom: 1rem;
-      }
-      h5 {
-        font-size: 1.2rem;
-        margin-top: 1.5rem;
-      }
-      h6 {
-        font-size: 1.1rem;
-        color: lightslategrey;
-        text-align: center;
-      }
-      hr {
-        color: #ddd;
-        margin: 2rem auto;
-      }
-    }
-
-    .content-info {
-      p {
-        font-size: 0.85rem;
-        margin-bottom: 1rem;
-      }
-      h6 {
-        font-size: 1rem;
-        color: lightslategrey;
-      }
-    }
-  `,
+  styleUrl: './article-detail-page.scss',
   encapsulation: ViewEncapsulation.None,
 })
 export class ArticleDetailPage implements OnInit {
   protected readonly i18n = es;
   private localStorageService = inject(LocalStorageService);
   private homeService = inject(HomeService);
+  private shareSocialService = inject(ShareSocialService);
   private activatedRoute = inject(ActivatedRoute);
   private destroyRef = inject(DestroyRef);
+  private meta = inject(Meta);
+  private title = inject(Title);
   router = inject(Router);
 
   articleDetail = signal<ArticleDetail>({
@@ -72,7 +46,7 @@ export class ArticleDetailPage implements OnInit {
     releaseCode: '',
     slug: '',
   });
-  articleSelected = signal<AnyCategory>({} as AnyCategory);
+  articleSelected = signal<Article>({} as Article);
   layoutPage = signal<string>(publicLayoutPage);
   isLoadingArticle = signal(false);
   isLoadingLayout = signal(false);
@@ -101,6 +75,18 @@ export class ArticleDetailPage implements OnInit {
     this.getArticleData();
   }
 
+  addMetaTags(): void {
+    this.title.setTitle(this.articleSelected().titleArticle);
+
+    this.meta.updateTag({ property: 'og:title', content: this.articleSelected().titleArticle });
+    this.meta.updateTag({
+      property: 'og:description',
+      content: this.articleSelected().titleCategory,
+    });
+    this.meta.updateTag({ property: 'og:image', content: this.articleSelected().image });
+    this.meta.updateTag({ property: 'og:url', content: window.location.href });
+  }
+
   getRouteParams(): void {
     this.activatedRoute.params.subscribe((params) => {
       this.articleDetail.set({
@@ -113,13 +99,15 @@ export class ArticleDetailPage implements OnInit {
 
   getArticleData(): void {
     this.isLoadingArticle.set(true);
-    const { category, releaseCode, slug } = this.articleDetail();
+    const { releaseCode, slug } = this.articleDetail();
     this.homeService
-      .getArticleBySlug(releaseCode, slug, category)
+      .getArticleBySlug(releaseCode, slug)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (article) => {
           this.articleSelected.set(article);
+
+          this.addMetaTags();
         },
         error: (error) => {
           this.errorMessageApi.set(error ?? this.i18n.common.serverError);
@@ -156,5 +144,17 @@ export class ArticleDetailPage implements OnInit {
     );
 
     this.router.navigate([releaseLS.isCurrent ? '/' : `/release/${releaseCode.toLowerCase()}`]);
+  }
+
+  shareLinkedin(): void {
+    const url =
+      'https://outsiderrevista.com/admin/articles/oct026/editorial/que-escritor-no-ha-fantaseado';
+    this.shareSocialService.shareOnLinkedIn(url);
+  }
+
+  shareWhatsapp(): void {
+    const url =
+      'https://outsiderrevista.com/admin/articles/oct026/editorial/que-escritor-no-ha-fantaseado';
+    this.shareSocialService.shareOnWhatsApp(url);
   }
 }

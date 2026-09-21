@@ -228,7 +228,7 @@
           [alt]="activeParam() === 'new' ? 'Empty picture' : articleForm.titleArticle().value()"
         />
       </div>
-      <!-- 3endregion IMAGE -->
+      <!-- #endregion IMAGE -->
     </div>
 
     <div class="grid grid-cols-1 gap-3">
@@ -252,77 +252,67 @@
       <!-- #endregion CONTENT FIELD -->
 
       <!-- #region AUTHOR INFO FIELD -->
-      @if (articleForm.authorInfo !== undefined) {
-        <fieldset class="fieldset w-full">
-          <legend class="fieldset-legend text-sm lg:text-base">
-            {{ i18n.articles.authorInfoLabel }}
-          </legend>
+      <fieldset class="fieldset w-full">
+        <legend class="fieldset-legend text-sm lg:text-base">
+          {{ i18n.articles.authorInfoLabel }}
+        </legend>
 
-          <out-input-text-rich-form [formField]="$any(articleForm.authorInfo)" />
-        </fieldset>
-      }
+        <out-input-text-rich-form [formField]="articleForm.authorInfo" />
+      </fieldset>
       <!-- #endregion AUTHOR INFO FIELD -->
     </div>
 
     <div class="grid grid-cols-1 gap-3 lg:grid-cols-2 lg:gap-6 xl:grid-cols-4">
       <!-- #region SUBTITLE FIELD -->
-      @if (articleForm.subtitle !== undefined) {
-        <fieldset class="fieldset col-span-2 w-full">
-          <legend class="fieldset-legend text-sm lg:text-base">
-            {{ i18n.articles.subtitleLabel }}
-          </legend>
+      <fieldset class="fieldset col-span-2 w-full">
+        <legend class="fieldset-legend text-sm lg:text-base">
+          {{ i18n.articles.subtitleLabel }}
+        </legend>
 
-          <input
-            type="text"
-            class="input w-full"
-            [placeholder]="i18n.articles.subtitlePlaceholder"
-            [formField]="$any(articleForm.subtitle)"
-          />
-        </fieldset>
-      }
+        <input
+          type="text"
+          class="input w-full"
+          [placeholder]="i18n.articles.subtitlePlaceholder"
+          [formField]="articleForm.subtitle"
+        />
+      </fieldset>
       <!-- #endregion SUBTITLE FIELD -->
 
       <!-- #region AUTHOR QUOTE FIELD -->
-      @if (articleForm.authorQuote !== undefined) {
-        <fieldset class="fieldset col-span-2 w-full">
-          <legend class="fieldset-legend text-sm lg:text-base">
-            {{ i18n.articles.authorQuoteLabel }}
-          </legend>
+      <fieldset class="fieldset col-span-2 w-full">
+        <legend class="fieldset-legend text-sm lg:text-base">
+          {{ i18n.articles.authorQuoteLabel }}
+        </legend>
 
-          <input
-            type="text"
-            class="input w-full"
-            [placeholder]="i18n.articles.authorQuotePlaceholder"
-            [formField]="$any(articleForm.authorQuote)"
-          />
-        </fieldset>
-      }
+        <input
+          type="text"
+          class="input w-full"
+          [placeholder]="i18n.articles.authorQuotePlaceholder"
+          [formField]="articleForm.authorQuote"
+        />
+      </fieldset>
       <!-- #endregion AUTHOR QUOTE FIELD -->
     </div>
 
     <div class="grid grid-cols-1 gap-3 lg:gap-6 xl:grid-cols-2">
-      <!-- #region CITA FIELD -->
-      @if (articleForm.quote !== undefined) {
-        <fieldset class="fieldset w-full">
-          <legend class="fieldset-legend text-sm lg:text-base">
-            {{ i18n.articles.quoteLabel }}
-          </legend>
+      <!-- #region QUOTE FIELD -->
+      <fieldset class="fieldset w-full">
+        <legend class="fieldset-legend text-sm lg:text-base">
+          {{ i18n.articles.quoteLabel }}
+        </legend>
 
-          <out-input-text-rich-form [formField]="$any(articleForm.quote)" />
-        </fieldset>
-      }
-      <!-- #endregion CITA FIELD -->
+        <out-input-text-rich-form [formField]="articleForm.quote" />
+      </fieldset>
+      <!-- #endregion QUOTE FIELD -->
 
       <!-- #region REFERENCES FIELD -->
-      @if (articleForm.references !== undefined) {
-        <fieldset class="fieldset w-full">
-          <legend class="fieldset-legend text-sm lg:text-base">
-            {{ i18n.articles.referencesLabel }}
-          </legend>
+      <fieldset class="fieldset w-full">
+        <legend class="fieldset-legend text-sm lg:text-base">
+          {{ i18n.articles.referencesLabel }}
+        </legend>
 
-          <out-input-text-rich-form [formField]="$any(articleForm.references)" />
-        </fieldset>
-      }
+        <out-input-text-rich-form [formField]="articleForm.references" />
+      </fieldset>
       <!-- #endregion REFERENCES FIELD -->
     </div>
 
