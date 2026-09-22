@@ -7,3 +7,4 @@ export * from './contact-form.interface';
 export * from './releases-api.interface';
 export * from './release-local-storage.interface';
 export * from './home-layout-api.interface';
+export * from './share-social.interface';

@@ -1,4 +1,5 @@
 import { Service } from '@angular/core';
+import { Article } from '../interfaces';
 
 @Service()
 export class ShareSocialService {
@@ -7,7 +8,7 @@ export class ShareSocialService {
     window.open(shareUrl, '_blank');
   }
 
-  shareOnTwitter(url: string, text: string) {
+  shareOnX(url: string, text: string) {
     const shareUrl = `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`;
     window.open(shareUrl, '_blank');
   }
@@ -20,5 +21,25 @@ export class ShareSocialService {
   shareOnLinkedIn(url: string) {
     const shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`;
     window.open(shareUrl, '_blank');
+  }
+
+  shareOnInstagramProfile(username: string) {
+    const url = `https://www.instagram.com/${username}/`;
+    window.open(url, '_blank');
+  }
+
+  async shareOnInstagramMobile(url: string, article: Article) {
+    if (navigator.share) {
+      await navigator.share({
+        title: article.titleArticle,
+        text: article.content,
+        url,
+      });
+    }
+  }
+
+  shareOnInstagramCopy(url: string) {
+    navigator.clipboard.writeText(url);
+    window.open('https://www.instagram.com/', '_blank');
   }
 }
