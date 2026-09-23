@@ -1,20 +1,22 @@
 import { SubtitlePage } from '@/shared/components/subtitle-page/subtitle-page';
 import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import es from '@/i18n/es.json';
-import { LocalStorageService } from '@/core/services';
 import { HomeService, ReleasesService } from '@/features/public/services';
 import { Router } from '@angular/router';
 import { ReleaseCode, ViewState } from '@/features/public/types';
-import {
-  Article,
-  ArticlesApi,
-  ReleaseLocalStorage,
-  ReleasesApi,
-} from '@/features/public/interfaces';
+import { Article, ArticlesApi, ReleasesApi } from '@/features/public/interfaces';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Spinner } from '@/shared/components/spinner/spinner';
 import { NgClass, UpperCasePipe } from '@angular/common';
 import { ReleaseCodeSelect } from '../../interfaces';
+
+interface ArticlesApiWithRelease extends ArticlesApi {
+  articlesExtended: ArticleWithRelease[];
+}
+
+interface ArticleWithRelease extends Article {
+  isReleasePublished: boolean;
+}
 
 @Component({
   selector: 'out-articles-crud-page',
@@ -24,7 +26,6 @@ import { ReleaseCodeSelect } from '../../interfaces';
 export class ArticlesCrudPage implements OnInit {
   protected readonly i18n = es;
   private releasesService = inject(ReleasesService);
-  private localStorageService = inject(LocalStorageService);
   private homeService = inject(HomeService);
   private destroyRef = inject(DestroyRef);
   router = inject(Router);
@@ -35,14 +36,27 @@ export class ArticlesCrudPage implements OnInit {
   articlesApi = signal<ArticlesApi>({} as ArticlesApi);
   optionReleaseCodeSelected = signal<ReleaseCode>('');
 
-  articlesFiltered = computed<Article[]>(() => {
-    return this.optionReleaseCodeSelected() === ''
-      ? this.articlesApi().articles
-      : this.articlesApi().articles.filter(
-          (item) => item.releaseCode === this.optionReleaseCodeSelected(),
-        );
+  articlesApiWithRelease = computed<ArticlesApiWithRelease>(() => {
+    const api = this.articlesApi();
+    return {
+      ...api,
+      articlesExtended:
+        api.articles?.map((item) => ({
+          ...item,
+          isReleasePublished:
+            this.releases().find((elem) => elem.releaseCode === item.releaseCode)?.isPublished ??
+            false,
+        })) ?? [],
+    };
   });
-  articlesQuantity = computed<number>(() => this.articlesFiltered()?.length);
+  articlesFiltered = computed<ArticleWithRelease[]>(() => {
+    const articles: ArticleWithRelease[] = this.articlesApiWithRelease()?.articlesExtended;
+
+    return this.optionReleaseCodeSelected() === ''
+      ? articles
+      : articles.filter((item) => item.releaseCode === this.optionReleaseCodeSelected());
+  });
+  articlesQuantity = computed<number>(() => this.articlesFiltered()?.length ?? 0);
   viewState = computed<ViewState>(() => {
     if (this.isLoadingArticles()) return 'loading';
     if (this.errorMessageApi()) return 'error';
@@ -115,14 +129,7 @@ export class ArticlesCrudPage implements OnInit {
     this.router.navigate([`/admin/articles-crud/new`]);
   }
 
-  preview(article: Article): void {
-    const { releaseCode, slug, category } = article;
-    const release: ReleaseLocalStorage = {
-      code: releaseCode,
-      isCurrent:
-        this.releases().find((item) => item.releaseCode === releaseCode)?.isCurrentRelease ?? false,
-    };
-    this.localStorageService.setItem('release', JSON.stringify(release));
-    this.router.navigate([`admin/articles/${releaseCode.toLowerCase()}/${category}/${slug}`]);
+  preview(id: string): void {
+    this.router.navigate([`admin/articles-preview/${id}`]);
   }
 }

@@ -18,15 +18,19 @@ export const serverRoutes: ServerRoute[] = [
     renderMode: RenderMode.Server,
   },
   {
+    path: 'admin/articles-preview/:id',
+    renderMode: RenderMode.Server,
+  },
+  {
+    path: 'admin/about-us-preview/:id',
+    renderMode: RenderMode.Server,
+  },
+  {
     path: 'release/:release',
     renderMode: RenderMode.Server,
   },
   {
     path: 'articles/:release/:category/:slug',
-    renderMode: RenderMode.Server,
-  },
-  {
-    path: 'admin/articles/:release/:category/:slug',
     renderMode: RenderMode.Server,
   },
   {

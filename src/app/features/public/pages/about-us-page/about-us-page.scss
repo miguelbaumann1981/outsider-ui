@@ -1,0 +1,15 @@
+.content-info {
+  p {
+    font-size: 1rem;
+    margin-bottom: 1rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .content-info {
+    p {
+      font-size: 14px;
+      margin-bottom: 0.8rem;
+    }
+  }
+}

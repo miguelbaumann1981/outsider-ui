@@ -100,4 +100,8 @@ export class AboutUsCrudPage implements OnInit {
   onEditLayout(id: string): void {
     this.router.navigate([`/admin/about-us-crud/${id}`]);
   }
+
+  preview(id: string): void {
+    this.router.navigate([`/admin/about-us-preview/${id}`]);
+  }
 }

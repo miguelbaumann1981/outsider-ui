@@ -4,14 +4,15 @@ import { IsPrivateZoneGuard } from '@/auth/guards';
 import {
   AboutUsCrudDetailPage,
   AboutUsCrudPage,
+  AboutUsPreviewPage,
+  ArticlePreviewPage,
+  ArticlesCrudDetailPage,
   ArticlesCrudPage,
   HomeLayoutCrudDetailPage,
   HomeLayoutCrudPage,
   ReleaseCrudDetailPage,
   ReleasesCrudPage,
 } from './pages';
-import { ArticlesCrudDetailPage } from './pages/articles-crud-detail-page/articles-crud-detail-page';
-import { ArticleDetailPage } from '../public/pages/article-detail-page/article-detail-page';
 
 export const adminRoutes: Routes = [
   {
@@ -28,8 +29,8 @@ export const adminRoutes: Routes = [
         component: ArticlesCrudDetailPage,
       },
       {
-        path: 'articles/:releaseCode/:category/:slug',
-        component: ArticleDetailPage,
+        path: 'articles-preview/:id',
+        component: ArticlePreviewPage,
       },
       {
         path: 'about-us-crud',
@@ -38,6 +39,10 @@ export const adminRoutes: Routes = [
       {
         path: 'about-us-crud/:id',
         component: AboutUsCrudDetailPage,
+      },
+      {
+        path: 'about-us-preview/:id',
+        component: AboutUsPreviewPage,
       },
       {
         path: 'home-layout-crud',
