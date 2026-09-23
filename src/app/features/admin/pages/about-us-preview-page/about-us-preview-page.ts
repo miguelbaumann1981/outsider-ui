@@ -12,14 +12,7 @@ import { TitlePage } from '@/shared/components/title-page/title-page';
   selector: 'out-about-us-preview-page',
   imports: [SafeHtmlPipe, NgClass, TitlePage],
   templateUrl: './about-us-preview-page.html',
-  styles: `
-    .content-info {
-      p {
-        font-size: 1rem;
-        margin-bottom: 1rem;
-      }
-    }
-  `,
+  styleUrl: '../../../public/pages/about-us-page/about-us-page.scss',
   encapsulation: ViewEncapsulation.None,
 })
 export class AboutUsPreviewPage implements OnInit {

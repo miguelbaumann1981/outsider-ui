@@ -48,6 +48,12 @@ import { LocalStorageService } from '@/core/services';
       text-shadow: 1px 1px 2px rgba($color: #000, $alpha: 0.5);
       font-size: clamp(0.75rem, 6rem, 2.5vw);
     }
+
+    @media (max-width: 640px) {
+      .slogan {
+        font-size: 20px;
+      }
+    }
   `,
 })
 export class HomePage implements OnInit, AfterViewInit {

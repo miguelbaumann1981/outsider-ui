@@ -19,7 +19,7 @@ const ARTICLE_MODEL: ArticleCrud = {
   authorArticle: '',
   category: ArticleCategory.EDITORIAL,
   content: '',
-  image: '',
+  image: 'https://outsider-api-node-production.up.railway.app/api/images/',
   releaseCode: '',
   slug: '',
   titleArticle: '',

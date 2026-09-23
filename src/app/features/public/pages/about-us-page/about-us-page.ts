@@ -24,14 +24,7 @@ import { LocalStorageService } from '@/core/services';
   selector: 'out-about-us-page',
   imports: [TitlePage, SafeHtmlPipe, NgClass, Spinner],
   templateUrl: './about-us-page.html',
-  styles: `
-    .content-info {
-      p {
-        font-size: 1rem;
-        margin-bottom: 1rem;
-      }
-    }
-  `,
+  styleUrl: './about-us-page.scss',
   encapsulation: ViewEncapsulation.None,
 })
 export class AboutUsPage implements OnInit {

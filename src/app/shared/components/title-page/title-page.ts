@@ -11,6 +11,11 @@ import { textTeal600 } from '@/features/public/utils';
     .icon-book {
       font-size: 35px;
     }
+    @media (max-width: 640px) {
+      .icon-book {
+        font-size: 20px;
+      }
+    }
   `,
 })
 export class TitlePage {
