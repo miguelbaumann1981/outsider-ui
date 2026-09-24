@@ -20,10 +20,10 @@ export class PublicHeader {
       text: this.i18n.menu.aboutUs,
       url: '/about-us',
     },
-    {
-      text: this.i18n.menu.allReleases,
-      url: '/releases',
-    },
+    // {
+    //   text: this.i18n.menu.allReleases,
+    //   url: '/releases',
+    // },
     {
       text: this.i18n.menu.contact,
       url: '/contact',
