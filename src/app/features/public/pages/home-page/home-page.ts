@@ -4,22 +4,22 @@ import {
   signal,
   PLATFORM_ID,
   inject,
-  OnInit,
   computed,
-  DestroyRef,
+  OnInit,
 } from '@angular/core';
 import { gsap } from 'gsap';
 import { isPlatformBrowser } from '@angular/common';
 import { ArticleHomeCard } from '../../components/article-home-card/article-home-card';
 import { ArticleCard } from '../../interfaces/article-card.interface';
 import es from '@/i18n/es.json';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ArticlesApi, HomeLayoutApi, ReleaseLocalStorage, ReleasesApi } from '../../interfaces';
+import { ReleaseLocalStorage } from '../../interfaces';
 import { Router } from '@angular/router';
 import { HomeService, ReleasesService } from '../../services';
 import { SkeletonCard } from '@/shared/components/skeleton-card/skeleton-card';
 import { ReleaseCode, ViewState } from '../../types';
-import { LocalStorageService } from '@/core/services';
+import { LocalStorageService, SetInitReleaseService } from '@/core/services';
+import { injectQuery } from '@tanstack/angular-query-experimental';
+import { lastValueFrom } from 'rxjs';
 
 @Component({
   selector: 'out-home-page',
@@ -59,17 +59,12 @@ import { LocalStorageService } from '@/core/services';
 export class HomePage implements OnInit, AfterViewInit {
   protected readonly i18n = es;
   private homeService = inject(HomeService);
-  private releasesService = inject(ReleasesService);
+  private setInitReleasesService = inject(SetInitReleaseService);
   private platformId = inject(PLATFORM_ID);
-  private destroyRef = inject(DestroyRef);
   private localStorageService = inject(LocalStorageService);
   router = inject(Router);
 
   title = signal('Outsider');
-  isLoadingArticles = signal(false);
-  isLoadingLayout = signal(false);
-  isLoadingReleases = signal(false);
-  errorMessageApi = signal<string>('');
   releaseCodeLocalStorage = computed<ReleaseCode>(() => {
     if (this.localStorageService.getItem('release')) {
       const releaseLS: ReleaseLocalStorage = JSON.parse(
@@ -80,19 +75,29 @@ export class HomePage implements OnInit, AfterViewInit {
     return '';
   });
 
-  releases = signal<ReleasesApi[]>([]);
+  readonly releases = this.setInitReleasesService.releases;
   releaseName = computed<string>(() => {
     return (
-      this.releases().find((item) => item.releaseCode === this.releaseCodeLocalStorage())?.name ??
-      ''
+      this.releases.data()?.find((item) => item.releaseCode === this.releaseCodeLocalStorage())
+        ?.name ?? ''
     );
   });
-  articlesApi = signal<ArticlesApi>({} as ArticlesApi);
-  homeLayoutApi = signal<HomeLayoutApi[]>([]);
+
+  readonly articlesApi = injectQuery(() => ({
+    queryKey: ['articlesApi', this.releaseCodeLocalStorage()],
+    queryFn: () => lastValueFrom(this.homeService.getArticles(this.releaseCodeLocalStorage())),
+    staleTime: 1000 * 60 * 5,
+  }));
+  readonly homeLayoutApi = injectQuery(() => ({
+    queryKey: ['homeLayoutApi'],
+    queryFn: () => lastValueFrom(this.homeService.getHomeLayout()),
+    staleTime: 1000 * 60 * 5,
+  }));
+
   articlesRelease = computed<ArticleCard[]>(() => {
-    const articles = this.articlesApi()?.articles ?? [];
+    const articles = this.articlesApi.data()?.articles ?? [];
     const layoutFeatures =
-      this.homeLayoutApi().find((item) => item.releaseCode === this.releaseCodeLocalStorage())
+      this.homeLayoutApi.data()?.find((item) => item.releaseCode === this.releaseCodeLocalStorage())
         ?.features ?? [];
 
     return articles
@@ -115,17 +120,16 @@ export class HomePage implements OnInit, AfterViewInit {
   });
 
   viewState = computed<ViewState>(() => {
-    if (this.isLoadingReleases() || this.isLoadingArticles() || this.isLoadingLayout())
+    if (this.articlesApi.isLoading() || this.homeLayoutApi.isLoading() || this.releases.isLoading())
       return 'loading';
-    if (this.errorMessageApi()) return 'error';
+    if (this.articlesApi.isError() || this.homeLayoutApi.isError() || this.releases.isError())
+      return 'error';
     if (this.articlesRelease().length > 0) return 'available';
     return 'empty';
   });
 
   ngOnInit(): void {
-    this.getArticlesHomePage();
-    this.getHomeLayoutApi();
-    this.getReleasesApi();
+    this.setInitReleasesService.setInitReleaseLocalStorage();
   }
 
   async ngAfterViewInit(): Promise<void> {
@@ -161,69 +165,13 @@ export class HomePage implements OnInit, AfterViewInit {
     });
   }
 
-  getArticlesHomePage(): void {
-    this.isLoadingArticles.set(true);
-    this.homeService
-      .getArticles(this.releaseCodeLocalStorage())
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (articlesData) => {
-          this.articlesApi.set(articlesData);
-        },
-        error: (error) => {
-          this.errorMessageApi.set(error ?? this.i18n.common.serverError);
-          this.isLoadingArticles.set(false);
-        },
-        complete: () => {
-          this.isLoadingArticles.set(false);
-        },
-      });
-  }
-
-  getHomeLayoutApi(): void {
-    this.isLoadingLayout.set(true);
-    this.homeService
-      .getHomeLayout()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (layoutData) => {
-          this.homeLayoutApi.set(layoutData);
-        },
-        error: (error) => {
-          this.errorMessageApi.set(error ?? this.i18n.common.serverError);
-          this.isLoadingLayout.set(false);
-        },
-        complete: () => {
-          this.isLoadingLayout.set(false);
-        },
-      });
-  }
-
-  getReleasesApi(): void {
-    this.isLoadingReleases.set(true);
-    this.releasesService
-      .getReleases()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (data) => {
-          this.releases.set(data);
-        },
-        error: (error) => {
-          this.errorMessageApi.set(error ?? this.i18n.common.serverError);
-          this.isLoadingReleases.set(false);
-        },
-        complete: () => {
-          this.isLoadingReleases.set(false);
-        },
-      });
-  }
-
   navigateToDetail(article: ArticleCard) {
     const { releaseCode, slug, category } = article;
     const release: ReleaseLocalStorage = {
       code: releaseCode,
       isCurrent:
-        this.releases().find((item) => item.releaseCode === releaseCode)?.isCurrentRelease ?? false,
+        this.releases.data()?.find((item) => item.releaseCode === releaseCode)?.isCurrentRelease ??
+        false,
     };
     this.localStorageService.setItem('release', JSON.stringify(release));
     this.router.navigate([`/articles/${releaseCode.toLowerCase()}/${category}/${slug}`]);

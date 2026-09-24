@@ -1,24 +1,17 @@
 import { TitlePage } from '@/shared/components/title-page/title-page';
-import {
-  Component,
-  computed,
-  DestroyRef,
-  inject,
-  OnInit,
-  signal,
-  ViewEncapsulation,
-} from '@angular/core';
+import { Component, computed, inject, signal, ViewEncapsulation } from '@angular/core';
 import es from '@/i18n/es.json';
 import { Router } from '@angular/router';
 import { publicLayoutPage } from '../../utils';
 import { AboutUsService } from '../../services';
 import { AboutUsApi, ReleaseLocalStorage } from '../../interfaces';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { SafeHtmlPipe } from '../../pipes';
 import { NgClass } from '@angular/common';
 import { Spinner } from '@/shared/components/spinner/spinner';
 import { ReleaseCode, ViewState } from '../../types';
 import { LocalStorageService } from '@/core/services';
+import { injectQuery } from '@tanstack/angular-query-experimental';
+import { lastValueFrom } from 'rxjs';
 
 @Component({
   selector: 'out-about-us-page',
@@ -27,23 +20,13 @@ import { LocalStorageService } from '@/core/services';
   styleUrl: './about-us-page.scss',
   encapsulation: ViewEncapsulation.None,
 })
-export class AboutUsPage implements OnInit {
+export class AboutUsPage {
   protected readonly i18n = es;
   router = inject(Router);
-  private destroyRef = inject(DestroyRef);
   private aboutUsService = inject(AboutUsService);
   private localStorageService = inject(LocalStorageService);
 
   layoutPage = signal<string>(publicLayoutPage);
-  isLoading = signal(false);
-  errorMessageApi = signal<string>('');
-  info = signal<AboutUsApi>({} as AboutUsApi);
-  viewState = computed<ViewState>(() => {
-    if (this.isLoading()) return 'loading';
-    if (this.errorMessageApi()) return 'error';
-    if (this.info()?.isPublished && !this.info()?.isDraft) return 'available';
-    return 'empty';
-  });
   releaseCodeLocalStorage = computed<ReleaseCode>(() => {
     if (this.localStorageService.getItem('release')) {
       const releaseLS: ReleaseLocalStorage = JSON.parse(
@@ -54,36 +37,22 @@ export class AboutUsPage implements OnInit {
     return '';
   });
 
-  ngOnInit(): void {
-    this.getAboutUsInfo();
-  }
-
-  getAboutUsInfo(): void {
-    this.isLoading.set(true);
-    this.aboutUsService
-      .getAboutUsInfo()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (data) => {
-          const currentVersion = data.find(
-            (item) => item.releaseCode === this.releaseCodeLocalStorage(),
-          );
-          if (!currentVersion) {
-            this.errorMessageApi.set(this.i18n.aboutUs.noCurrentVersion);
-            this.isLoading.set(false);
-            return;
-          }
-          this.info.set(currentVersion);
-        },
-        error: (error) => {
-          this.errorMessageApi.set(error ?? this.i18n.common.serverError);
-          this.isLoading.set(false);
-        },
-        complete: () => {
-          this.isLoading.set(false);
-        },
-      });
-  }
+  readonly infoApi = injectQuery(() => ({
+    queryKey: ['infoAboutUsApi'],
+    queryFn: () => lastValueFrom(this.aboutUsService.getAboutUsInfo()),
+    staleTime: 1000 * 60 * 5,
+  }));
+  info = computed<AboutUsApi>(
+    () =>
+      this.infoApi.data()?.find((item) => item.releaseCode === this.releaseCodeLocalStorage()) ??
+      ({} as AboutUsApi),
+  );
+  viewState = computed<ViewState>(() => {
+    if (this.infoApi.isLoading()) return 'loading';
+    if (this.infoApi.isError()) return 'error';
+    if (this.info()?.isPublished && !this.info()?.isDraft) return 'available';
+    return 'empty';
+  });
 
   navigateToHome() {
     this.router.navigate(['/']);

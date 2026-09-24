@@ -5,7 +5,8 @@ import {
   provideBrowserGlobalErrorListeners,
 } from '@angular/core';
 import { provideRouter } from '@angular/router';
-
+import { provideTanStackQuery, QueryClient } from '@tanstack/angular-query-experimental';
+import { withDevtools } from '@tanstack/angular-query-experimental/devtools';
 import { routes } from './app.routes';
 import { provideClientHydration } from '@angular/platform-browser';
 import { provideHttpClient } from '@angular/common/http';
@@ -18,7 +19,8 @@ export const appConfig: ApplicationConfig = {
     provideClientHydration(),
     provideHttpClient(),
     provideAppInitializer(() => {
-      inject(SetInitReleaseService).setInitReleaseLocalStorage();
+      inject(SetInitReleaseService).releases;
     }),
+    provideTanStackQuery(new QueryClient(), withDevtools()),
   ],
 };

@@ -31,7 +31,6 @@ export class PublicHeader {
   ]);
 
   navigateToHomePage(): void {
-    this.setInitiReleaseService.setInitReleaseLocalStorage();
     this.router.navigate(['/']);
   }
 }

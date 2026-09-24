@@ -12,7 +12,9 @@
       @case ('error') {
         <div class="w-full">
           <div role="alert" class="alert alert-error alert-soft w-full">
-            <span class="text-xl font-semibold">{{ errorMessageApi() }}</span>
+            <span class="text-xl font-semibold">{{
+              infoApi.error() ?? i18n.common.serverError
+            }}</span>
           </div>
         </div>
       }
@@ -21,7 +23,7 @@
         <div class="flex flex-col gap-8">
           <div
             class="content-info text-base lg:text-lg"
-            [innerHTML]="info()?.mainText | safeHtml"
+            [innerHTML]="info().mainText | safeHtml"
           ></div>
 
           <div class="flex flex-col gap-5">
