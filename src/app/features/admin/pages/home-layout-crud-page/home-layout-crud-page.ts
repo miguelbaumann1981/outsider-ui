@@ -10,6 +10,8 @@ import { ViewState } from '@/features/public/types';
 import { HomeLayoutApi, ReleasesApi } from '@/features/public/interfaces';
 import { HomeService, ReleasesService } from '@/features/public/services';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { HandleEditMode } from '../../services';
+import { SetInitReleaseService } from '@/core/services';
 
 interface HomeLayoutCard extends HomeLayoutApi {
   title: string;
@@ -23,20 +25,24 @@ interface HomeLayoutCard extends HomeLayoutApi {
 export class HomeLayoutCrudPage implements OnInit {
   protected readonly i18n = es;
   private destroyRef = inject(DestroyRef);
-  router = inject(Router);
+  private router = inject(Router);
   readonly dialog = inject(MatDialog);
   private homeService = inject(HomeService);
-  private releasesService = inject(ReleasesService);
+  private handleEditMode = inject(HandleEditMode);
+  private setInitReleasesService = inject(SetInitReleaseService);
 
+  readonly releasesApi = this.setInitReleasesService.releases;
   isLoadingHomeLayouts = signal(false);
   isLoadingReleases = signal(false);
   errorMessageApi = signal<string>('');
   homeLayouts = signal<HomeLayoutCard[]>([]);
-  releases = signal<ReleasesApi[]>([]);
+  releases = computed<ReleasesApi[]>(
+    () => this.releasesApi.data()?.sort((a, b) => b.index - a.index) ?? [],
+  );
 
   viewState = computed<ViewState>(() => {
-    if (this.isLoadingHomeLayouts() || this.isLoadingReleases()) return 'loading';
-    if (this.errorMessageApi()) return 'error';
+    if (this.releasesApi.isLoading()) return 'loading';
+    if (this.releasesApi.isError()) return 'error';
     if (this.homeLayouts().length > 0) return 'available';
     return 'empty';
   });
@@ -46,7 +52,13 @@ export class HomeLayoutCrudPage implements OnInit {
   });
 
   ngOnInit(): void {
-    this.getReleasesApi();
+    this.handleEditMode.getEditMode().subscribe((isEdited: boolean) => {
+      if (isEdited) {
+        // this.setInitReleasesService.releases.refetch();
+      }
+    });
+
+    // this.getReleasesApi();
     this.getHomeLayoutsApi();
   }
 
@@ -76,24 +88,24 @@ export class HomeLayoutCrudPage implements OnInit {
       });
   }
 
-  getReleasesApi(): void {
-    this.isLoadingReleases.set(true);
-    this.releasesService
-      .getReleases()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (data) => {
-          this.releases.set(data.sort((a, b) => b.index - a.index) ?? []);
-        },
-        error: (error) => {
-          this.errorMessageApi.set(error ?? this.i18n.common.serverError);
-          this.isLoadingReleases.set(false);
-        },
-        complete: () => {
-          this.isLoadingReleases.set(false);
-        },
-      });
-  }
+  // getReleasesApi(): void {
+  //   this.isLoadingReleases.set(true);
+  //   this.releasesService
+  //     .getReleases()
+  //     .pipe(takeUntilDestroyed(this.destroyRef))
+  //     .subscribe({
+  //       next: (data) => {
+  //         this.releases.set(data.sort((a, b) => b.index - a.index) ?? []);
+  //       },
+  //       error: (error) => {
+  //         this.errorMessageApi.set(error ?? this.i18n.common.serverError);
+  //         this.isLoadingReleases.set(false);
+  //       },
+  //       complete: () => {
+  //         this.isLoadingReleases.set(false);
+  //       },
+  //     });
+  // }
 
   onCreateNewLayout(): void {
     this.router.navigate(['/admin/home-layout-crud/new']);

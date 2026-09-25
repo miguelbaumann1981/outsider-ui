@@ -61,7 +61,7 @@ export class ArticlePreviewPage implements OnInit {
   private homeService = inject(HomeService);
   private activatedRoute = inject(ActivatedRoute);
   private destroyRef = inject(DestroyRef);
-  router = inject(Router);
+  private router = inject(Router);
 
   articleSelected = signal<Article>({} as Article);
   activeParam = signal<string>('');

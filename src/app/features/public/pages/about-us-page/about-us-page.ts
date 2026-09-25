@@ -2,7 +2,7 @@ import { TitlePage } from '@/shared/components/title-page/title-page';
 import { Component, computed, inject, signal, ViewEncapsulation } from '@angular/core';
 import es from '@/i18n/es.json';
 import { Router } from '@angular/router';
-import { publicLayoutPage } from '../../utils';
+import { publicLayoutPage, staleTime } from '../../utils';
 import { AboutUsService } from '../../services';
 import { AboutUsApi, ReleaseLocalStorage } from '../../interfaces';
 import { SafeHtmlPipe } from '../../pipes';
@@ -22,7 +22,7 @@ import { lastValueFrom } from 'rxjs';
 })
 export class AboutUsPage {
   protected readonly i18n = es;
-  router = inject(Router);
+  private router = inject(Router);
   private aboutUsService = inject(AboutUsService);
   private localStorageService = inject(LocalStorageService);
 
@@ -40,7 +40,7 @@ export class AboutUsPage {
   readonly infoApi = injectQuery(() => ({
     queryKey: ['infoAboutUsApi'],
     queryFn: () => lastValueFrom(this.aboutUsService.getAboutUsInfo()),
-    staleTime: 1000 * 60 * 5,
+    staleTime,
   }));
   info = computed<AboutUsApi>(
     () =>

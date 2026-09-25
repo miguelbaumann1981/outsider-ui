@@ -20,6 +20,7 @@ import { ReleaseCode, ViewState } from '../../types';
 import { LocalStorageService, SetInitReleaseService } from '@/core/services';
 import { injectQuery } from '@tanstack/angular-query-experimental';
 import { lastValueFrom } from 'rxjs';
+import { staleTime } from '../../utils';
 
 @Component({
   selector: 'out-home-page',
@@ -62,7 +63,7 @@ export class HomePage implements OnInit, AfterViewInit {
   private setInitReleasesService = inject(SetInitReleaseService);
   private platformId = inject(PLATFORM_ID);
   private localStorageService = inject(LocalStorageService);
-  router = inject(Router);
+  private router = inject(Router);
 
   title = signal('Outsider');
   releaseCodeLocalStorage = computed<ReleaseCode>(() => {
@@ -86,12 +87,12 @@ export class HomePage implements OnInit, AfterViewInit {
   readonly articlesApi = injectQuery(() => ({
     queryKey: ['articlesApi', this.releaseCodeLocalStorage()],
     queryFn: () => lastValueFrom(this.homeService.getArticles(this.releaseCodeLocalStorage())),
-    staleTime: 1000 * 60 * 5,
+    staleTime,
   }));
   readonly homeLayoutApi = injectQuery(() => ({
     queryKey: ['homeLayoutApi'],
     queryFn: () => lastValueFrom(this.homeService.getHomeLayout()),
-    staleTime: 1000 * 60 * 5,
+    staleTime,
   }));
 
   articlesRelease = computed<ArticleCard[]>(() => {

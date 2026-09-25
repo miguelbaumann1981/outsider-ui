@@ -50,7 +50,7 @@ const ALL_CATEGORIES: ArticleCategory[] = [
 export class HomeLayoutCrudDetailPage implements OnInit {
   protected readonly i18n = es;
   private destroyRef = inject(DestroyRef);
-  router = inject(Router);
+  private router = inject(Router);
   private activatedRoute = inject(ActivatedRoute);
   private homeService = inject(HomeService);
   private releasesService = inject(ReleasesService);

@@ -4,6 +4,7 @@ import { ReleasesService } from '@/features/public/services';
 import { ReleaseLocalStorage } from '@/features/public/interfaces';
 import { injectQuery } from '@tanstack/angular-query-experimental';
 import { lastValueFrom } from 'rxjs';
+import { staleTime } from '@/features/public/utils';
 
 @Service()
 export class SetInitReleaseService {
@@ -13,7 +14,7 @@ export class SetInitReleaseService {
   readonly releases = injectQuery(() => ({
     queryKey: ['releases'],
     queryFn: () => lastValueFrom(this.releasesService.getReleases()),
-    staleTime: 1000 * 60 * 30,
+    staleTime,
   }));
 
   setInitReleaseLocalStorage(): void {

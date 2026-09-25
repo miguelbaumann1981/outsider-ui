@@ -4,19 +4,16 @@ import { firstValueFrom } from 'rxjs';
 import { AuthService } from '../services/auth.service';
 
 export const NotAuthenticatedGuard: CanMatchFn = async (route: Route, segments: UrlSegment[]) => {
-    
-    const authService = inject(AuthService);
-    const router = inject(Router);
+  const authService = inject(AuthService);
+  const router = inject(Router);
 
-    // const isAuthenticated = await firstValueFrom(authService.checkUserStatus());
-    const isAuthenticated = authService.isAuthenticated();
-    console.log('isAuthenticated?', isAuthenticated);
-    if (isAuthenticated) {
-        router.navigateByUrl('/');
-        return false;
-    }
+  // const isAuthenticated = await firstValueFrom(authService.checkUserStatus());
+  const isAuthenticated = authService.isAuthenticated();
+  console.log('isAuthenticated?', isAuthenticated);
+  if (isAuthenticated) {
+    router.navigateByUrl('/');
+    return false;
+  }
 
-
-
-    return true;
-}
+  return true;
+};

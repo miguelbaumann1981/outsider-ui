@@ -9,28 +9,35 @@
     @case ('error') {
       <div class="w-full">
         <div role="alert" class="alert alert-error alert-soft w-full">
-          <span class="text-xl font-semibold">{{ errorMessageApi() }}</span>
+          <p class="text-xl font-semibold">
+            {{ homeLayoutApi.error() ?? i18n.common.serverError }}
+          </p>
+          <p class="text-xl font-semibold">
+            {{ articleSelected.error() ?? i18n.common.serverError }}
+          </p>
         </div>
       </div>
     }
 
     @case ('available') {
       <out-title-page
-        [text]="articleSelected()?.titleCategory"
-        [category]="articleSelected()?.category"
+        [text]="articleSelected.data()?.titleCategory ?? ''"
+        [category]="articleSelected.data()?.category"
         [color]="color()"
-        (return)="navigateToReleasePage(articleSelected()?.releaseCode)"
+        (return)="navigateToReleasePage(articleSelected.data()?.releaseCode ?? '')"
       />
 
       <div class="rounded-lg border border-gray-200 bg-white px-4 py-6 shadow-lg lg:px-10">
         <div class="flex flex-col gap-5">
           <!-- HEADER -->
           <div class="flex flex-col gap-3">
-            <h3 class="text-xl font-semibold lg:text-2xl">{{ articleSelected()?.titleArticle }}</h3>
+            <h3 class="text-xl font-semibold lg:text-2xl">
+              {{ articleSelected.data()?.titleArticle }}
+            </h3>
 
             <div class="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
               <h4 class="text-base font-semibold text-gray-500 italic lg:text-lg">
-                {{ articleSelected()?.authorArticle }}
+                {{ articleSelected.data()?.authorArticle }}
               </h4>
 
               <div class="flex items-center gap-2">
@@ -52,13 +59,13 @@
           </div>
 
           <!-- CONTENT -->
-          @if (articleSelected()?.quote) {
+          @if (articleSelected.data()?.quote) {
             <div class="block flex flex-col items-end gap-2 lg:hidden">
               <blockquote
                 class="border-r-4 border-gray-400 pr-4 text-right text-sm italic"
-                [innerHTML]="articleSelected()?.quote! | safeHtml"
+                [innerHTML]="articleSelected.data()?.quote! | safeHtml"
               ></blockquote>
-              <label class="text-sm font-semibold">{{ articleSelected()?.authorQuote }}</label>
+              <label class="text-sm font-semibold">{{ articleSelected.data()?.authorQuote }}</label>
             </div>
           }
           <article class="grid grid-cols-1 gap-5 lg:grid-cols-3 lg:gap-20">
@@ -66,29 +73,29 @@
               <div class="content-article">
                 <div
                   class="text-sm lg:text-lg"
-                  [innerHTML]="articleSelected()?.content | safeHtml"
+                  [innerHTML]="articleSelected.data()?.content ?? '' | safeHtml"
                 ></div>
               </div>
             </div>
 
             <div class="col-span-1 flex flex-col gap-3">
-              @if (articleSelected()?.quote) {
+              @if (articleSelected.data()?.quote) {
                 <div
                   class="flex hidden flex-col justify-end justify-items-end gap-3 lg:inline-block"
                 >
                   <blockquote
                     class="border-r-4 border-gray-400 pr-4 text-right text-sm italic"
-                    [innerHTML]="articleSelected()?.quote! | safeHtml"
+                    [innerHTML]="articleSelected.data()?.quote! | safeHtml"
                   ></blockquote>
                   <div class="mt-3 flex justify-end">
                     <label class="text-right text-sm font-semibold">{{
-                      articleSelected()?.authorQuote
+                      articleSelected.data()?.authorQuote
                     }}</label>
                   </div>
                 </div>
               }
               <img
-                [src]="articleSelected()?.image"
+                [src]="articleSelected.data()?.image"
                 appImgFallback="/assets/foto-libros.jpg"
                 class="rounded-lg"
                 width="100%"
@@ -96,20 +103,20 @@
               />
               <span
                 class="text-sm text-gray-500"
-                [innerHTML]="articleSelected()?.references ?? '' | safeHtml"
+                [innerHTML]="articleSelected.data()?.references ?? '' | safeHtml"
               ></span>
 
               <!-- ABOUT AUTHOR -->
-              @if (articleSelected()?.authorInfo) {
+              @if (articleSelected.data()?.authorInfo) {
                 <div class="mt-5 flex flex-col gap-2">
                   <hr class="border-gray-300" />
                   <p class="text-sm font-semibold lg:text-base">
-                    {{ articleSelected()?.subtitle }}
+                    {{ articleSelected.data()?.subtitle }}
                   </p>
 
                   <div
                     class="content-info"
-                    [innerHTML]="articleSelected()?.authorInfo! | safeHtml"
+                    [innerHTML]="articleSelected.data()?.authorInfo! | safeHtml"
                   ></div>
                 </div>
               }

@@ -12,7 +12,7 @@ import { SetInitReleaseService } from '../../../core/services/set-init-release.s
 })
 export class PublicHeader {
   private setInitiReleaseService = inject(SetInitReleaseService);
-  router = inject(Router);
+  private router = inject(Router);
   protected readonly i18n = es;
 
   menu = signal<MenuItem[]>([
@@ -20,10 +20,10 @@ export class PublicHeader {
       text: this.i18n.menu.aboutUs,
       url: '/about-us',
     },
-    // {
-    //   text: this.i18n.menu.allReleases,
-    //   url: '/releases',
-    // },
+    {
+      text: this.i18n.menu.allReleases,
+      url: '/releases',
+    },
     {
       text: this.i18n.menu.contact,
       url: '/contact',

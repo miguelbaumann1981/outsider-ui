@@ -28,7 +28,7 @@ export class ArticlesCrudPage implements OnInit {
   private releasesService = inject(ReleasesService);
   private homeService = inject(HomeService);
   private destroyRef = inject(DestroyRef);
-  router = inject(Router);
+  private router = inject(Router);
 
   isLoadingArticles = signal(false);
   releases = signal<ReleasesApi[]>([]);

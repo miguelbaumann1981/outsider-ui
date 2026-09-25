@@ -16,7 +16,12 @@
       @case ('error') {
         <div class="w-full">
           <div role="alert" class="alert alert-error alert-soft w-full">
-            <span class="text-xl font-semibold">{{ errorMessageApi() }}</span>
+            <p class="text-xl font-semibold">
+              {{ releasesApi.error() ?? i18n.common.serverError }}
+            </p>
+            <p class="text-xl font-semibold">
+              {{ articlesApi.error() ?? i18n.common.serverError }}
+            </p>
           </div>
         </div>
       }

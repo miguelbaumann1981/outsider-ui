@@ -26,7 +26,7 @@ import { toast, NgxSonnerToaster } from 'ngx-sonner';
 export class ContactPage {
   protected readonly i18n = es;
   protected readonly toast = toast;
-  router = inject(Router);
+  private router = inject(Router);
   contactService = inject(ContactService);
 
   layoutPage = signal<string>(publicLayoutPage);

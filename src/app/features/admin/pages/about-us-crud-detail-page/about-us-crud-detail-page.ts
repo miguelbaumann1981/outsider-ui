@@ -46,7 +46,7 @@ const ALL_CATEGORIES: ArticleCategory[] = [
 export class AboutUsCrudDetailPage implements OnInit {
   protected readonly i18n = es;
   private destroyRef = inject(DestroyRef);
-  router = inject(Router);
+  private router = inject(Router);
   private activatedRoute = inject(ActivatedRoute);
   private aboutUsService = inject(AboutUsService);
   private releasesService = inject(ReleasesService);

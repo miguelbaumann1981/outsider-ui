@@ -20,7 +20,7 @@ export class AboutUsPreviewPage implements OnInit {
   private destroyRef = inject(DestroyRef);
   private aboutUsService = inject(AboutUsService);
   private activatedRoute = inject(ActivatedRoute);
-  router = inject(Router);
+  private router = inject(Router);
 
   info = signal<AboutUsApi>({} as AboutUsApi);
   activeParam = signal<string>('');

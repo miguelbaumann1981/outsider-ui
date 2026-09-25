@@ -60,7 +60,7 @@ const EMPTY_IMAGE: string = '/assets/empty-picture.png';
 export class ArticlesCrudDetailPage implements OnInit {
   protected readonly i18n = es;
   private destroyRef = inject(DestroyRef);
-  router = inject(Router);
+  private router = inject(Router);
   private activatedRoute = inject(ActivatedRoute);
   private releasesService = inject(ReleasesService);
   private homeService = inject(HomeService);

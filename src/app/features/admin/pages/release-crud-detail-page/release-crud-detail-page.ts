@@ -1,15 +1,20 @@
 import { SubtitlePage } from '@/shared/components/subtitle-page/subtitle-page';
-import { Component, DestroyRef, inject, signal, OnInit, computed } from '@angular/core';
+import { Component, DestroyRef, inject, signal, computed, effect } from '@angular/core';
 import es from '@/i18n/es.json';
 import { apply, disabled, form, FormField, FormRoot, schema } from '@angular/forms/signals';
 import { ReleasesCrud } from '../../interfaces';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ReleasesApi } from '@/features/public/interfaces';
 import { ReleasesService } from '@/features/public/services';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { releaseSchemaBase } from './release-crud-form-schema';
 import { toast, NgxSonnerToaster } from 'ngx-sonner';
 import { ReleaseCode } from '@/features/public/types';
+import { SetInitReleaseService } from '@/core/services';
+import { injectQuery } from '@tanstack/angular-query-experimental';
+import { staleTime } from '@/features/public/utils';
+import { lastValueFrom, map } from 'rxjs';
+import { HandleEditMode } from '../../services';
 
 const RELEASE_MODEL: ReleasesCrud = {
   name: '',
@@ -27,23 +32,35 @@ const RELEASE_MODEL: ReleasesCrud = {
   imports: [SubtitlePage, FormField, FormRoot, NgxSonnerToaster],
   templateUrl: './release-crud-detail-page.html',
 })
-export class ReleaseCrudDetailPage implements OnInit {
+export class ReleaseCrudDetailPage {
   protected readonly i18n = es;
   private destroyRef = inject(DestroyRef);
-  router = inject(Router);
+  private router = inject(Router);
   private activatedRoute = inject(ActivatedRoute);
   private releasesService = inject(ReleasesService);
+  private setInitReleasesService = inject(SetInitReleaseService);
+  private handleEditMode = inject(HandleEditMode);
 
-  activeParam = signal<string | 'new'>('');
-  allReleases = signal<ReleasesApi[]>([]);
-  selectedRelease = signal<ReleasesApi>({} as ReleasesApi);
   isLoading = signal(false);
+  activeParam = toSignal(this.activatedRoute.params.pipe(map((params) => params['id'])), {
+    initialValue: '',
+  });
+
+  readonly releasesApi = this.setInitReleasesService.releases;
+  readonly selectedRelease = injectQuery(() => ({
+    queryKey: ['release', this.activeParam()],
+    queryFn: () => lastValueFrom(this.releasesService.getReleaseById(this.activeParam()!)),
+    enabled: this.activeParam() !== '',
+    staleTime,
+  }));
+
+  allReleases = computed<ReleasesApi[]>(() => this.releasesApi.data() ?? []);
   subtitlePage = computed<string>(() =>
     this.activeParam() === 'new'
       ? this.i18n.releases.createNewRelease
       : this.i18n.releases.editRelease,
   );
-  newIndexRelease = computed<number>(() => this.allReleases().length + 1);
+  newIndexRelease = computed<number>(() => this.allReleases()?.length + 1);
 
   releaseSchema = schema<ReleasesCrud>((path) => {
     apply(path, releaseSchemaBase);
@@ -51,64 +68,17 @@ export class ReleaseCrudDetailPage implements OnInit {
     disabled(path.index);
   });
 
-  releaseModel = signal<ReleasesCrud>({ ...RELEASE_MODEL, index: this.newIndexRelease() });
+  releaseModel = signal<ReleasesCrud>({ ...RELEASE_MODEL });
+
+  private syncReleaseModel = effect(() => {
+    if (this.activeParam() !== 'new') {
+      this.releaseModel.set(this.selectedRelease.data() ?? RELEASE_MODEL);
+    } else {
+      this.releaseModel.set({ ...RELEASE_MODEL, index: this.newIndexRelease() });
+    }
+  });
 
   readonly releaseForm = form(this.releaseModel, this.releaseSchema);
-
-  ngOnInit(): void {
-    this.getReleasesApi();
-    this.handleCrudRelease();
-  }
-
-  handleCrudRelease(): void {
-    this.activatedRoute.params.subscribe((params) => {
-      this.activeParam.set(params['id']);
-
-      if (this.activeParam() !== 'new') {
-        this.getSelectedRelease(this.activeParam());
-      }
-    });
-  }
-
-  getReleasesApi(): void {
-    this.releasesService
-      .getReleases()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (data) => {
-          this.allReleases.set(data ?? []);
-          if (this.activeParam() === 'new') {
-            this.releaseModel.update((model) => ({
-              ...model,
-              index: this.newIndexRelease(),
-            }));
-          }
-        },
-        error: (error) => {
-          toast.error(error ?? this.i18n.common.serverError);
-        },
-      });
-  }
-
-  getSelectedRelease(id: string): void {
-    this.isLoading.set(true);
-    this.releasesService
-      .getReleaseById(id)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (data) => {
-          this.selectedRelease.set(data);
-          this.releaseModel.set(this.selectedRelease());
-        },
-        error: () => {
-          toast.error(this.i18n.common.serverError);
-          this.isLoading.set(false);
-        },
-        complete: () => {
-          this.isLoading.set(false);
-        },
-      });
-  }
 
   checkCodeReleaseIsAvailable(code: ReleaseCode): boolean {
     return this.allReleases().some((item) => item.releaseCode === code);
@@ -121,6 +91,7 @@ export class ReleaseCrudDetailPage implements OnInit {
       .subscribe({
         next: () => {
           toast.success(this.i18n.releases.successCreateMessageForm);
+          this.handleEditMode.setEditMode(true);
         },
         error: () => {
           toast.error(this.i18n.releases.errorCreateMessageForm);
@@ -130,7 +101,7 @@ export class ReleaseCrudDetailPage implements OnInit {
           this.isLoading.set(false);
           this.releaseForm().reset(RELEASE_MODEL);
           setTimeout(() => {
-            this.navigateToPreviousPage();
+            this.navigateToPreviousPage(true);
           }, 1500);
         },
       });
@@ -151,7 +122,7 @@ export class ReleaseCrudDetailPage implements OnInit {
         complete: () => {
           this.isLoading.set(false);
           setTimeout(() => {
-            this.navigateToPreviousPage();
+            this.navigateToPreviousPage(true);
           }, 1500);
         },
       });
@@ -176,7 +147,8 @@ export class ReleaseCrudDetailPage implements OnInit {
     }
   }
 
-  navigateToPreviousPage(): void {
+  navigateToPreviousPage(isEdited?: boolean): void {
     this.router.navigate(['/admin/releases-crud']);
+    this.handleEditMode.setEditMode(isEdited ?? false);
   }
 }

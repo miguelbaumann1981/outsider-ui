@@ -1,33 +1,20 @@
-import {
-  Component,
-  computed,
-  DestroyRef,
-  inject,
-  OnInit,
-  signal,
-  ViewEncapsulation,
-} from '@angular/core';
+import { Component, computed, inject, OnInit, signal, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SafeHtmlPipe } from '../../pipes';
 import { ArticleCategory } from '../../enums';
 import { HomeService } from '../../services/home.service';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TitlePage } from '@/shared/components/title-page/title-page';
-import { publicLayoutPage, textTeal600, WINDOW } from '../../utils';
+import { publicLayoutPage, staleTime, textTeal600, WINDOW } from '../../utils';
 import { ReleaseCode, ViewState } from '../../types';
-import {
-  Article,
-  ArticleDetail,
-  HomeLayoutApi,
-  ReleaseLocalStorage,
-  ShareSocialItem,
-} from '../../interfaces';
+import { Article, ArticleDetail, ReleaseLocalStorage, ShareSocialItem } from '../../interfaces';
 import { ImgFallbackDirective } from '../../directives';
 import { Spinner } from '@/shared/components/spinner/spinner';
 import es from '@/i18n/es.json';
 import { LocalStorageService } from '@/core/services';
 import { ShareSocialService } from '../../services';
 import { Meta, Title } from '@angular/platform-browser';
+import { injectQuery } from '@tanstack/angular-query-experimental';
+import { lastValueFrom } from 'rxjs';
 
 const SOCIAL_MEDIA: ShareSocialItem[] = [
   {
@@ -75,47 +62,57 @@ export class ArticleDetailPage implements OnInit {
   private homeService = inject(HomeService);
   private shareSocialService = inject(ShareSocialService);
   private activatedRoute = inject(ActivatedRoute);
-  private destroyRef = inject(DestroyRef);
   private meta = inject(Meta);
   private title = inject(Title);
   private _window = inject(WINDOW);
-  router = inject(Router);
+  private router = inject(Router);
 
   articleDetail = signal<ArticleDetail>({
     category: ArticleCategory.EDITORIAL,
     releaseCode: '',
     slug: '',
   });
-  articleSelected = signal<Article>({} as Article);
   layoutPage = signal<string>(publicLayoutPage);
-  isLoadingArticle = signal(false);
-  isLoadingLayout = signal(false);
-  errorMessageApi = signal<string>('');
-  homeLayoutApi = signal<HomeLayoutApi[]>([]);
+
+  readonly articleSelected = injectQuery(() => {
+    const { releaseCode, slug } = this.articleDetail();
+    return {
+      queryKey: ['articleSelected', releaseCode, slug],
+      queryFn: () => lastValueFrom(this.homeService.getArticleBySlug(releaseCode, slug)),
+      staleTime,
+    };
+  });
+
+  readonly homeLayoutApi = injectQuery(() => ({
+    queryKey: ['homeLayoutApi'],
+    queryFn: () => lastValueFrom(this.homeService.getHomeLayout()),
+    staleTime,
+  }));
+
   socialMediaItems = computed<ShareSocialItem[]>(() =>
-    SOCIAL_MEDIA.map((item) => ({ ...item, article: this.articleSelected() })),
+    SOCIAL_MEDIA.map((item) => ({ ...item, article: this.articleSelected.data() })),
   );
 
   color = computed<string>(() => {
     const layoutFeatures =
-      this.homeLayoutApi().find((item) => item.releaseCode === this.articleSelected().releaseCode)
-        ?.features ?? [];
+      this.homeLayoutApi
+        .data()
+        ?.find((item) => item.releaseCode === this.articleSelected.data()?.releaseCode)?.features ??
+      [];
     return (
       layoutFeatures.find((elem) => elem.category === this.articleDetail().category)?.color
         ?.solid ?? textTeal600
     );
   });
   viewState = computed<ViewState>(() => {
-    if (this.isLoadingLayout() || this.isLoadingArticle()) return 'loading';
-    if (this.errorMessageApi()) return 'error';
-    if (this.articleSelected() !== null) return 'available';
+    if (this.homeLayoutApi.isLoading() || this.articleSelected.isLoading()) return 'loading';
+    if (this.homeLayoutApi.isError() || this.articleSelected.isError()) return 'error';
+    if (this.articleSelected.data() !== null) return 'available';
     return 'empty';
   });
 
   ngOnInit(): void {
     this.getRouteParams();
-    this.getLayoutArticles();
-    this.getArticleData();
   }
 
   getRouteParams(): void {
@@ -128,45 +125,6 @@ export class ArticleDetailPage implements OnInit {
     });
   }
 
-  getArticleData(): void {
-    this.isLoadingArticle.set(true);
-    const { releaseCode, slug } = this.articleDetail();
-    this.homeService
-      .getArticleBySlug(releaseCode, slug)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (article) => {
-          this.articleSelected.set(article);
-        },
-        error: (error) => {
-          this.errorMessageApi.set(error ?? this.i18n.common.serverError);
-          this.isLoadingArticle.set(false);
-        },
-        complete: () => {
-          this.isLoadingArticle.set(false);
-        },
-      });
-  }
-
-  getLayoutArticles(): void {
-    this.isLoadingLayout.set(true);
-    this.homeService
-      .getHomeLayout()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (layoutData) => {
-          this.homeLayoutApi.set(layoutData);
-        },
-        error: (error) => {
-          this.errorMessageApi.set(error ?? this.i18n.common.serverError);
-          this.isLoadingLayout.set(false);
-        },
-        complete: () => {
-          this.isLoadingLayout.set(false);
-        },
-      });
-  }
-
   navigateToReleasePage(releaseCode: ReleaseCode): void {
     const releaseLS: ReleaseLocalStorage = JSON.parse(
       this.localStorageService.getItem('release') ?? '',
@@ -176,20 +134,35 @@ export class ArticleDetailPage implements OnInit {
   }
 
   addSocialMetatags(): void {
-    this.title.setTitle(this.articleSelected().titleArticle);
+    this.title.setTitle(this.articleSelected.data()?.titleArticle ?? '');
 
-    this.meta.updateTag({ property: 'og:title', content: this.articleSelected().titleArticle });
+    this.meta.updateTag({
+      property: 'og:title',
+      content: this.articleSelected.data()?.titleArticle ?? '',
+    });
     this.meta.updateTag({
       property: 'og:description',
-      content: this.articleSelected().content,
+      content: this.articleSelected.data()?.content ?? '',
     });
-    this.meta.updateTag({ property: 'og:image', content: this.articleSelected().image });
+    this.meta.updateTag({
+      property: 'og:image',
+      content: this.articleSelected.data()?.image ?? '',
+    });
     this.meta.updateTag({ property: 'og:url', content: this._window?.location?.href });
 
     this.meta.updateTag({ name: 'twitter:card', content: 'summary_large_image' });
-    this.meta.updateTag({ name: 'twitter:title', content: this.articleSelected().titleArticle });
-    this.meta.updateTag({ name: 'twitter:description', content: this.articleSelected().content });
-    this.meta.updateTag({ name: 'twitter:image', content: this.articleSelected().image });
+    this.meta.updateTag({
+      name: 'twitter:title',
+      content: this.articleSelected.data()?.titleArticle ?? '',
+    });
+    this.meta.updateTag({
+      name: 'twitter:description',
+      content: this.articleSelected.data()?.content ?? '',
+    });
+    this.meta.updateTag({
+      name: 'twitter:image',
+      content: this.articleSelected.data()?.image ?? '',
+    });
   }
 
   shareOnMedia(social: string): void | Promise<void> {
@@ -198,7 +171,10 @@ export class ArticleDetailPage implements OnInit {
 
     switch (social) {
       case 'Instagram':
-        return this.shareSocialService.shareOnInstagramMobile(url, this.articleSelected());
+        return this.shareSocialService.shareOnInstagramMobile(
+          url,
+          this.articleSelected.data() ?? ({} as Article),
+        );
 
       case 'Facebook':
         return this.shareSocialService.shareOnFacebook(url);
@@ -207,7 +183,10 @@ export class ArticleDetailPage implements OnInit {
         return this.shareSocialService.shareOnWhatsApp(url);
 
       case 'X':
-        return this.shareSocialService.shareOnX(url, this.articleSelected().titleArticle);
+        return this.shareSocialService.shareOnX(
+          url,
+          this.articleSelected.data()?.titleArticle ?? '',
+        );
 
       case 'LinkedIn':
         return this.shareSocialService.shareOnLinkedIn(url);

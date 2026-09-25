@@ -25,7 +25,7 @@ export class AboutUsCrudPage implements OnInit {
   private releasesService = inject(ReleasesService);
   private aboutUsService = inject(AboutUsService);
   private destroyRef = inject(DestroyRef);
-  router = inject(Router);
+  private router = inject(Router);
 
   isLoadingPage = signal(false);
   isLoadingReleases = signal(false);
