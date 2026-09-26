@@ -1,11 +1,11 @@
 import { SubtitlePage } from '@/shared/components/subtitle-page/subtitle-page';
-import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, DestroyRef, effect, inject, signal } from '@angular/core';
 import { NgxSonnerToaster, toast } from 'ngx-sonner';
 import es from '@/i18n/es.json';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HomeService, ReleasesService } from '@/features/public/services';
-import { ColorFeature, HomeLayoutApi, ReleasesApi } from '@/features/public/interfaces';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ColorFeature, HomeLayoutApi } from '@/features/public/interfaces';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { HomeLayoutCrud, ReleaseCodeSelect } from '../../interfaces';
 import { apply, disabled, form, FormField, FormRoot, schema } from '@angular/forms/signals';
 import { ArticleCategory } from '@/features/public/enums';
@@ -14,6 +14,11 @@ import { ReleaseCode } from '@/features/public/types';
 import { CategoryTranslatePipe } from '../../pipes';
 import { MatDialog } from '@angular/material/dialog';
 import { ColorPickerDialog } from '../../components/color-picker-dialog/color-picker-dialog';
+import { HandleEditMode } from '../../services';
+import { SetInitReleaseService } from '@/core/services';
+import { injectQuery } from '@tanstack/angular-query-experimental';
+import { lastValueFrom, map } from 'rxjs';
+import { staleTime } from '@/features/public/utils';
 
 interface HomeLayoutCard extends HomeLayoutApi {
   title: string;
@@ -47,119 +52,94 @@ const ALL_CATEGORIES: ArticleCategory[] = [
   imports: [SubtitlePage, FormField, FormRoot, NgxSonnerToaster, CategoryTranslatePipe],
   templateUrl: './home-layout-crud-detail-page.html',
 })
-export class HomeLayoutCrudDetailPage implements OnInit {
+export class HomeLayoutCrudDetailPage {
   protected readonly i18n = es;
   private destroyRef = inject(DestroyRef);
   private router = inject(Router);
   private activatedRoute = inject(ActivatedRoute);
   private homeService = inject(HomeService);
-  private releasesService = inject(ReleasesService);
+  private handleEditMode = inject(HandleEditMode);
+  private setInitReleasesService = inject(SetInitReleaseService);
   readonly dialog = inject(MatDialog);
 
   isLoading = signal(false);
-  activeParam = signal<string | 'new'>('');
-  homeLayouts = signal<HomeLayoutCard[]>([]);
-  selectedHomeLayout = signal<HomeLayoutApi>({} as HomeLayoutApi);
-  releases = signal<ReleasesApi[]>([]);
   optionReleaseCodeSelected = signal<ReleaseCode>('');
 
-  currentReleaseCode = computed<ReleaseCode>(() => {
-    return this.releases().find((item) => item.isCurrentRelease)?.releaseCode ?? '';
+  activeParam = toSignal(this.activatedRoute.params.pipe(map((params) => params['id'])), {
+    initialValue: '',
   });
-  activeLayouts = computed<ReleaseCode[]>(() => this.homeLayouts().map((elem) => elem.releaseCode));
 
+  readonly selectedHomeLayout = injectQuery(() => ({
+    queryKey: ['selectedHomeLayout', this.activeParam()],
+    queryFn: () => lastValueFrom(this.homeService.getHomeLayoutById(this.activeParam())),
+    enabled: this.activeParam() !== '' && this.activeParam() !== 'new',
+    staleTime,
+  }));
+  readonly releasesApi = this.setInitReleasesService.releases;
+  readonly homeLayoutsApi = injectQuery(() => ({
+    queryKey: ['homeLayoutsApi'],
+    queryFn: () => lastValueFrom(this.homeService.getHomeLayout()),
+    staleTime,
+  }));
+
+  currentReleaseCode = computed<ReleaseCode>(() => {
+    return this.releasesApi.data()?.find((item) => item.isCurrentRelease)?.releaseCode ?? '';
+  });
+  homeLayout = computed<HomeLayoutCard[]>(() => {
+    const data = this.homeLayoutsApi.data() ?? [];
+    return data?.map((item) => ({
+      ...item,
+      title:
+        this.releasesApi.data()?.find((release) => release.releaseCode === item.releaseCode)
+          ?.name ?? '',
+    }));
+  });
+  activeLayout = computed<ReleaseCode[]>(() => this.homeLayout().map((elem) => elem.releaseCode));
   subtitlePage = computed<string>(() =>
     this.activeParam() === 'new'
       ? this.i18n.homeLayout.createLayout
       : this.i18n.homeLayout.editHomeLayout,
   );
   releasesCodeOptions = computed<ReleaseCodeSelect[]>(() => {
-    return this.releases().map((item) => ({
-      code: item.releaseCode,
-      displayName: item.name,
-      disabled: this.activeLayouts()?.includes(item.releaseCode),
-    }));
+    return (
+      this.releasesApi.data()?.map((item) => ({
+        code: item.releaseCode,
+        displayName: item.name,
+        disabled: this.activeLayout()?.includes(item.releaseCode),
+      })) ?? []
+    );
   });
   releasesCodeCloneOptions = computed<ReleaseCodeSelect[]>(() => {
-    return this.releases().map((item) => ({
-      code: item.releaseCode,
-      displayName: item.name,
-      disabled: !this.activeLayouts()?.includes(item.releaseCode),
-    }));
+    return (
+      this.releasesApi.data()?.map((item) => ({
+        code: item.releaseCode,
+        displayName: item.name,
+        disabled: !this.activeLayout()?.includes(item.releaseCode),
+      })) ?? []
+    );
   });
 
   homeLayoutModel = signal<HomeLayoutCrud>(HOME_LAYOUT_MODEL);
   homeLayoutSchema = schema<HomeLayoutCrud>((path) => {
     apply(path, homeLayoutSchemaBase);
-
     disabled(path.releaseCode, { when: () => this.activeParam() !== 'new' });
   });
+
   readonly homeLayoutForm = form(this.homeLayoutModel, this.homeLayoutSchema);
 
-  ngOnInit(): void {
-    this.getHomeLayoutsApi();
-    this.handleCrudHomeLayouts();
-    this.getReleasesApi();
-  }
-
-  getHomeLayoutsApi(): void {
-    this.homeService
-      .getHomeLayout()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (data) => {
-          this.homeLayouts.set(
-            data.map((item) => {
-              const title =
-                this.releases().find((release) => release.releaseCode === item.releaseCode)?.name ??
-                '';
-              return { ...item, title };
-            }),
-          );
-        },
-        error: (error) => {
-          toast.error(error ?? this.i18n.common.serverError);
-        },
+  private syncHomeLayoutModel = effect(() => {
+    if (this.activeParam() === 'new') {
+      this.homeLayoutModel.set({
+        ...HOME_LAYOUT_MODEL,
+        features: HOME_LAYOUT_MODEL.features.map((item, index) => ({
+          ...item,
+          category: ALL_CATEGORIES[index % ALL_CATEGORIES.length],
+        })),
       });
-  }
-
-  handleCrudHomeLayouts(): void {
-    this.activatedRoute.params.subscribe((params) => {
-      this.activeParam.set(params['id']);
-
-      if (this.activeParam() === 'new') {
-        this.homeLayoutModel.set({
-          ...HOME_LAYOUT_MODEL,
-          features: this.homeLayoutModel().features.map((item, index) => ({
-            ...item,
-            category: ALL_CATEGORIES[index % ALL_CATEGORIES.length],
-          })),
-        });
-      } else {
-        this.getSelectedHomeLayout(this.activeParam());
-      }
-    });
-  }
-
-  getSelectedHomeLayout(id: string): void {
-    this.homeService
-      .getHomeLayoutById(id)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (data) => {
-          data.features.sort((a, b) => a.position - b.position);
-          this.selectedHomeLayout.set(data);
-          this.homeLayoutModel.set(this.selectedHomeLayout());
-        },
-        error: () => {
-          toast.error(this.i18n.common.serverError);
-          this.isLoading.set(false);
-        },
-        complete: () => {
-          this.isLoading.set(false);
-        },
-      });
-  }
+    } else {
+      this.homeLayoutModel.set(this.selectedHomeLayout.data() ?? HOME_LAYOUT_MODEL);
+    }
+  });
 
   getClonedHomeLayout(id: string): void {
     this.homeService
@@ -179,21 +159,6 @@ export class HomeLayoutCrudDetailPage implements OnInit {
         complete: () => {
           this.isLoading.set(false);
         },
-      });
-  }
-
-  getReleasesApi(): void {
-    this.releasesService
-      .getReleases()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (data) => {
-          this.releases.set(data);
-        },
-        error: (error) => {
-          toast.error(error ?? this.i18n.common.serverError);
-        },
-        complete: () => {},
       });
   }
 
@@ -241,7 +206,8 @@ export class HomeLayoutCrudDetailPage implements OnInit {
   }
 
   onCloneSelect(code: ReleaseCode): void {
-    const layoutId = this.homeLayouts().find((item) => item.releaseCode === code)?.id ?? 'new';
+    const layoutId =
+      this.homeLayoutsApi.data()?.find((item) => item.releaseCode === code)?.id ?? 'new';
 
     this.getClonedHomeLayout(layoutId);
   }
@@ -267,7 +233,7 @@ export class HomeLayoutCrudDetailPage implements OnInit {
     if (this.activeParam() === 'new') {
       this.createLayout(formData);
     } else {
-      this.updateLayout(this.selectedHomeLayout().id, formData);
+      this.updateLayout(this.selectedHomeLayout.data()?.id ?? '', formData);
     }
   }
 
@@ -286,7 +252,7 @@ export class HomeLayoutCrudDetailPage implements OnInit {
         complete: () => {
           this.isLoading.set(false);
           setTimeout(() => {
-            this.navigateToPreviousPage();
+            this.navigateToPreviousPage(true);
           }, 1500);
         },
       });
@@ -307,13 +273,14 @@ export class HomeLayoutCrudDetailPage implements OnInit {
         complete: () => {
           this.isLoading.set(false);
           setTimeout(() => {
-            this.navigateToPreviousPage();
+            this.navigateToPreviousPage(true);
           }, 1500);
         },
       });
   }
 
-  navigateToPreviousPage(): void {
+  navigateToPreviousPage(isEdited?: boolean): void {
     this.router.navigate(['/admin/home-layout-crud']);
+    this.handleEditMode.setEditMode(isEdited ?? false);
   }
 }

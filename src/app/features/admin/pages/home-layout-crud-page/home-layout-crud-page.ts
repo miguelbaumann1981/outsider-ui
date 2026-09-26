@@ -12,6 +12,9 @@ import { HomeService, ReleasesService } from '@/features/public/services';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { HandleEditMode } from '../../services';
 import { SetInitReleaseService } from '@/core/services';
+import { injectQuery } from '@tanstack/angular-query-experimental';
+import { lastValueFrom } from 'rxjs';
+import { staleTime } from '@/features/public/utils';
 
 interface HomeLayoutCard extends HomeLayoutApi {
   title: string;
@@ -24,7 +27,6 @@ interface HomeLayoutCard extends HomeLayoutApi {
 })
 export class HomeLayoutCrudPage implements OnInit {
   protected readonly i18n = es;
-  private destroyRef = inject(DestroyRef);
   private router = inject(Router);
   readonly dialog = inject(MatDialog);
   private homeService = inject(HomeService);
@@ -32,80 +34,43 @@ export class HomeLayoutCrudPage implements OnInit {
   private setInitReleasesService = inject(SetInitReleaseService);
 
   readonly releasesApi = this.setInitReleasesService.releases;
-  isLoadingHomeLayouts = signal(false);
-  isLoadingReleases = signal(false);
-  errorMessageApi = signal<string>('');
-  homeLayouts = signal<HomeLayoutCard[]>([]);
+  readonly homeLayoutApi = injectQuery(() => ({
+    queryKey: ['homeLayout'],
+    queryFn: () => lastValueFrom(this.homeService.getHomeLayout()),
+    staleTime,
+  }));
+
+  homeLayout = computed<HomeLayoutCard[]>(() => {
+    const data = this.homeLayoutApi.data() ?? [];
+    return data?.map((item) => ({
+      ...item,
+      title:
+        this.releasesApi.data()?.find((release) => release.releaseCode === item.releaseCode)
+          ?.name ?? '',
+    }));
+  });
   releases = computed<ReleasesApi[]>(
     () => this.releasesApi.data()?.sort((a, b) => b.index - a.index) ?? [],
   );
 
   viewState = computed<ViewState>(() => {
-    if (this.releasesApi.isLoading()) return 'loading';
-    if (this.releasesApi.isError()) return 'error';
-    if (this.homeLayouts().length > 0) return 'available';
+    if (this.releasesApi.isLoading() || this.homeLayoutApi.isLoading()) return 'loading';
+    if (this.releasesApi.isError() || this.homeLayoutApi.isError()) return 'error';
+    if (this.homeLayout().length > 0) return 'available';
     return 'empty';
   });
 
   currentRelease = computed<ReleasesApi>(() => {
-    return this.releases().find((item) => item.isCurrentRelease) ?? ({} as ReleasesApi);
+    return this.releasesApi.data()?.find((item) => item.isCurrentRelease) ?? ({} as ReleasesApi);
   });
 
   ngOnInit(): void {
     this.handleEditMode.getEditMode().subscribe((isEdited: boolean) => {
       if (isEdited) {
-        // this.setInitReleasesService.releases.refetch();
+        this.homeLayoutApi.refetch();
       }
     });
-
-    // this.getReleasesApi();
-    this.getHomeLayoutsApi();
   }
-
-  getHomeLayoutsApi(): void {
-    this.isLoadingHomeLayouts.set(true);
-    this.homeService
-      .getHomeLayout()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (data) => {
-          this.homeLayouts.set(
-            data.map((item) => {
-              const title =
-                this.releases().find((release) => release.releaseCode === item.releaseCode)?.name ??
-                '';
-              return { ...item, title };
-            }),
-          );
-        },
-        error: (error) => {
-          this.errorMessageApi.set(error ?? this.i18n.common.serverError);
-          this.isLoadingHomeLayouts.set(false);
-        },
-        complete: () => {
-          this.isLoadingHomeLayouts.set(false);
-        },
-      });
-  }
-
-  // getReleasesApi(): void {
-  //   this.isLoadingReleases.set(true);
-  //   this.releasesService
-  //     .getReleases()
-  //     .pipe(takeUntilDestroyed(this.destroyRef))
-  //     .subscribe({
-  //       next: (data) => {
-  //         this.releases.set(data.sort((a, b) => b.index - a.index) ?? []);
-  //       },
-  //       error: (error) => {
-  //         this.errorMessageApi.set(error ?? this.i18n.common.serverError);
-  //         this.isLoadingReleases.set(false);
-  //       },
-  //       complete: () => {
-  //         this.isLoadingReleases.set(false);
-  //       },
-  //     });
-  // }
 
   onCreateNewLayout(): void {
     this.router.navigate(['/admin/home-layout-crud/new']);

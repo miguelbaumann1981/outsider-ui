@@ -49,8 +49,8 @@ export class ReleaseCrudDetailPage {
   readonly releasesApi = this.setInitReleasesService.releases;
   readonly selectedRelease = injectQuery(() => ({
     queryKey: ['release', this.activeParam()],
-    queryFn: () => lastValueFrom(this.releasesService.getReleaseById(this.activeParam()!)),
-    enabled: this.activeParam() !== '',
+    queryFn: () => lastValueFrom(this.releasesService.getReleaseById(this.activeParam())),
+    enabled: this.activeParam() !== '' && this.activeParam() !== 'new',
     staleTime,
   }));
 
@@ -71,10 +71,10 @@ export class ReleaseCrudDetailPage {
   releaseModel = signal<ReleasesCrud>({ ...RELEASE_MODEL });
 
   private syncReleaseModel = effect(() => {
-    if (this.activeParam() !== 'new') {
-      this.releaseModel.set(this.selectedRelease.data() ?? RELEASE_MODEL);
-    } else {
+    if (this.activeParam() === 'new') {
       this.releaseModel.set({ ...RELEASE_MODEL, index: this.newIndexRelease() });
+    } else {
+      this.releaseModel.set(this.selectedRelease.data() ?? RELEASE_MODEL);
     }
   });
 
@@ -91,7 +91,6 @@ export class ReleaseCrudDetailPage {
       .subscribe({
         next: () => {
           toast.success(this.i18n.releases.successCreateMessageForm);
-          this.handleEditMode.setEditMode(true);
         },
         error: () => {
           toast.error(this.i18n.releases.errorCreateMessageForm);
