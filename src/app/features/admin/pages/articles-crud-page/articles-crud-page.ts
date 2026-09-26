@@ -1,14 +1,18 @@
 import { SubtitlePage } from '@/shared/components/subtitle-page/subtitle-page';
-import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import es from '@/i18n/es.json';
-import { HomeService, ReleasesService } from '@/features/public/services';
+import { HomeService } from '@/features/public/services';
 import { Router } from '@angular/router';
 import { ReleaseCode, ViewState } from '@/features/public/types';
 import { Article, ArticlesApi, ReleasesApi } from '@/features/public/interfaces';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Spinner } from '@/shared/components/spinner/spinner';
 import { NgClass, UpperCasePipe } from '@angular/common';
 import { ReleaseCodeSelect } from '../../interfaces';
+import { SetInitReleaseService } from '@/core/services';
+import { injectQuery } from '@tanstack/angular-query-experimental';
+import { lastValueFrom } from 'rxjs';
+import { staleTime } from '@/features/public/utils';
+import { HandleEditMode } from '../../services';
 
 interface ArticlesApiWithRelease extends ArticlesApi {
   articlesExtended: ArticleWithRelease[];
@@ -25,19 +29,25 @@ interface ArticleWithRelease extends Article {
 })
 export class ArticlesCrudPage implements OnInit {
   protected readonly i18n = es;
-  private releasesService = inject(ReleasesService);
   private homeService = inject(HomeService);
-  private destroyRef = inject(DestroyRef);
+  private setInitReleasesService = inject(SetInitReleaseService);
   private router = inject(Router);
+  private handleEditMode = inject(HandleEditMode);
 
-  isLoadingArticles = signal(false);
-  releases = signal<ReleasesApi[]>([]);
-  errorMessageApi = signal<string>('');
-  articlesApi = signal<ArticlesApi>({} as ArticlesApi);
+  readonly releasesApi = this.setInitReleasesService.releases;
+  readonly articlesApi = injectQuery(() => ({
+    queryKey: ['allArticles'],
+    queryFn: () => lastValueFrom(this.homeService.getAllArticles()),
+    staleTime,
+  }));
+
   optionReleaseCodeSelected = signal<ReleaseCode>('');
 
+  releases = computed<ReleasesApi[]>(
+    () => this.releasesApi.data()?.sort((a, b) => b.index - a.index) ?? [],
+  );
   articlesApiWithRelease = computed<ArticlesApiWithRelease>(() => {
-    const api = this.articlesApi();
+    const api = this.articlesApi.data() ?? ({} as ArticlesApi);
     return {
       ...api,
       articlesExtended:
@@ -58,8 +68,8 @@ export class ArticlesCrudPage implements OnInit {
   });
   articlesQuantity = computed<number>(() => this.articlesFiltered()?.length ?? 0);
   viewState = computed<ViewState>(() => {
-    if (this.isLoadingArticles()) return 'loading';
-    if (this.errorMessageApi()) return 'error';
+    if (this.releasesApi.isLoading() || this.articlesApi.isLoading()) return 'loading';
+    if (this.releasesApi.isError() || this.releasesApi.isError()) return 'error';
     if (this.articlesFiltered()?.length > 0) return 'available';
     return 'empty';
   });
@@ -67,54 +77,21 @@ export class ArticlesCrudPage implements OnInit {
     return this.releases().find((item) => item.isCurrentRelease) ?? ({} as ReleasesApi);
   });
   releasesCodeOptions = computed<ReleaseCodeSelect[]>(() => {
-    return this.releases().map((item) => ({
-      code: item.releaseCode,
-      displayName: item.name,
-      disabled: false,
-    }));
+    return (
+      this.releases().map((item) => ({
+        code: item.releaseCode,
+        displayName: item.name,
+        disabled: false,
+      })) ?? []
+    );
   });
 
   ngOnInit(): void {
-    this.getArticlesApi();
-    this.getReleasesApi();
-  }
-
-  getArticlesApi(): void {
-    this.isLoadingArticles.set(true);
-    this.homeService
-      .getAllArticles()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (articlesData) => {
-          this.articlesApi.set(articlesData);
-        },
-        error: (error) => {
-          this.errorMessageApi.set(error ?? this.i18n.common.serverError);
-          this.isLoadingArticles.set(false);
-        },
-        complete: () => {
-          this.isLoadingArticles.set(false);
-        },
-      });
-  }
-
-  getReleasesApi(): void {
-    this.isLoadingArticles.set(true);
-    this.releasesService
-      .getReleases()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (data) => {
-          this.releases.set(data.sort((a, b) => b.index - a.index) ?? []);
-        },
-        error: (error) => {
-          this.errorMessageApi.set(error ?? this.i18n.common.serverError);
-          this.isLoadingArticles.set(false);
-        },
-        complete: () => {
-          this.isLoadingArticles.set(false);
-        },
-      });
+    this.handleEditMode.getEditMode().subscribe((isEdited: boolean) => {
+      if (isEdited) {
+        this.articlesApi.refetch();
+      }
+    });
   }
 
   onOptionCode(code: ReleaseCode): void {

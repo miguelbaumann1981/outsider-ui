@@ -1,4 +1,4 @@
-import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, DestroyRef, effect, inject, signal } from '@angular/core';
 import { ArticleCrud, ReleaseCodeSelect } from '../../interfaces';
 import { ArticleCategory } from '@/features/public/enums';
 import { InputTextRichForm } from '@/shared/components/input-text-rich-form/input-text-rich-form';
@@ -6,14 +6,19 @@ import { SubtitlePage } from '@/shared/components/subtitle-page/subtitle-page';
 import { apply, disabled, form, FormField, FormRoot, schema } from '@angular/forms/signals';
 import { NgxSonnerToaster, toast } from 'ngx-sonner';
 import { ActivatedRoute, Router } from '@angular/router';
-import { HomeService, ReleasesService } from '@/features/public/services';
+import { HomeService } from '@/features/public/services';
 import es from '@/i18n/es.json';
-import { Article, ArticlesApi, ReleasesApi } from '@/features/public/interfaces';
+import { ReleasesApi } from '@/features/public/interfaces';
 import { ReleaseCode } from '@/features/public/types';
 import { articleSchemaBase } from './article-crud-form-schema';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { UpperCasePipe } from '@angular/common';
 import { ImgFallbackDirective } from '@/features/public/directives';
+import { SetInitReleaseService } from '@/core/services';
+import { HandleEditMode } from '../../services';
+import { lastValueFrom, map } from 'rxjs';
+import { injectQuery } from '@tanstack/angular-query-experimental';
+import { staleTime } from '@/features/public/utils';
 
 const ARTICLE_MODEL: ArticleCrud = {
   authorArticle: '',
@@ -57,26 +62,37 @@ const EMPTY_IMAGE: string = '/assets/empty-picture.png';
   ],
   templateUrl: './articles-crud-detail-page.html',
 })
-export class ArticlesCrudDetailPage implements OnInit {
+export class ArticlesCrudDetailPage {
   protected readonly i18n = es;
   private destroyRef = inject(DestroyRef);
   private router = inject(Router);
   private activatedRoute = inject(ActivatedRoute);
-  private releasesService = inject(ReleasesService);
   private homeService = inject(HomeService);
+  private setInitReleasesService = inject(SetInitReleaseService);
+  private handleEditMode = inject(HandleEditMode);
 
   isLoading = signal(false);
-  isLoadingArticles = signal(false);
-  activeParam = signal<string | 'new'>('');
-  articlesData = signal<Article[]>([]);
-  articlesApi = signal<ArticlesApi>({} as ArticlesApi);
-  selectedArticle = signal<Article>({} as Article);
-  releases = signal<ReleasesApi[]>([]);
-  errorMessageApi = signal<string>('');
   optionReleaseCodeSelected = signal<ReleaseCode>('');
   optionCategorySelected = signal<ArticleCategory | undefined>(undefined);
   categoriesOptions = signal<ReleaseCodeSelect[]>([]);
   emptyImage = signal<string>(EMPTY_IMAGE);
+
+  activeParam = toSignal(this.activatedRoute.params.pipe(map((params) => params['id'])), {
+    initialValue: '',
+  });
+  readonly releasesApi = this.setInitReleasesService.releases;
+  readonly articlesApi = injectQuery(() => ({
+    queryKey: ['allArticles'],
+    queryFn: () => lastValueFrom(this.homeService.getAllArticles()),
+    staleTime,
+  }));
+  readonly selectedArticle = injectQuery(() => ({
+    queryKey: ['release', this.activeParam()],
+    queryFn: () => lastValueFrom(this.homeService.getArticleById(this.activeParam())),
+    enabled: this.activeParam() !== '' && this.activeParam() !== 'new',
+    staleTime,
+  }));
+
   imageDisplayed = computed<string>(() => {
     return this.articleForm.image().value() ?? this.emptyImage();
   });
@@ -87,14 +103,15 @@ export class ArticlesCrudDetailPage implements OnInit {
       : this.i18n.aboutUs.editAboutUsInfo,
   );
   currentReleaseCode = computed<ReleaseCode>(() => {
-    return this.releases().find((item) => item.isCurrentRelease)?.releaseCode ?? '';
+    return this.releasesApi.data()?.find((item) => item.isCurrentRelease)?.releaseCode ?? '';
   });
   currentRelease = computed<ReleasesApi>(() => {
-    return this.releases().find((item) => item.isCurrentRelease) ?? ({} as ReleasesApi);
+    return this.releasesApi.data()?.find((item) => item.isCurrentRelease) ?? ({} as ReleasesApi);
   });
 
   releasesCodeOptions = computed<ReleaseCodeSelect[]>(() => {
-    const filtered: ReleasesApi[] = this.releases().filter((item) => !item.isPublished);
+    const filtered: ReleasesApi[] =
+      this.releasesApi.data()?.filter((item) => !item.isPublished) ?? [];
     return filtered.map((release) => ({
       code: release.releaseCode,
       displayName: release.name,
@@ -108,92 +125,44 @@ export class ArticlesCrudDetailPage implements OnInit {
     disabled(path.releaseCode, { when: () => this.activeParam() !== 'new' });
     disabled(path.category, { when: () => this.optionReleaseCodeSelected() === '' });
   });
+
+  private syncArticleModel = effect(() => {
+    if (this.activeParam() === 'new') {
+      this.articleModel.set(ARTICLE_MODEL);
+    } else {
+      const dataApi = this.selectedArticle.data();
+      const dataModel = {
+        content: dataApi?.content ?? ARTICLE_MODEL.content,
+        image: dataApi?.image ?? ARTICLE_MODEL.image,
+        releaseCode: (dataApi?.releaseCode as ReleaseCode | undefined) ?? ARTICLE_MODEL.releaseCode,
+        slug: dataApi?.slug ?? ARTICLE_MODEL.slug,
+        titleArticle: dataApi?.titleArticle ?? ARTICLE_MODEL.titleArticle,
+        titleCategory: dataApi?.titleCategory ?? ARTICLE_MODEL.titleCategory,
+        category: dataApi?.category ?? ARTICLE_MODEL.category,
+        authorArticle: dataApi?.authorArticle ?? ARTICLE_MODEL.authorArticle,
+        isDraft: dataApi?.isDraft ?? ARTICLE_MODEL.isDraft,
+        isPublished: dataApi?.isPublished ?? ARTICLE_MODEL.isPublished,
+        subtitle: dataApi?.subtitle ?? ARTICLE_MODEL.subtitle,
+        references: dataApi?.references ?? ARTICLE_MODEL.references,
+        authorQuote: dataApi?.authorQuote ?? ARTICLE_MODEL.authorQuote,
+        authorInfo: dataApi?.authorInfo ?? ARTICLE_MODEL.authorInfo,
+        quote: dataApi?.quote ?? ARTICLE_MODEL.quote,
+      };
+
+      this.articleModel.set(dataModel);
+    }
+  });
+
   readonly articleForm = form(this.articleModel, this.articleSchema);
-
-  ngOnInit(): void {
-    this.handleCrudArticles();
-    this.getReleasesApi();
-    this.getArticlesApi();
-  }
-
-  handleCrudArticles(): void {
-    this.activatedRoute.params.subscribe((params) => {
-      this.activeParam.set(params['id']);
-
-      if (this.activeParam() === 'new') {
-        this.articleModel.set(ARTICLE_MODEL);
-      } else {
-        this.getSelectedArticleData(this.activeParam());
-      }
-    });
-  }
-
-  getArticlesApi(): void {
-    this.isLoadingArticles.set(true);
-    this.homeService
-      .getAllArticles()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (articlesData) => {
-          this.articlesApi.set(articlesData);
-        },
-        error: (error) => {
-          this.errorMessageApi.set(error ?? this.i18n.common.serverError);
-          this.isLoadingArticles.set(false);
-        },
-        complete: () => {
-          this.isLoadingArticles.set(false);
-        },
-      });
-  }
-
-  getSelectedArticleData(id: string): void {
-    this.homeService
-      .getArticleById(id)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (data) => {
-          this.selectedArticle.set({
-            ...data,
-            subtitle: data.subtitle ?? '',
-            references: data.references ?? '',
-            authorQuote: data.authorQuote ?? '',
-            authorInfo: data.authorInfo ?? '',
-            quote: data.quote ?? '',
-          });
-          this.articleModel.set(this.selectedArticle());
-        },
-        error: () => {
-          toast.error(this.i18n.common.serverError);
-          this.isLoading.set(false);
-        },
-        complete: () => {
-          this.isLoading.set(false);
-        },
-      });
-  }
-
-  getReleasesApi(): void {
-    this.releasesService
-      .getReleases()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (data) => {
-          this.releases.set(data);
-        },
-        error: (error) => {
-          toast.error(error ?? this.i18n.common.serverError);
-        },
-        complete: () => {},
-      });
-  }
 
   onOptionCode(code: ReleaseCode): void {
     this.optionReleaseCodeSelected.set(code);
 
-    const usedCategories = this.articlesApi()
-      .articles.filter((item) => item.releaseCode === code)
-      .map((item) => item.category);
+    const usedCategories =
+      this.articlesApi
+        .data()
+        ?.articles.filter((item) => item.releaseCode === code)
+        .map((item) => item.category) ?? [];
 
     const availableCategories = ALL_CATEGORIES.filter(
       (category) => !usedCategories.includes(category),
@@ -232,7 +201,7 @@ export class ArticlesCrudDetailPage implements OnInit {
         complete: () => {
           this.isLoading.set(false);
           setTimeout(() => {
-            this.navigateToPreviousPage();
+            this.navigateToPreviousPage(true);
           }, 1500);
         },
       });
@@ -253,7 +222,7 @@ export class ArticlesCrudDetailPage implements OnInit {
         complete: () => {
           this.isLoading.set(false);
           setTimeout(() => {
-            this.navigateToPreviousPage();
+            this.navigateToPreviousPage(true);
           }, 1500);
         },
       });
@@ -267,17 +236,18 @@ export class ArticlesCrudDetailPage implements OnInit {
     formData.category = this.optionCategorySelected() ?? formData.category;
     formData.slug = formData.slug.toLowerCase();
     formData.isPublished =
-      this.releases().find((item) => item.releaseCode === formData.releaseCode)?.isPublished ??
-      false;
+      this.releasesApi.data()?.find((item) => item.releaseCode === formData.releaseCode)
+        ?.isPublished ?? false;
 
     if (this.activeParam() === 'new') {
       this.createArticleData(formData);
     } else {
-      this.updateArticleData(this.selectedArticle().id, formData);
+      this.updateArticleData(this.selectedArticle.data()?.id ?? '', formData);
     }
   }
 
-  navigateToPreviousPage(): void {
+  navigateToPreviousPage(isEdited?: boolean): void {
     this.router.navigate(['/admin/articles-crud']);
+    this.handleEditMode.setEditMode(isEdited ?? false);
   }
 }
