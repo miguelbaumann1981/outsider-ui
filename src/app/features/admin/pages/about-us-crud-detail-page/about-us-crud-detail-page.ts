@@ -1,17 +1,21 @@
-import { AboutUsService, ReleasesService } from '@/features/public/services';
+import { AboutUsService } from '@/features/public/services';
 import { SubtitlePage } from '@/shared/components/subtitle-page/subtitle-page';
-import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, DestroyRef, effect, inject, signal } from '@angular/core';
 import { apply, disabled, form, FormField, FormRoot, schema } from '@angular/forms/signals';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgxSonnerToaster, toast } from 'ngx-sonner';
 import es from '@/i18n/es.json';
-import { AboutUsApi, ReleasesApi } from '@/features/public/interfaces';
+import { AboutUsApi } from '@/features/public/interfaces';
 import { AboutUsCrud, ReleaseCodeSelect } from '../../interfaces';
-import { ArticleCategory } from '@/features/public/enums';
 import { ReleaseCode } from '@/features/public/types';
 import { aboutUsSchemaBase } from './about-us-crud-form-schema';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { InputTextRichForm } from '@/shared/components/input-text-rich-form/input-text-rich-form';
+import { SetInitReleaseService } from '@/core/services';
+import { HandleEditMode } from '../../services';
+import { lastValueFrom, map } from 'rxjs';
+import { injectQuery } from '@tanstack/angular-query-experimental';
+import { staleTime } from '@/features/public/utils';
 
 interface AboutUsCard extends AboutUsApi {
   title: string;
@@ -29,34 +33,50 @@ const ABOUT_US_MODEL: AboutUsCrud = {
   })),
 };
 
-const ALL_CATEGORIES: ArticleCategory[] = [
-  ArticleCategory.EDITORIAL,
-  ArticleCategory.MICROSTORY,
-  ArticleCategory.OPINION,
-  ArticleCategory.OUTSIDERS,
-  ArticleCategory.POETRY,
-  ArticleCategory.TALES,
-];
-
 @Component({
   selector: 'out-about-us-crud-detail-page',
   imports: [SubtitlePage, FormField, FormRoot, NgxSonnerToaster, InputTextRichForm],
   templateUrl: './about-us-crud-detail-page.html',
 })
-export class AboutUsCrudDetailPage implements OnInit {
+export class AboutUsCrudDetailPage {
   protected readonly i18n = es;
   private destroyRef = inject(DestroyRef);
   private router = inject(Router);
   private activatedRoute = inject(ActivatedRoute);
   private aboutUsService = inject(AboutUsService);
-  private releasesService = inject(ReleasesService);
+  private setInitReleasesService = inject(SetInitReleaseService);
+  private handleEditMode = inject(HandleEditMode);
 
   isLoading = signal(false);
-  activeParam = signal<string | 'new'>('');
-  aboutUsData = signal<AboutUsCard[]>([]);
-  selectedAboutUsData = signal<AboutUsApi>({} as AboutUsApi);
-  releases = signal<ReleasesApi[]>([]);
-  errorMessageApi = signal<string>('');
+  activeParam = toSignal(this.activatedRoute.params.pipe(map((params) => params['id'])), {
+    initialValue: '',
+  });
+
+  readonly aboutUsApi = injectQuery(() => ({
+    queryKey: ['infoAboutUsApi'],
+    queryFn: () => lastValueFrom(this.aboutUsService.getAboutUsInfo()),
+    staleTime,
+  }));
+  readonly selectedAboutUsData = injectQuery(() => ({
+    queryKey: ['release', this.activeParam()],
+    queryFn: () => lastValueFrom(this.aboutUsService.getAboutUsInfoById(this.activeParam())),
+    enabled: this.activeParam() !== '' && this.activeParam() !== 'new',
+    staleTime,
+  }));
+  readonly releasesApi = this.setInitReleasesService.releases;
+
+  aboutUsData = computed<AboutUsCard[]>(() => {
+    const api = this.aboutUsApi.data();
+    return (
+      api?.map((item) => ({
+        ...item,
+        title:
+          this.releasesApi.data()?.find((release) => release.releaseCode === item.releaseCode)
+            ?.name ?? '',
+      })) ?? []
+    );
+  });
+
   optionReleaseCodeSelected = signal<ReleaseCode>('');
 
   activeLayouts = computed<ReleaseCode[]>(() => this.aboutUsData().map((elem) => elem.releaseCode));
@@ -67,18 +87,22 @@ export class AboutUsCrudDetailPage implements OnInit {
       : this.i18n.aboutUs.editAboutUsInfo,
   );
   releasesCodeOptions = computed<ReleaseCodeSelect[]>(() => {
-    return this.releases().map((item) => ({
-      code: item.releaseCode,
-      displayName: item.name,
-      disabled: this.activeLayouts()?.includes(item.releaseCode),
-    }));
+    return (
+      this.releasesApi.data()?.map((item) => ({
+        code: item.releaseCode,
+        displayName: item.name,
+        disabled: this.activeLayouts()?.includes(item.releaseCode),
+      })) ?? []
+    );
   });
   releasesCodeCloneOptions = computed<ReleaseCodeSelect[]>(() => {
-    return this.releases().map((item) => ({
-      code: item.releaseCode,
-      displayName: item.name,
-      disabled: !this.activeLayouts()?.includes(item.releaseCode),
-    }));
+    return (
+      this.releasesApi.data()?.map((item) => ({
+        code: item.releaseCode,
+        displayName: item.name,
+        disabled: !this.activeLayouts()?.includes(item.releaseCode),
+      })) ?? []
+    );
   });
 
   aboutUsModel = signal<AboutUsCrud>(ABOUT_US_MODEL);
@@ -87,66 +111,16 @@ export class AboutUsCrudDetailPage implements OnInit {
 
     disabled(path.releaseCode, { when: () => this.activeParam() !== 'new' });
   });
+
+  private syncAboutUsModel = effect(() => {
+    if (this.activeParam() === 'new') {
+      this.aboutUsModel.set(ABOUT_US_MODEL);
+    } else {
+      this.aboutUsModel.set(this.selectedAboutUsData.data() ?? ABOUT_US_MODEL);
+    }
+  });
+
   readonly aboutUsForm = form(this.aboutUsModel, this.aboutUsSchema);
-
-  ngOnInit(): void {
-    this.getAboutUsData();
-    this.handleCrudHomeLayouts();
-    this.getReleasesApi();
-  }
-
-  getAboutUsData(): void {
-    this.aboutUsService
-      .getAboutUsInfo()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (data) => {
-          this.aboutUsData.set(
-            data.map((item) => {
-              const title =
-                this.releases().find((release) => release.releaseCode === item.releaseCode)?.name ??
-                '';
-              return { ...item, title };
-            }),
-          );
-        },
-        error: (error) => {
-          this.errorMessageApi.set(error ?? this.i18n.common.serverError);
-        },
-        complete: () => {},
-      });
-  }
-
-  handleCrudHomeLayouts(): void {
-    this.activatedRoute.params.subscribe((params) => {
-      this.activeParam.set(params['id']);
-
-      if (this.activeParam() === 'new') {
-        this.aboutUsModel.set(ABOUT_US_MODEL);
-      } else {
-        this.getSelectedAboutUsInfo(this.activeParam());
-      }
-    });
-  }
-
-  getSelectedAboutUsInfo(id: string): void {
-    this.aboutUsService
-      .getAboutUsInfoById(id)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (data) => {
-          this.selectedAboutUsData.set(data);
-          this.aboutUsModel.set(this.selectedAboutUsData());
-        },
-        error: () => {
-          toast.error(this.i18n.common.serverError);
-          this.isLoading.set(false);
-        },
-        complete: () => {
-          this.isLoading.set(false);
-        },
-      });
-  }
 
   getClonedHomeLayout(id: string): void {
     this.aboutUsService
@@ -166,21 +140,6 @@ export class AboutUsCrudDetailPage implements OnInit {
         complete: () => {
           this.isLoading.set(false);
         },
-      });
-  }
-
-  getReleasesApi(): void {
-    this.releasesService
-      .getReleases()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (data) => {
-          this.releases.set(data);
-        },
-        error: (error) => {
-          toast.error(error ?? this.i18n.common.serverError);
-        },
-        complete: () => {},
       });
   }
 
@@ -212,7 +171,7 @@ export class AboutUsCrudDetailPage implements OnInit {
         complete: () => {
           this.isLoading.set(false);
           setTimeout(() => {
-            this.navigateToPreviousPage();
+            this.navigateToPreviousPage(true);
           }, 1500);
         },
       });
@@ -233,7 +192,7 @@ export class AboutUsCrudDetailPage implements OnInit {
         complete: () => {
           this.isLoading.set(false);
           setTimeout(() => {
-            this.navigateToPreviousPage();
+            this.navigateToPreviousPage(true);
           }, 1500);
         },
       });
@@ -248,11 +207,12 @@ export class AboutUsCrudDetailPage implements OnInit {
     if (this.activeParam() === 'new') {
       this.createAboutUsInfoData(formData);
     } else {
-      this.updateAboutUsInfoData(this.selectedAboutUsData().id, formData);
+      this.updateAboutUsInfoData(this.selectedAboutUsData.data()?.id ?? '', formData);
     }
   }
 
-  navigateToPreviousPage(): void {
+  navigateToPreviousPage(isEdited?: boolean): void {
     this.router.navigate(['/admin/about-us-crud']);
+    this.handleEditMode.setEditMode(isEdited ?? false);
   }
 }

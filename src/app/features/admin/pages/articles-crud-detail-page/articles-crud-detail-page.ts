@@ -130,26 +130,7 @@ export class ArticlesCrudDetailPage {
     if (this.activeParam() === 'new') {
       this.articleModel.set(ARTICLE_MODEL);
     } else {
-      const dataApi = this.selectedArticle.data();
-      const dataModel = {
-        content: dataApi?.content ?? ARTICLE_MODEL.content,
-        image: dataApi?.image ?? ARTICLE_MODEL.image,
-        releaseCode: (dataApi?.releaseCode as ReleaseCode | undefined) ?? ARTICLE_MODEL.releaseCode,
-        slug: dataApi?.slug ?? ARTICLE_MODEL.slug,
-        titleArticle: dataApi?.titleArticle ?? ARTICLE_MODEL.titleArticle,
-        titleCategory: dataApi?.titleCategory ?? ARTICLE_MODEL.titleCategory,
-        category: dataApi?.category ?? ARTICLE_MODEL.category,
-        authorArticle: dataApi?.authorArticle ?? ARTICLE_MODEL.authorArticle,
-        isDraft: dataApi?.isDraft ?? ARTICLE_MODEL.isDraft,
-        isPublished: dataApi?.isPublished ?? ARTICLE_MODEL.isPublished,
-        subtitle: dataApi?.subtitle ?? ARTICLE_MODEL.subtitle,
-        references: dataApi?.references ?? ARTICLE_MODEL.references,
-        authorQuote: dataApi?.authorQuote ?? ARTICLE_MODEL.authorQuote,
-        authorInfo: dataApi?.authorInfo ?? ARTICLE_MODEL.authorInfo,
-        quote: dataApi?.quote ?? ARTICLE_MODEL.quote,
-      };
-
-      this.articleModel.set(dataModel);
+      this.articleModel.set(this.selectedArticle.data() ?? ARTICLE_MODEL);
     }
   });
 
