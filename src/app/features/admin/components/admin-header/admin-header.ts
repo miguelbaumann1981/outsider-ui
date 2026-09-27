@@ -13,7 +13,7 @@ import { AuthService } from '@/auth/services';
 export class AdminHeader {
   protected readonly i18n = es;
   private authService = inject(AuthService);
-  router = inject(Router);
+  private router = inject(Router);
 
   menu = signal<MenuItem[]>([
     {

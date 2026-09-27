@@ -28,7 +28,7 @@ export class LoginPage {
   protected readonly i18n = es;
   private authService = inject(AuthService);
   formBuilder = inject(FormBuilder);
-  router = inject(Router);
+  private router = inject(Router);
 
   minLengthPassword: number = 6;
 

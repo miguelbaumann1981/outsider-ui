@@ -12,7 +12,7 @@ import { SetInitReleaseService } from '../../../core/services/set-init-release.s
 })
 export class PublicHeader {
   private setInitiReleaseService = inject(SetInitReleaseService);
-  router = inject(Router);
+  private router = inject(Router);
   protected readonly i18n = es;
 
   menu = signal<MenuItem[]>([
@@ -31,7 +31,6 @@ export class PublicHeader {
   ]);
 
   navigateToHomePage(): void {
-    this.setInitiReleaseService.setInitReleaseLocalStorage();
     this.router.navigate(['/']);
   }
 }

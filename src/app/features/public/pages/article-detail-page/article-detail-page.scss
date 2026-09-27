@@ -16,11 +16,16 @@
     margin: 20px 0 10px;
   }
   h3,
-  h4,
-  h5 {
+  h4 {
     font-weight: 500;
     font-size: 1.05rem;
     margin: 15px 0 10px;
+  }
+  h5 {
+    font-size: 0.9rem;
+    color: lightslategrey;
+    margin-top: 20px;
+    font-weight: 400;
   }
   h6 {
     font-style: italic;
@@ -51,8 +56,7 @@
     margin: 20px 0 10px;
   }
   h3,
-  h4,
-  h5 {
+  h4 {
     font-weight: 500;
     font-size: 0.95rem;
     margin: 15px 0 10px;

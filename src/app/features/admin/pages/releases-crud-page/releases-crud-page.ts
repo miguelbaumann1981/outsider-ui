@@ -1,5 +1,5 @@
 import { SubtitlePage } from '@/shared/components/subtitle-page/subtitle-page';
-import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, DestroyRef, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import es from '@/i18n/es.json';
 import { ReleasesService } from '@/features/public/services';
 import { Router } from '@angular/router';
@@ -12,57 +12,53 @@ import { ConfirmPublishReleaseDialog } from './dialogs/confirm-publish-release-d
 import { ConfirmCurrentReleaseDialog } from './dialogs/confirm-current-release-dialog/confirm-current-release-dialog';
 import { ViewState } from '@/features/public/types';
 import { Spinner } from '@/shared/components/spinner/spinner';
-import { LocalStorageService } from '@/core/services';
+import { LocalStorageService, SetInitReleaseService } from '@/core/services';
+import { HandleEditMode } from '../../services';
+import { distinctUntilChanged, filter, Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'out-releases-crud-page',
   imports: [SubtitlePage, NgClass, NgxSonnerToaster, MatDialogModule, Spinner],
   templateUrl: './releases-crud-page.html',
 })
-export class ReleasesCrudPage implements OnInit {
+export class ReleasesCrudPage implements OnInit, OnDestroy {
   protected readonly i18n = es;
   private releasesService = inject(ReleasesService);
   private localStorageService = inject(LocalStorageService);
+  private setInitReleasesService = inject(SetInitReleaseService);
   private destroyRef = inject(DestroyRef);
-  router = inject(Router);
+  private router = inject(Router);
+  private handleEditMode = inject(HandleEditMode);
   readonly dialog = inject(MatDialog);
+  private destroy$ = new Subject<void>();
 
-  isLoadingReleases = signal(false);
-  errorMessageApi = signal<string>('');
-  releases = signal<ReleasesApi[]>([]);
+  readonly releasesApi = this.setInitReleasesService.releases;
   releaseId = signal('');
   isLoading = signal(false);
+
+  releases = computed<ReleasesApi[]>(
+    () => this.releasesApi.data()?.sort((a, b) => b.index - a.index) ?? [],
+  );
   viewState = computed<ViewState>(() => {
-    if (this.isLoadingReleases()) return 'loading';
-    if (this.errorMessageApi()) return 'error';
-    if (this.releases().length > 0) return 'available';
+    if (this.releasesApi.isLoading()) return 'loading';
+    if (this.releasesApi.isError()) return 'error';
+    if (this.releases()?.length > 0) return 'available';
     return 'empty';
   });
-
   currentRelease = computed<ReleasesApi>(() => {
     return this.releases().find((item) => item.isCurrentRelease) ?? ({} as ReleasesApi);
   });
 
   ngOnInit(): void {
-    this.getReleasesApi();
-  }
-
-  getReleasesApi(): void {
-    this.isLoadingReleases.set(true);
-    this.releasesService
-      .getReleases()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (data) => {
-          this.releases.set(data.sort((a, b) => b.index - a.index) ?? []);
-        },
-        error: (error) => {
-          this.errorMessageApi.set(error ?? this.i18n.common.serverError);
-          this.isLoadingReleases.set(false);
-        },
-        complete: () => {
-          this.isLoadingReleases.set(false);
-        },
+    this.handleEditMode
+      .getEditMode()
+      .pipe(
+        distinctUntilChanged(),
+        filter((isEdited) => isEdited === true),
+        takeUntil(this.destroy$),
+      )
+      .subscribe(() => {
+        this.setInitReleasesService.releases.refetch();
       });
   }
 
@@ -126,7 +122,7 @@ export class ReleasesCrudPage implements OnInit {
         },
         complete: () => {
           this.isLoading.set(false);
-          this.getReleasesApi();
+          this.setInitReleasesService.releases.refetch();
 
           const release: ReleaseLocalStorage = {
             code: newCurrent.releaseCode,
@@ -162,5 +158,10 @@ export class ReleasesCrudPage implements OnInit {
         this.setAsCurrent(release);
       }
     });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }

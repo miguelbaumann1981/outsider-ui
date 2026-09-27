@@ -17,14 +17,17 @@
     @case ('error') {
       <div class="w-full">
         <div role="alert" class="alert alert-error alert-soft w-full">
-          <span class="text-xl font-semibold">{{ errorMessageApi() }}</span>
+          <p class="text-xl font-semibold">{{ releasesApi.error() ?? i18n.common.serverError }}</p>
+          <p class="text-xl font-semibold">
+            {{ homeLayoutApi.error() ?? i18n.common.serverError }}
+          </p>
         </div>
       </div>
     }
 
     @case ('available') {
       <div class="grid grid-cols-1 gap-3 lg:grid-cols-2 lg:gap-10 xl:grid-cols-4">
-        @for (layout of homeLayouts(); track layout.id) {
+        @for (layout of homeLayout(); track layout.id) {
           <div
             class="card w-full border border-gray-200 shadow-sm"
             [ngClass]="

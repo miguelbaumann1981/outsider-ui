@@ -1,5 +1,5 @@
 @let isCurrentRelease =
-  releases().find((item) => item.releaseCode === releaseCodeLocalStorage())?.isCurrentRelease;
+  releases.data()?.find((item) => item.releaseCode === releaseCodeLocalStorage())?.isCurrentRelease;
 
 <main class="flex flex-col gap-5">
   <!-- SLOGAN -->
@@ -37,7 +37,11 @@
     @case ('error') {
       <div class="w-full">
         <div role="alert" class="alert alert-error alert-soft w-full">
-          <span class="text-xl font-semibold">{{ errorMessageApi() }}</span>
+          <p class="text-xl font-semibold">{{ articlesApi.error() ?? i18n.common.serverError }}</p>
+          <p class="text-xl font-semibold">
+            {{ homeLayoutApi.error() ?? i18n.common.serverError }}
+          </p>
+          <p class="text-xl font-semibold">{{ releases.error() ?? i18n.common.serverError }}</p>
         </div>
       </div>
     }
