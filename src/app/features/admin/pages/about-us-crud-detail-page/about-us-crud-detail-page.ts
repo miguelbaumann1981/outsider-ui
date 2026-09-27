@@ -61,7 +61,7 @@ export class AboutUsCrudDetailPage {
     queryKey: ['release', this.activeParam()],
     queryFn: () => lastValueFrom(this.aboutUsService.getAboutUsInfoById(this.activeParam())),
     enabled: this.activeParam() !== '' && this.activeParam() !== 'new',
-    staleTime,
+    refetchOnMount: 'always',
   }));
   readonly releasesApi = this.setInitReleasesService.releases;
 

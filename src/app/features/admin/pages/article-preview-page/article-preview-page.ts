@@ -1,20 +1,14 @@
 import { TitlePage } from '@/shared/components/title-page/title-page';
-import {
-  Component,
-  computed,
-  DestroyRef,
-  inject,
-  OnInit,
-  signal,
-  ViewEncapsulation,
-} from '@angular/core';
+import { Component, computed, inject, signal, ViewEncapsulation } from '@angular/core';
 import es from '@/i18n/es.json';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Article, HomeLayoutApi, ShareSocialItem } from '@/features/public/interfaces';
+import { Article, ShareSocialItem } from '@/features/public/interfaces';
 import { HomeService } from '@/features/public/services';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { textTeal600 } from '@/features/public/utils';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { staleTime, textTeal600 } from '@/features/public/utils';
 import { SafeHtmlPipe } from '@/features/public/pipes';
+import { injectQuery } from '@tanstack/angular-query-experimental';
+import { lastValueFrom, map } from 'rxjs';
 
 const SOCIAL_MEDIA: ShareSocialItem[] = [
   {
@@ -56,63 +50,40 @@ const SOCIAL_MEDIA: ShareSocialItem[] = [
   styleUrl: '../../../public/pages/article-detail-page/article-detail-page.scss',
   encapsulation: ViewEncapsulation.None,
 })
-export class ArticlePreviewPage implements OnInit {
+export class ArticlePreviewPage {
   protected readonly i18n = es;
   private homeService = inject(HomeService);
   private activatedRoute = inject(ActivatedRoute);
-  private destroyRef = inject(DestroyRef);
   private router = inject(Router);
 
-  articleSelected = signal<Article>({} as Article);
-  activeParam = signal<string>('');
-  homeLayoutApi = signal<HomeLayoutApi[]>([]);
+  activeParam = toSignal(this.activatedRoute.params.pipe(map((params) => params['id'])), {
+    initialValue: '',
+  });
+  readonly selectedArticle = injectQuery(() => ({
+    queryKey: ['release', this.activeParam()],
+    queryFn: () => lastValueFrom(this.homeService.getArticleById(this.activeParam())),
+    enabled: this.activeParam() !== '' && this.activeParam() !== 'new',
+  }));
+  readonly homeLayoutApi = injectQuery(() => ({
+    queryKey: ['homeLayout'],
+    queryFn: () => lastValueFrom(this.homeService.getHomeLayout()),
+    staleTime,
+  }));
 
   color = computed<string>(() => {
     const layoutFeatures =
-      this.homeLayoutApi().find((item) => item.releaseCode === this.articleSelected().releaseCode)
-        ?.features ?? [];
+      this.homeLayoutApi
+        .data()
+        ?.find((item) => item.releaseCode === this.selectedArticle.data()?.releaseCode)?.features ??
+      [];
     return (
-      layoutFeatures.find((elem) => elem.category === this.articleSelected().category)?.color
+      layoutFeatures.find((elem) => elem.category === this.selectedArticle.data()?.category)?.color
         ?.solid ?? textTeal600
     );
   });
   socialMediaItems = computed<ShareSocialItem[]>(() =>
-    SOCIAL_MEDIA.map((item) => ({ ...item, article: this.articleSelected() })),
+    SOCIAL_MEDIA.map((item) => ({ ...item, article: this.selectedArticle.data() })),
   );
-
-  ngOnInit(): void {
-    this.getRouteParams();
-    this.getLayoutArticles();
-    this.getArticleData();
-  }
-
-  getRouteParams(): void {
-    this.activatedRoute.params.subscribe((params) => {
-      this.activeParam.set(params['id']);
-    });
-  }
-
-  getArticleData(): void {
-    this.homeService
-      .getArticleById(this.activeParam())
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (article) => {
-          this.articleSelected.set(article);
-        },
-      });
-  }
-
-  getLayoutArticles(): void {
-    this.homeService
-      .getHomeLayout()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (layoutData) => {
-          this.homeLayoutApi.set(layoutData);
-        },
-      });
-  }
 
   backToArticles(): void {
     this.router.navigate(['admin/articles-crud']);

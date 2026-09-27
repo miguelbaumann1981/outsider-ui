@@ -15,6 +15,8 @@ export class SetInitReleaseService {
     queryKey: ['releases'],
     queryFn: () => lastValueFrom(this.releasesService.getReleases()),
     staleTime,
+    refetchOnWindowFocus: true,
+    refetchOnReconnect: true,
   }));
 
   setInitReleaseLocalStorage(): void {

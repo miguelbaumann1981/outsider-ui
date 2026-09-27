@@ -1,5 +1,5 @@
 import { SubtitlePage } from '@/shared/components/subtitle-page/subtitle-page';
-import { Component, computed, inject, OnInit } from '@angular/core';
+import { Component, computed, inject, OnDestroy, OnInit } from '@angular/core';
 import es from '@/i18n/es.json';
 import { ViewState } from '@/features/public/types';
 import { AboutUsApi, ReleasesApi } from '@/features/public/interfaces';
@@ -11,7 +11,7 @@ import { NgxSonnerToaster } from 'ngx-sonner';
 import { SetInitReleaseService } from '@/core/services';
 import { HandleEditMode } from '../../services';
 import { injectQuery } from '@tanstack/angular-query-experimental';
-import { lastValueFrom } from 'rxjs';
+import { distinctUntilChanged, filter, lastValueFrom, Subject, takeUntil } from 'rxjs';
 import { staleTime } from '@/features/public/utils';
 
 interface AboutUsCard extends AboutUsApi {
@@ -23,12 +23,13 @@ interface AboutUsCard extends AboutUsApi {
   imports: [SubtitlePage, Spinner, NgClass, NgxSonnerToaster],
   templateUrl: './about-us-crud-page.html',
 })
-export class AboutUsCrudPage implements OnInit {
+export class AboutUsCrudPage implements OnInit, OnDestroy {
   protected readonly i18n = es;
   private aboutUsService = inject(AboutUsService);
   private setInitReleasesService = inject(SetInitReleaseService);
   private router = inject(Router);
   private handleEditMode = inject(HandleEditMode);
+  private destroy$ = new Subject<void>();
 
   readonly releasesApi = this.setInitReleasesService.releases;
   readonly aboutUsApi = injectQuery(() => ({
@@ -62,11 +63,16 @@ export class AboutUsCrudPage implements OnInit {
   });
 
   ngOnInit(): void {
-    this.handleEditMode.getEditMode().subscribe((isEdited: boolean) => {
-      if (isEdited) {
+    this.handleEditMode
+      .getEditMode()
+      .pipe(
+        distinctUntilChanged(),
+        filter((isEdited) => isEdited === true),
+        takeUntil(this.destroy$),
+      )
+      .subscribe(() => {
         this.aboutUsApi.refetch();
-      }
-    });
+      });
   }
 
   onCreateAboutUs(): void {
@@ -79,5 +85,10 @@ export class AboutUsCrudPage implements OnInit {
 
   preview(id: string): void {
     this.router.navigate([`/admin/about-us-preview/${id}`]);
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }

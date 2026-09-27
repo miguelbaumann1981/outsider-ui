@@ -51,7 +51,7 @@ export class ReleaseCrudDetailPage {
     queryKey: ['release', this.activeParam()],
     queryFn: () => lastValueFrom(this.releasesService.getReleaseById(this.activeParam())),
     enabled: this.activeParam() !== '' && this.activeParam() !== 'new',
-    staleTime,
+    refetchOnMount: 'always',
   }));
 
   allReleases = computed<ReleasesApi[]>(() => this.releasesApi.data() ?? []);

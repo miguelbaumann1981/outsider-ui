@@ -1,7 +1,7 @@
 import { Spinner } from '@/shared/components/spinner/spinner';
 import { SubtitlePage } from '@/shared/components/subtitle-page/subtitle-page';
 import { NgClass } from '@angular/common';
-import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, DestroyRef, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { NgxSonnerToaster } from 'ngx-sonner';
@@ -13,7 +13,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { HandleEditMode } from '../../services';
 import { SetInitReleaseService } from '@/core/services';
 import { injectQuery } from '@tanstack/angular-query-experimental';
-import { lastValueFrom } from 'rxjs';
+import { distinctUntilChanged, filter, lastValueFrom, Subject, takeUntil } from 'rxjs';
 import { staleTime } from '@/features/public/utils';
 
 interface HomeLayoutCard extends HomeLayoutApi {
@@ -25,13 +25,14 @@ interface HomeLayoutCard extends HomeLayoutApi {
   imports: [SubtitlePage, NgClass, NgxSonnerToaster, MatDialogModule, Spinner],
   templateUrl: './home-layout-crud-page.html',
 })
-export class HomeLayoutCrudPage implements OnInit {
+export class HomeLayoutCrudPage implements OnInit, OnDestroy {
   protected readonly i18n = es;
   private router = inject(Router);
   readonly dialog = inject(MatDialog);
   private homeService = inject(HomeService);
   private handleEditMode = inject(HandleEditMode);
   private setInitReleasesService = inject(SetInitReleaseService);
+  private destroy$ = new Subject<void>();
 
   readonly releasesApi = this.setInitReleasesService.releases;
   readonly homeLayoutApi = injectQuery(() => ({
@@ -65,11 +66,16 @@ export class HomeLayoutCrudPage implements OnInit {
   });
 
   ngOnInit(): void {
-    this.handleEditMode.getEditMode().subscribe((isEdited: boolean) => {
-      if (isEdited) {
+    this.handleEditMode
+      .getEditMode()
+      .pipe(
+        distinctUntilChanged(),
+        filter((isEdited) => isEdited === true),
+        takeUntil(this.destroy$),
+      )
+      .subscribe(() => {
         this.homeLayoutApi.refetch();
-      }
-    });
+      });
   }
 
   onCreateNewLayout(): void {
@@ -78,5 +84,10 @@ export class HomeLayoutCrudPage implements OnInit {
 
   onEditLayout(id: string): void {
     this.router.navigate([`/admin/home-layout-crud/${id}`]);
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }

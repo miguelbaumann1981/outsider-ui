@@ -1,5 +1,5 @@
 import { SubtitlePage } from '@/shared/components/subtitle-page/subtitle-page';
-import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, DestroyRef, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import es from '@/i18n/es.json';
 import { ReleasesService } from '@/features/public/services';
 import { Router } from '@angular/router';
@@ -14,13 +14,14 @@ import { ViewState } from '@/features/public/types';
 import { Spinner } from '@/shared/components/spinner/spinner';
 import { LocalStorageService, SetInitReleaseService } from '@/core/services';
 import { HandleEditMode } from '../../services';
+import { distinctUntilChanged, filter, Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'out-releases-crud-page',
   imports: [SubtitlePage, NgClass, NgxSonnerToaster, MatDialogModule, Spinner],
   templateUrl: './releases-crud-page.html',
 })
-export class ReleasesCrudPage implements OnInit {
+export class ReleasesCrudPage implements OnInit, OnDestroy {
   protected readonly i18n = es;
   private releasesService = inject(ReleasesService);
   private localStorageService = inject(LocalStorageService);
@@ -29,6 +30,7 @@ export class ReleasesCrudPage implements OnInit {
   private router = inject(Router);
   private handleEditMode = inject(HandleEditMode);
   readonly dialog = inject(MatDialog);
+  private destroy$ = new Subject<void>();
 
   readonly releasesApi = this.setInitReleasesService.releases;
   releaseId = signal('');
@@ -48,11 +50,16 @@ export class ReleasesCrudPage implements OnInit {
   });
 
   ngOnInit(): void {
-    this.handleEditMode.getEditMode().subscribe((isEdited: boolean) => {
-      if (isEdited) {
+    this.handleEditMode
+      .getEditMode()
+      .pipe(
+        distinctUntilChanged(),
+        filter((isEdited) => isEdited === true),
+        takeUntil(this.destroy$),
+      )
+      .subscribe(() => {
         this.setInitReleasesService.releases.refetch();
-      }
-    });
+      });
   }
 
   navigateToDetailForm(id: string): void {
@@ -151,5 +158,10 @@ export class ReleasesCrudPage implements OnInit {
         this.setAsCurrent(release);
       }
     });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }

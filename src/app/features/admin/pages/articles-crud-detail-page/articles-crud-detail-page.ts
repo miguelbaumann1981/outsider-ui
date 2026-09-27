@@ -90,7 +90,7 @@ export class ArticlesCrudDetailPage {
     queryKey: ['release', this.activeParam()],
     queryFn: () => lastValueFrom(this.homeService.getArticleById(this.activeParam())),
     enabled: this.activeParam() !== '' && this.activeParam() !== 'new',
-    staleTime,
+    refetchOnMount: 'always',
   }));
 
   imageDisplayed = computed<string>(() => {

@@ -73,7 +73,7 @@ export class HomeLayoutCrudDetailPage {
     queryKey: ['selectedHomeLayout', this.activeParam()],
     queryFn: () => lastValueFrom(this.homeService.getHomeLayoutById(this.activeParam())),
     enabled: this.activeParam() !== '' && this.activeParam() !== 'new',
-    staleTime,
+    refetchOnMount: 'always',
   }));
   readonly releasesApi = this.setInitReleasesService.releases;
   readonly homeLayoutsApi = injectQuery(() => ({

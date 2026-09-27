@@ -1,5 +1,5 @@
 import { SubtitlePage } from '@/shared/components/subtitle-page/subtitle-page';
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import es from '@/i18n/es.json';
 import { HomeService } from '@/features/public/services';
 import { Router } from '@angular/router';
@@ -10,7 +10,7 @@ import { NgClass, UpperCasePipe } from '@angular/common';
 import { ReleaseCodeSelect } from '../../interfaces';
 import { SetInitReleaseService } from '@/core/services';
 import { injectQuery } from '@tanstack/angular-query-experimental';
-import { lastValueFrom } from 'rxjs';
+import { distinctUntilChanged, filter, lastValueFrom, Subject, takeUntil } from 'rxjs';
 import { staleTime } from '@/features/public/utils';
 import { HandleEditMode } from '../../services';
 
@@ -27,12 +27,13 @@ interface ArticleWithRelease extends Article {
   imports: [SubtitlePage, Spinner, NgClass, UpperCasePipe],
   templateUrl: './articles-crud-page.html',
 })
-export class ArticlesCrudPage implements OnInit {
+export class ArticlesCrudPage implements OnInit, OnDestroy {
   protected readonly i18n = es;
   private homeService = inject(HomeService);
   private setInitReleasesService = inject(SetInitReleaseService);
   private router = inject(Router);
   private handleEditMode = inject(HandleEditMode);
+  private destroy$ = new Subject<void>();
 
   readonly releasesApi = this.setInitReleasesService.releases;
   readonly articlesApi = injectQuery(() => ({
@@ -87,11 +88,16 @@ export class ArticlesCrudPage implements OnInit {
   });
 
   ngOnInit(): void {
-    this.handleEditMode.getEditMode().subscribe((isEdited: boolean) => {
-      if (isEdited) {
+    this.handleEditMode
+      .getEditMode()
+      .pipe(
+        distinctUntilChanged(),
+        filter((isEdited) => isEdited === true),
+        takeUntil(this.destroy$),
+      )
+      .subscribe(() => {
         this.articlesApi.refetch();
-      }
-    });
+      });
   }
 
   onOptionCode(code: ReleaseCode): void {
@@ -108,5 +114,10 @@ export class ArticlesCrudPage implements OnInit {
 
   preview(id: string): void {
     this.router.navigate([`admin/articles-preview/${id}`]);
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }
