@@ -1,5 +1,5 @@
 import { SubtitlePage } from '@/shared/components/subtitle-page/subtitle-page';
-import { Component, computed, inject, OnDestroy, OnInit, signal } from '@angular/core';
+import { Component, computed, DestroyRef, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import es from '@/i18n/es.json';
 import { HomeService } from '@/features/public/services';
 import { Router } from '@angular/router';
@@ -13,6 +13,10 @@ import { injectQuery } from '@tanstack/angular-query-experimental';
 import { distinctUntilChanged, filter, lastValueFrom, Subject, takeUntil } from 'rxjs';
 import { staleTime } from '@/features/public/utils';
 import { HandleEditMode } from '../../services';
+import { DeleteItemDialog } from '../../components/delete-item-dialog/delete-item-dialog';
+import { MatDialog } from '@angular/material/dialog';
+import { NgxSonnerToaster, toast } from 'ngx-sonner';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 interface ArticlesApiWithRelease extends ArticlesApi {
   articlesExtended: ArticleWithRelease[];
@@ -24,7 +28,7 @@ interface ArticleWithRelease extends Article {
 
 @Component({
   selector: 'out-articles-crud-page',
-  imports: [SubtitlePage, Spinner, NgClass, UpperCasePipe],
+  imports: [SubtitlePage, Spinner, NgClass, UpperCasePipe, NgxSonnerToaster],
   templateUrl: './articles-crud-page.html',
 })
 export class ArticlesCrudPage implements OnInit, OnDestroy {
@@ -34,6 +38,8 @@ export class ArticlesCrudPage implements OnInit, OnDestroy {
   private router = inject(Router);
   private handleEditMode = inject(HandleEditMode);
   private destroy$ = new Subject<void>();
+  private destroyRef = inject(DestroyRef);
+  readonly dialog = inject(MatDialog);
 
   readonly releasesApi = this.setInitReleasesService.releases;
   readonly articlesApi = injectQuery(() => ({
@@ -114,6 +120,35 @@ export class ArticlesCrudPage implements OnInit, OnDestroy {
 
   preview(id: string): void {
     this.router.navigate([`admin/articles-preview/${id}`]);
+  }
+
+  delete(id: string): void {
+    this.homeService
+      .deleteArticle(id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          toast.success(this.i18n.articles.successDeleteMessageForm);
+        },
+        error: () => {
+          toast.error(this.i18n.articles.errorDeleteMessageForm);
+        },
+        complete: () => {
+          this.articlesApi.refetch();
+        },
+      });
+  }
+
+  openDeleteItemDialog(id: string): void {
+    const dialogRef = this.dialog.open(DeleteItemDialog, {
+      width: '600px',
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.delete(id);
+      }
+    });
   }
 
   ngOnDestroy(): void {

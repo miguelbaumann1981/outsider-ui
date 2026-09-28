@@ -86,20 +86,32 @@
                         article.isReleasePublished ? 'badge-success' : 'badge-error text-white'
                       "
                     >
-                      {{ article.isPublished ? i18n.common.published : i18n.common.notPublished }}
+                      {{
+                        article.isReleasePublished
+                          ? i18n.common.published
+                          : i18n.common.notPublished
+                      }}
                     </div>
                   </div>
                 </div>
               </div>
 
               <div class="card-actions mt-3 items-center justify-end">
-                <button class="btn btn-outline btn-secondary" (click)="preview(article.id)">
+                <button
+                  class="btn btn-outline btn-error btn-sm"
+                  (click)="openDeleteItemDialog(article.id)"
+                  [disabled]="article.isPublished"
+                >
+                  <span class="material-icons"> delete </span>
+                  {{ i18n.common.delete }}
+                </button>
+                <button class="btn btn-outline btn-secondary btn-sm" (click)="preview(article.id)">
                   <span class="material-icons"> remove_red_eye </span>
                   {{ i18n.common.preview }}
                 </button>
 
                 <button
-                  class="btn btn-outline btn-primary"
+                  class="btn btn-outline btn-primary btn-sm"
                   (click)="navigateToDetailForm(article.id)"
                 >
                   <span class="material-icons"> edit </span>
@@ -113,3 +125,5 @@
     }
   }
 </div>
+
+<ngx-sonner-toaster position="top-center" richColors />

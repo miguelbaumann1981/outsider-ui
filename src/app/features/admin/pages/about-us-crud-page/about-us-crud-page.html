@@ -24,7 +24,7 @@
     }
 
     @case ('available') {
-      <div class="grid grid-cols-1 gap-3 lg:grid-cols-2 lg:gap-10 xl:grid-cols-4">
+      <div class="grid grid-cols-1 gap-3 lg:grid-cols-2 lg:gap-10 xl:grid-cols-3">
         @for (info of aboutUsData(); track info.id) {
           <div
             class="card w-full border border-gray-200 shadow-sm"
@@ -53,12 +53,21 @@
               </div>
 
               <div class="card-actions mt-3 items-center justify-end">
-                <button class="btn btn-outline btn-secondary" (click)="preview(info.id)">
+                <button
+                  class="btn btn-outline btn-error btn-sm"
+                  (click)="openDeleteItemDialog(info.id)"
+                  [disabled]="info.isPublished"
+                >
+                  <span class="material-icons"> delete </span>
+                  {{ i18n.common.delete }}
+                </button>
+
+                <button class="btn btn-outline btn-secondary btn-sm" (click)="preview(info.id)">
                   <span class="material-icons"> remove_red_eye </span>
                   {{ i18n.common.preview }}
                 </button>
 
-                <button class="btn btn-outline btn-primary" (click)="onEditLayout(info.id)">
+                <button class="btn btn-outline btn-primary btn-sm" (click)="onEditLayout(info.id)">
                   <span class="material-icons"> edit </span>
                   {{ i18n.common.edit }}
                 </button>

@@ -92,7 +92,16 @@
                 [class.mt-3]="!release.isPublished"
               >
                 <button
-                  class="btn btn-outline btn-primary"
+                  class="btn btn-outline btn-error btn-sm"
+                  (click)="openDeleteItemDialog(release.id)"
+                  [disabled]="release.isPublished || isLoading()"
+                >
+                  <span class="material-icons"> delete </span>
+                  {{ i18n.common.delete }}
+                </button>
+
+                <button
+                  class="btn btn-outline btn-primary btn-sm"
                   (click)="navigateToDetailForm(release.id)"
                   [disabled]="release.isCurrentRelease || isLoading()"
                 >
@@ -101,8 +110,8 @@
                 </button>
 
                 <button
-                  class="btn btn-outline"
-                  [ngClass]="release.isPublished ? 'btn-error' : 'btn-success'"
+                  class="btn btn-outline btn-sm"
+                  [ngClass]="release.isPublished ? 'btn-warning' : 'btn-success'"
                   (click)="openConfirmPublishDialog(release, release.isPublished)"
                   [disabled]="release.isCurrentRelease || isLoading()"
                 >

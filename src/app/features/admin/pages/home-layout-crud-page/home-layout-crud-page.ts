@@ -4,7 +4,7 @@ import { NgClass } from '@angular/common';
 import { Component, computed, DestroyRef, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { NgxSonnerToaster } from 'ngx-sonner';
+import { NgxSonnerToaster, toast } from 'ngx-sonner';
 import es from '@/i18n/es.json';
 import { ViewState } from '@/features/public/types';
 import { HomeLayoutApi, ReleasesApi } from '@/features/public/interfaces';
@@ -15,6 +15,7 @@ import { SetInitReleaseService } from '@/core/services';
 import { injectQuery } from '@tanstack/angular-query-experimental';
 import { distinctUntilChanged, filter, lastValueFrom, Subject, takeUntil } from 'rxjs';
 import { staleTime } from '@/features/public/utils';
+import { DeleteItemDialog } from '../../components/delete-item-dialog/delete-item-dialog';
 
 interface HomeLayoutCard extends HomeLayoutApi {
   title: string;
@@ -33,6 +34,9 @@ export class HomeLayoutCrudPage implements OnInit, OnDestroy {
   private handleEditMode = inject(HandleEditMode);
   private setInitReleasesService = inject(SetInitReleaseService);
   private destroy$ = new Subject<void>();
+  private destroyRef = inject(DestroyRef);
+
+  isLoading = signal(false);
 
   readonly releasesApi = this.setInitReleasesService.releases;
   readonly homeLayoutApi = injectQuery(() => ({
@@ -84,6 +88,39 @@ export class HomeLayoutCrudPage implements OnInit, OnDestroy {
 
   onEditLayout(id: string): void {
     this.router.navigate([`/admin/home-layout-crud/${id}`]);
+  }
+
+  delete(id: string): void {
+    this.isLoading.set(true);
+
+    this.homeService
+      .deleteHomeLayout(id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          toast.success(this.i18n.homeLayout.successDeleteMessageForm);
+        },
+        error: () => {
+          toast.error(this.i18n.homeLayout.errorDeleteMessageForm);
+          this.isLoading.set(false);
+        },
+        complete: () => {
+          this.isLoading.set(false);
+          this.homeLayoutApi.refetch();
+        },
+      });
+  }
+
+  openDeleteItemDialog(id: string): void {
+    const dialogRef = this.dialog.open(DeleteItemDialog, {
+      width: '600px',
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.delete(id);
+      }
+    });
   }
 
   ngOnDestroy(): void {
