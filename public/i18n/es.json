@@ -16,7 +16,10 @@
     "confirm": "Confirmar",
     "select": "Seleccionar",
     "apply": "Aplicar",
-    "preview": "Previsualizar"
+    "preview": "Previsualizar",
+    "delete": "Eliminar",
+    "deleteItem": "Eliminar registro",
+    "deleteItemConfirmation": "¿Estás seguro que deseas eliminar este registro?"
   },
   "slogan": "Revista Literaria Subterránea",
   "menu": {
@@ -100,7 +103,9 @@
     "unpublishReleaseConfirmation": "¿Estás seguro que quieres retirar este número?",
     "changeCurrentRelease": "Establecer como actual",
     "changeCurrentReleaseConfirmation": "¿Estás seguro que quieres poner este número como actual?",
-    "createRelease": "Crear número"
+    "createRelease": "Crear número",
+    "successDeleteMessageForm": "El número ha sido eliminado con éxito",
+    "errorDeleteMessageForm": "El número no ha sido eliminado. Intente más tarde"
   },
   "months": {
     "january": "Enero",
@@ -163,7 +168,9 @@
     "successEditMessageForm": "La información ha sido editada con éxito",
     "errorEditMessageForm": "La información no ha sido editada. Intente más tarde",
     "successCreateMessageForm": "La nueva información ha sido creada con éxito",
-    "errorCreateMessageForm": "La nueva información no ha sido creada. Intente más tarde"
+    "errorCreateMessageForm": "La nueva información no ha sido creada. Intente más tarde",
+    "successDeleteMessageForm": "La información ha sido eliminada con éxito",
+    "errorDeleteMessageForm": "La información no ha sido eliminada. Intente más tarde"
   },
   "auth": {
     "login": "Iniciar sesión",
@@ -216,7 +223,9 @@
     "errorEditMessageForm": "La configuración no ha sido editada. Intenete más tarde",
     "successCreateMessageForm": "La nueva configuración ha sido creada con éxito",
     "errorCreateMessageForm": "La nueva configuración no ha sido creada. Intente más tarde",
-    "applyConfigFrom": "Aplicar configuración de..."
+    "applyConfigFrom": "Aplicar configuración de...",
+    "successDeleteMessageForm": "La configuración ha sido eliminada con éxito",
+    "errorDeleteMessageForm": "La configuración no ha sido eliminada. Intente más tarde"
   },
   "articles": {
     "createNewArticle": "Crear nuevo artículo",
@@ -256,6 +265,8 @@
     "successEditMessageForm": "El artículo ha sido editado con éxito",
     "errorEditMessageForm": "El artículo no ha sido editado. Intente más tarde",
     "successCreateMessageForm": "El nuevo artículo ha sido creado con éxito",
-    "errorCreateMessageForm": "El nuevo artículo no ha sido creado. Intente más tarde"
+    "errorCreateMessageForm": "El nuevo artículo no ha sido creado. Intente más tarde",
+    "successDeleteMessageForm": "El artículo ha sido eliminado con éxito",
+    "errorDeleteMessageForm": "El artículo no ha sido eliminado. Intente más tarde"
   }
 }

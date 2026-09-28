@@ -1,5 +1,5 @@
 import { SubtitlePage } from '@/shared/components/subtitle-page/subtitle-page';
-import { Component, computed, inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, computed, DestroyRef, inject, OnDestroy, OnInit } from '@angular/core';
 import es from '@/i18n/es.json';
 import { ViewState } from '@/features/public/types';
 import { AboutUsApi, ReleasesApi } from '@/features/public/interfaces';
@@ -7,12 +7,15 @@ import { Spinner } from '@/shared/components/spinner/spinner';
 import { AboutUsService } from '@/features/public/services';
 import { Router } from '@angular/router';
 import { NgClass } from '@angular/common';
-import { NgxSonnerToaster } from 'ngx-sonner';
+import { NgxSonnerToaster, toast } from 'ngx-sonner';
 import { SetInitReleaseService } from '@/core/services';
 import { HandleEditMode } from '../../services';
 import { injectQuery } from '@tanstack/angular-query-experimental';
 import { distinctUntilChanged, filter, lastValueFrom, Subject, takeUntil } from 'rxjs';
 import { staleTime } from '@/features/public/utils';
+import { MatDialog } from '@angular/material/dialog';
+import { DeleteItemDialog } from '../../components/delete-item-dialog/delete-item-dialog';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 interface AboutUsCard extends AboutUsApi {
   title: string;
@@ -30,6 +33,8 @@ export class AboutUsCrudPage implements OnInit, OnDestroy {
   private router = inject(Router);
   private handleEditMode = inject(HandleEditMode);
   private destroy$ = new Subject<void>();
+  private destroyRef = inject(DestroyRef);
+  readonly dialog = inject(MatDialog);
 
   readonly releasesApi = this.setInitReleasesService.releases;
   readonly aboutUsApi = injectQuery(() => ({
@@ -85,6 +90,35 @@ export class AboutUsCrudPage implements OnInit, OnDestroy {
 
   preview(id: string): void {
     this.router.navigate([`/admin/about-us-preview/${id}`]);
+  }
+
+  delete(id: string): void {
+    this.aboutUsService
+      .deleteAboutUsInfo(id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          toast.success(this.i18n.aboutUs.successDeleteMessageForm);
+        },
+        error: () => {
+          toast.error(this.i18n.aboutUs.errorDeleteMessageForm);
+        },
+        complete: () => {
+          this.aboutUsApi.refetch();
+        },
+      });
+  }
+
+  openDeleteItemDialog(id: string): void {
+    const dialogRef = this.dialog.open(DeleteItemDialog, {
+      width: '600px',
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.delete(id);
+      }
+    });
   }
 
   ngOnDestroy(): void {

@@ -33,4 +33,8 @@ export class ReleasesService {
   updateBulk(items: ReleasesApi[]) {
     return this.http.patch(`${this.baseUrl}/api/releases/bulk`, items).pipe(delay(1500));
   }
+
+  deleteRelease(id: string): Observable<ReleasesApi> {
+    return this.http.delete<ReleasesApi>(`${this.baseUrl}/api/releases/${id}`).pipe(delay(1500));
+  }
 }

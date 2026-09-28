@@ -29,4 +29,8 @@ export class AboutUsService {
       .put<AboutUsApi>(`${this.baseUrl}/api/about-us/${id}`, update)
       .pipe(delay(1500));
   }
+
+  deleteAboutUsInfo(id: string): Observable<AboutUsApi> {
+    return this.http.delete<AboutUsApi>(`${this.baseUrl}/api/about-us/${id}`).pipe(delay(1500));
+  }
 }

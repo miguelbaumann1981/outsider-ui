@@ -37,6 +37,10 @@ export class HomeService {
     return this.http.put<Article>(`${this.baseUrl}/api/articles/${id}`, update).pipe(delay(1500));
   }
 
+  deleteArticle(id: string): Observable<Article> {
+    return this.http.delete<Article>(`${this.baseUrl}/api/articles/${id}`).pipe(delay(1500));
+  }
+
   getHomeLayout(): Observable<HomeLayoutApi[]> {
     return this.http.get<HomeLayoutApi[]>(`${this.baseUrl}/api/home-layout`);
   }
@@ -54,6 +58,12 @@ export class HomeService {
   updateHomeLayout(id: string, update: HomeLayoutCrud): Observable<HomeLayoutApi> {
     return this.http
       .put<HomeLayoutApi>(`${this.baseUrl}/api/home-layout/${id}`, update)
+      .pipe(delay(1500));
+  }
+
+  deleteHomeLayout(id: string): Observable<HomeLayoutApi> {
+    return this.http
+      .delete<HomeLayoutApi>(`${this.baseUrl}/api/home-layout/${id}`)
       .pipe(delay(1500));
   }
 }

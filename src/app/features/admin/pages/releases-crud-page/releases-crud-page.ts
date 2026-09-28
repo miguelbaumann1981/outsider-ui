@@ -15,6 +15,7 @@ import { Spinner } from '@/shared/components/spinner/spinner';
 import { LocalStorageService, SetInitReleaseService } from '@/core/services';
 import { HandleEditMode } from '../../services';
 import { distinctUntilChanged, filter, Subject, takeUntil } from 'rxjs';
+import { DeleteItemDialog } from '../../components/delete-item-dialog/delete-item-dialog';
 
 @Component({
   selector: 'out-releases-crud-page',
@@ -107,7 +108,6 @@ export class ReleasesCrudPage implements OnInit, OnDestroy {
 
     const oldCurrent = { ...this.currentRelease(), isCurrentRelease: false };
     const newCurrent = { ...release, isCurrentRelease: true };
-    console.log([oldCurrent, newCurrent]);
 
     this.releasesService
       .updateBulk([oldCurrent, newCurrent])
@@ -129,6 +129,27 @@ export class ReleasesCrudPage implements OnInit, OnDestroy {
             isCurrent: true,
           };
           this.localStorageService.setItem('release', JSON.stringify(release));
+        },
+      });
+  }
+
+  delete(id: string): void {
+    this.isLoading.set(true);
+
+    this.releasesService
+      .deleteRelease(id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          toast.success(this.i18n.releases.successDeleteMessageForm);
+        },
+        error: () => {
+          toast.error(this.i18n.releases.errorDeleteMessageForm);
+          this.isLoading.set(false);
+        },
+        complete: () => {
+          this.isLoading.set(false);
+          this.setInitReleasesService.releases.refetch();
         },
       });
   }
@@ -156,6 +177,18 @@ export class ReleasesCrudPage implements OnInit, OnDestroy {
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         this.setAsCurrent(release);
+      }
+    });
+  }
+
+  openDeleteItemDialog(id: string): void {
+    const dialogRef = this.dialog.open(DeleteItemDialog, {
+      width: '600px',
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.delete(id);
       }
     });
   }
