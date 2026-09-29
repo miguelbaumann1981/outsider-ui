@@ -99,8 +99,8 @@ export class ArticlesCrudDetailPage {
 
   subtitlePage = computed<string>(() =>
     this.activeParam() === 'new'
-      ? this.i18n.aboutUs.createNewAboutUsInfo
-      : this.i18n.aboutUs.editAboutUsInfo,
+      ? this.i18n.articles.createNewArticle
+      : this.i18n.articles.editArticle,
   );
   currentReleaseCode = computed<ReleaseCode>(() => {
     return this.releasesApi.data()?.find((item) => item.isCurrentRelease)?.releaseCode ?? '';

@@ -64,7 +64,9 @@ export class ReleaseCrudDetailPage {
 
   releaseSchema = schema<ReleasesCrud>((path) => {
     apply(path, releaseSchemaBase);
-    disabled(path.releaseCode, { when: () => this.activeParam() !== 'new' });
+    disabled(path.releaseCode, {
+      when: () => this.activeParam() !== 'new' && this.releaseModel().isPublished,
+    });
     disabled(path.index);
   });
 

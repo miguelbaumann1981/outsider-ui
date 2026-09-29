@@ -1,7 +1,7 @@
 import { SubtitlePage } from '@/shared/components/subtitle-page/subtitle-page';
 import { Component, computed, DestroyRef, inject, OnDestroy, OnInit } from '@angular/core';
 import es from '@/i18n/es.json';
-import { ViewState } from '@/features/public/types';
+import { ReleaseCode, ViewState } from '@/features/public/types';
 import { AboutUsApi, ReleasesApi } from '@/features/public/interfaces';
 import { Spinner } from '@/shared/components/spinner/spinner';
 import { AboutUsService } from '@/features/public/services';
@@ -119,6 +119,10 @@ export class AboutUsCrudPage implements OnInit, OnDestroy {
         this.delete(id);
       }
     });
+  }
+
+  isReleasePublished(code: ReleaseCode): boolean {
+    return this.releasesApi.data()?.find((elem) => elem.releaseCode === code)?.isPublished ?? false;
   }
 
   ngOnDestroy(): void {
