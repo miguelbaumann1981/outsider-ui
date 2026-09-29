@@ -19,18 +19,22 @@ export class AdminHeader {
     {
       text: this.i18n.menu.releasesCrud,
       url: '/admin/releases-crud',
+      isActive: true,
     },
     {
       text: this.i18n.menu.homeLayoutCrud,
       url: '/admin/home-layout-crud',
+      isActive: true,
     },
     {
       text: this.i18n.menu.articlesCrud,
       url: '/admin/articles-crud',
+      isActive: true,
     },
     {
       text: this.i18n.menu.aboutUsCrud,
       url: '/admin/about-us-crud',
+      isActive: true,
     },
   ]);
 

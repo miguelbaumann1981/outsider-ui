@@ -4,7 +4,7 @@ import es from '@/i18n/es.json';
 import { HomeService } from '@/features/public/services';
 import { Router } from '@angular/router';
 import { ReleaseCode, ViewState } from '@/features/public/types';
-import { Article, ArticlesApi, ReleasesApi } from '@/features/public/interfaces';
+import { Article, ReleasesApi } from '@/features/public/interfaces';
 import { Spinner } from '@/shared/components/spinner/spinner';
 import { NgClass, UpperCasePipe } from '@angular/common';
 import { ReleaseCodeSelect } from '../../interfaces';
@@ -17,14 +17,6 @@ import { DeleteItemDialog } from '../../components/delete-item-dialog/delete-ite
 import { MatDialog } from '@angular/material/dialog';
 import { NgxSonnerToaster, toast } from 'ngx-sonner';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-
-interface ArticlesApiWithRelease extends ArticlesApi {
-  articlesExtended: ArticleWithRelease[];
-}
-
-interface ArticleWithRelease extends Article {
-  isReleasePublished: boolean;
-}
 
 @Component({
   selector: 'out-articles-crud-page',
@@ -53,21 +45,9 @@ export class ArticlesCrudPage implements OnInit, OnDestroy {
   releases = computed<ReleasesApi[]>(
     () => this.releasesApi.data()?.sort((a, b) => b.index - a.index) ?? [],
   );
-  articlesApiWithRelease = computed<ArticlesApiWithRelease>(() => {
-    const api = this.articlesApi.data() ?? ({} as ArticlesApi);
-    return {
-      ...api,
-      articlesExtended:
-        api.articles?.map((item) => ({
-          ...item,
-          isReleasePublished:
-            this.releases().find((elem) => elem.releaseCode === item.releaseCode)?.isPublished ??
-            false,
-        })) ?? [],
-    };
-  });
-  articlesFiltered = computed<ArticleWithRelease[]>(() => {
-    const articles: ArticleWithRelease[] = this.articlesApiWithRelease()?.articlesExtended;
+
+  articlesFiltered = computed<Article[]>(() => {
+    const articles: Article[] = this.articlesApi.data()?.articles ?? [];
 
     return this.optionReleaseCodeSelected() === ''
       ? articles
@@ -149,6 +129,10 @@ export class ArticlesCrudPage implements OnInit, OnDestroy {
         this.delete(id);
       }
     });
+  }
+
+  isReleasePublished(code: ReleaseCode): boolean {
+    return this.releasesApi.data()?.find((elem) => elem.releaseCode === code)?.isPublished ?? false;
   }
 
   ngOnDestroy(): void {

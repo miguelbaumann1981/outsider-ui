@@ -9,9 +9,11 @@
         class="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow"
       >
         @for (item of menu(); track item.text) {
-          <li>
-            <a [routerLink]="item.url" routerLinkActive="text-teal-600">{{ item.text }}</a>
-          </li>
+          @if (item.isActive) {
+            <li>
+              <a [routerLink]="item.url" routerLinkActive="text-teal-600">{{ item.text }}</a>
+            </li>
+          }
         }
       </ul>
     </div>
@@ -26,9 +28,11 @@
   <div class="navbar-center hidden lg:flex">
     <ul class="menu menu-horizontal hidden px-1 lg:flex">
       @for (item of menu(); track item.text) {
-        <li class="px-5 text-sm font-semibold hover:text-gray-500 xl:text-lg">
-          <a [routerLink]="item.url" routerLinkActive="text-teal-600">{{ item.text }}</a>
-        </li>
+        @if (item.isActive) {
+          <li class="px-5 text-sm font-semibold hover:text-gray-500 xl:text-lg">
+            <a [routerLink]="item.url" routerLinkActive="text-teal-600">{{ item.text }}</a>
+          </li>
+        }
       }
     </ul>
   </div>

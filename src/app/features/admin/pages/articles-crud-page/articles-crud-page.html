@@ -68,7 +68,7 @@
                   <h3 class="text-secondary text-base font-semibold">{{ article.titleArticle }}</h3>
                   <h4 class="font-semibold">{{ article.authorArticle }}</h4>
 
-                  <div class="mt-2 flex flex-col items-center gap-2 xl:flex-row">
+                  <div class="mt-2 flex flex-row items-center gap-3">
                     <div
                       class="badge"
                       [ngClass]="
@@ -83,11 +83,13 @@
                     <div
                       class="badge"
                       [ngClass]="
-                        article.isReleasePublished ? 'badge-success' : 'badge-error text-white'
+                        isReleasePublished(article.releaseCode)
+                          ? 'badge-success'
+                          : 'badge-error text-white'
                       "
                     >
                       {{
-                        article.isReleasePublished
+                        isReleasePublished(article.releaseCode)
                           ? i18n.common.published
                           : i18n.common.notPublished
                       }}
@@ -100,7 +102,7 @@
                 <button
                   class="btn btn-outline btn-error btn-sm"
                   (click)="openDeleteItemDialog(article.id)"
-                  [disabled]="article.isPublished"
+                  [disabled]="isReleasePublished(article.releaseCode)"
                 >
                   <span class="material-icons"> delete </span>
                   {{ i18n.common.delete }}

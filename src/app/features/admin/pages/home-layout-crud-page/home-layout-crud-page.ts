@@ -6,7 +6,7 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { NgxSonnerToaster, toast } from 'ngx-sonner';
 import es from '@/i18n/es.json';
-import { ViewState } from '@/features/public/types';
+import { ReleaseCode, ViewState } from '@/features/public/types';
 import { HomeLayoutApi, ReleasesApi } from '@/features/public/interfaces';
 import { HomeService, ReleasesService } from '@/features/public/services';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -121,6 +121,10 @@ export class HomeLayoutCrudPage implements OnInit, OnDestroy {
         this.delete(id);
       }
     });
+  }
+
+  isReleasePublished(code: ReleaseCode): boolean {
+    return this.releasesApi.data()?.find((elem) => elem.releaseCode === code)?.isPublished ?? false;
   }
 
   ngOnDestroy(): void {
