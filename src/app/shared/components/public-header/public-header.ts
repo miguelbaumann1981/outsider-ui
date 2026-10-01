@@ -17,6 +17,7 @@ export class PublicHeader {
 
   readonly releasesApi = this.setInitReleasesService.releases;
 
+  isDisplayedMenuMobile = signal(true);
   menu = signal<MenuItem[]>([
     {
       text: this.i18n.menu.aboutUs,
@@ -34,6 +35,13 @@ export class PublicHeader {
       isActive: true,
     },
   ]);
+
+  closeMenuAfterClick(): void {
+    this.isDisplayedMenuMobile.set(false);
+    setTimeout(() => {
+      this.isDisplayedMenuMobile.set(true);
+    }, 1000);
+  }
 
   navigateToHomePage(): void {
     this.router.navigate(['/']);
