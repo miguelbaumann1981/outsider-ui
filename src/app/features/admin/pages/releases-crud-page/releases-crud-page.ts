@@ -13,7 +13,7 @@ import { ConfirmCurrentReleaseDialog } from './dialogs/confirm-current-release-d
 import { ViewState } from '@/features/public/types';
 import { Spinner } from '@/shared/components/spinner/spinner';
 import { LocalStorageService, SetInitReleaseService } from '@/core/services';
-import { HandleEditMode } from '../../services';
+import { FileUploadService, HandleEditMode } from '../../services';
 import { distinctUntilChanged, filter, Subject, takeUntil } from 'rxjs';
 import { DeleteItemDialog } from '../../components/delete-item-dialog/delete-item-dialog';
 
@@ -30,6 +30,7 @@ export class ReleasesCrudPage implements OnInit, OnDestroy {
   private destroyRef = inject(DestroyRef);
   private router = inject(Router);
   private handleEditMode = inject(HandleEditMode);
+  private fileUploadService = inject(FileUploadService);
   readonly dialog = inject(MatDialog);
   private destroy$ = new Subject<void>();
 
@@ -190,6 +191,18 @@ export class ReleasesCrudPage implements OnInit, OnDestroy {
       if (result) {
         this.delete(id);
       }
+    });
+  }
+
+  uploadFile(event: Event): void {
+    const fileList: FileList | undefined = (event.target as HTMLInputElement).files ?? undefined;
+    console.log('Upload file event:', fileList);
+    console.log('Upload file event:', fileList?.[0]);
+    const file: File | undefined = fileList?.[0] ?? undefined;
+    this.fileUploadService.uploadImages(fileList).subscribe({
+      next: (fileName) => {
+        console.log('Uploaded file name:', fileName);
+      },
     });
   }
 
