@@ -13,7 +13,7 @@ import { textTeal600 } from '@/features/public/utils';
     }
     @media (max-width: 640px) {
       .icon-book {
-        font-size: 20px;
+        font-size: 24px;
       }
     }
   `,
