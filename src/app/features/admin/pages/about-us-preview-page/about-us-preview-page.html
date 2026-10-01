@@ -8,8 +8,6 @@
   <div class="content-info text-base lg:text-lg" [innerHTML]="info()?.mainText | safeHtml"></div>
 
   <div class="flex flex-col gap-5">
-    <h2 class="text-lg font-semibold lg:text-2xl">{{ i18n.aboutUs.subtitle }}</h2>
-
     <div class="flex flex-col gap-10">
       @for (collaborator of info()?.collaborators; track collaborator.name; let index = $index) {
         <div

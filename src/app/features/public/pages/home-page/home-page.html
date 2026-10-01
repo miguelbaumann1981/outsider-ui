@@ -1,7 +1,7 @@
 @let isCurrentRelease =
   releases.data()?.find((item) => item.releaseCode === releaseCodeLocalStorage())?.isCurrentRelease;
 
-<main class="flex flex-col gap-5">
+<main class="flex flex-col gap-0 lg:gap-5">
   <!-- SLOGAN -->
   @if (isCurrentRelease) {
     <div class="flex items-center justify-center">
