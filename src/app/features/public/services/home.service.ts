@@ -3,7 +3,7 @@ import { inject, Service } from '@angular/core';
 import { delay, map, Observable } from 'rxjs';
 import { environment } from '@envs/environment.development';
 import { Article, ArticlesApi, HomeLayoutApi } from '../interfaces';
-import { ArticleCategory, ReleaseCode } from '../types';
+import { ReleaseCode } from '../types';
 import { ArticleCrud, HomeLayoutCrud } from '@/features/admin/interfaces';
 
 @Service()

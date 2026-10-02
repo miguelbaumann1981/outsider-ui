@@ -4,23 +4,32 @@
       <div tabindex="0" role="button" class="btn btn-ghost lg:hidden">
         <out-icon-menu />
       </div>
-      <ul
-        tabindex="-1"
-        class="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow"
-      >
-        @for (item of menu(); track item.text) {
-          @if (item.isActive) {
-            <li>
-              <a [routerLink]="item.url" routerLinkActive="text-teal-600">{{ item.text }}</a>
-            </li>
+
+      @if (isDisplayedMenuMobile()) {
+        <ul
+          tabindex="-1"
+          class="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow"
+        >
+          @for (item of menu(); track item.text) {
+            @if (item.isActive) {
+              <li class="my-2">
+                <a
+                  class="text-lg"
+                  [routerLink]="item.url"
+                  routerLinkActive="text-teal-600"
+                  (click)="closeMenuAfterClick()"
+                  >{{ item.text }}</a
+                >
+              </li>
+            }
           }
-        }
-      </ul>
+        </ul>
+      }
     </div>
 
     <div class="flex items-center gap-5">
       <a class="cursor-pointer hover:opacity-75" (click)="navigateToHomePage()">
-        <img src="/assets/Outsider-logo.png" alt="Logo Outsider" class="h-[35px] lg:h-[45px]" />
+        <img src="/assets/Outsider-logo.png" alt="Logo Outsider" class="h-[30px] lg:h-[45px]" />
       </a>
     </div>
   </div>
@@ -38,8 +47,9 @@
   </div>
 
   <div class="navbar-end">
-    <a class="btn lg:btn-sm btn-outline btn-info btn-xs" [routerLink]="'/auth'">{{
-      i18n.menu.privateZone
-    }}</a>
+    <a class="btn lg:btn-sm btn-outline btn-info btn-xs" [routerLink]="'/auth'">
+      <span class="material-icons"> admin_panel_settings </span>
+      <span class="hidden lg:inline">{{ i18n.menu.privateZone }}</span>
+    </a>
   </div>
 </div>
