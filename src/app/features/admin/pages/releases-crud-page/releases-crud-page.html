@@ -7,6 +7,10 @@
     (actionEvent)="createNewRelease()"
   />
 
+  <div class="my-4">
+    <input class="btn btn-primary" type="file" (change)="uploadFile($event)" />
+  </div>
+
   @switch (viewState()) {
     @case ('loading') {
       <div class="spinner-container h-[600px]">

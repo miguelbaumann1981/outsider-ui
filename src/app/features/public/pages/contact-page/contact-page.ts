@@ -75,7 +75,6 @@ export class ContactPage {
       error: () => {
         toast.error(this.i18n.contact.errorSendingTitle);
         this.isLoading.set(false);
-        console.log('Error!!!');
       },
       complete: () => {
         this.contactForm().reset({
