@@ -23,5 +23,19 @@
   </head>
   <body>
     <app-root></app-root>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-HGHZ2H472R"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag('js', new Date());
+
+      gtag('config', 'G-HGHZ2H472R', {
+        send_page_view: false,
+      });
+    </script>
   </body>
 </html>
