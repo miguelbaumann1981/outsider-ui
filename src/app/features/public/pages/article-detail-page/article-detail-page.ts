@@ -1,4 +1,13 @@
-import { Component, computed, inject, OnInit, signal, ViewEncapsulation } from '@angular/core';
+import {
+  Component,
+  computed,
+  HostListener,
+  inject,
+  OnDestroy,
+  OnInit,
+  signal,
+  ViewEncapsulation,
+} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SafeHtmlPipe } from '../../pipes';
 import { ArticleCategory } from '../../enums';
@@ -15,6 +24,8 @@ import { ShareSocialService } from '../../services';
 import { Meta, Title } from '@angular/platform-browser';
 import { injectQuery } from '@tanstack/angular-query-experimental';
 import { lastValueFrom } from 'rxjs';
+
+declare let gtag: Function;
 
 const SOCIAL_MEDIA: ShareSocialItem[] = [
   {
@@ -56,7 +67,21 @@ const SOCIAL_MEDIA: ShareSocialItem[] = [
   styleUrl: './article-detail-page.scss',
   encapsulation: ViewEncapsulation.None,
 })
-export class ArticleDetailPage implements OnInit {
+export class ArticleDetailPage implements OnInit, OnDestroy {
+  @HostListener('window:scroll', [])
+  onScroll() {
+    const scrollTop = window.scrollY;
+    const docHeight = document.body.scrollHeight - window.innerHeight;
+    const percent = Math.round((scrollTop / docHeight) * 100);
+
+    if (percent === 25 || percent === 50 || percent === 75 || percent === 100) {
+      gtag('event', 'scroll_depth', {
+        percent,
+        article_id: this.articleSelected.data()?.id,
+      });
+    }
+  }
+
   protected readonly i18n = es;
   private localStorageService = inject(LocalStorageService);
   private homeService = inject(HomeService);
@@ -66,6 +91,7 @@ export class ArticleDetailPage implements OnInit {
   private title = inject(Title);
   private _window = inject(WINDOW);
   private router = inject(Router);
+  private startTime = signal<number>(Date.now());
 
   articleDetail = signal<ArticleDetail>({
     category: ArticleCategory.EDITORIAL,
@@ -113,6 +139,7 @@ export class ArticleDetailPage implements OnInit {
 
   ngOnInit(): void {
     this.getRouteParams();
+    this.addAnalyticsTags();
   }
 
   getRouteParams(): void {
@@ -122,6 +149,15 @@ export class ArticleDetailPage implements OnInit {
         releaseCode: params['releaseCode'],
         slug: params['slug'],
       });
+    });
+  }
+
+  addAnalyticsTags(): void {
+    gtag('event', 'view_article', {
+      article_id: this.articleSelected.data()?.id,
+      article_title: this.articleSelected.data()?.titleArticle,
+      category: this.articleSelected.data()?.category,
+      author: this.articleSelected.data()?.authorArticle,
     });
   }
 
@@ -191,5 +227,23 @@ export class ArticleDetailPage implements OnInit {
       case 'LinkedIn':
         return this.shareSocialService.shareOnLinkedIn(url);
     }
+
+    this.shareAnalytics(social);
+  }
+
+  shareAnalytics(method: string) {
+    gtag('event', 'article_share', {
+      method,
+      article_id: this.articleSelected.data()?.id,
+    });
+  }
+
+  ngOnDestroy() {
+    const timeSpent = Math.round((Date.now() - this.startTime()) / 1000);
+
+    gtag('event', 'article_time_spent', {
+      article_id: this.articleSelected.data()?.id,
+      time_spent: timeSpent,
+    });
   }
 }

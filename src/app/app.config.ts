@@ -10,7 +10,7 @@ import { withDevtools } from '@tanstack/angular-query-experimental/devtools';
 import { routes } from './app.routes';
 import { provideClientHydration } from '@angular/platform-browser';
 import { provideHttpClient } from '@angular/common/http';
-import { SetInitReleaseService } from './core/services';
+import { GoogleAnalyticsService, SetInitReleaseService } from './core/services';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -20,6 +20,7 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(),
     provideAppInitializer(() => {
       inject(SetInitReleaseService).releases;
+      inject(GoogleAnalyticsService).init();
     }),
     provideTanStackQuery(new QueryClient(), withDevtools()),
   ],
