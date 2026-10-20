@@ -14,7 +14,7 @@
             @if (item.isActive) {
               <li class="my-2">
                 <a
-                  class="text-lg"
+                  class="close-menu text-lg"
                   [routerLink]="item.url"
                   routerLinkActive="text-teal-600"
                   (click)="closeMenuAfterClick()"
@@ -28,7 +28,7 @@
     </div>
 
     <div class="flex items-center gap-5">
-      <a class="cursor-pointer hover:opacity-75" (click)="navigateToHomePage()">
+      <a id="goHome" class="cursor-pointer hover:opacity-75" (click)="navigateToHomePage()">
         <img src="/assets/Outsider-logo.png" alt="Logo Outsider" class="h-[30px] lg:h-[45px]" />
       </a>
     </div>

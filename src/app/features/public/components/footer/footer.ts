@@ -25,7 +25,7 @@ export class Footer {
     }
 
     if (social === 'Gmail') {
-      window.location.href = 'mailto:outsiderrevista@gmail.com';
+      this.mailTo('outsiderrevista@gmail.com');
     }
   }
 
